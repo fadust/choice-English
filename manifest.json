@@ -7,8 +7,8 @@
   "css": "dist/index.css",
   "author": "哈哈氣💨",
   "version": "1.9.1",
-  "homePage": "https://github.com/Junwu-Git/choice",
-  "auto_update": true,
+  "homePage": "https://github.com/fadust/choice-English",
+  "auto_update": false,
   "i18n": {
     "en": "i18n/en.json"
   }

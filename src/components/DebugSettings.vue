@@ -1,17 +1,17 @@
 <template>
   <div class="choice-debug-settings">
     <div class="choice-section">
-      <h4 class="choice-section-title"><i class="fa-solid fa-code"></i>{{ t`版本信息` }}</h4>
+      <h4 class="choice-section-title"><i class="fa-solid fa-code"></i>{{ t`Version Info` }}</h4>
       <p>Schema: {{ globalStore.settings.schema_version }}</p>
       <p>Prompt Schema: {{ globalStore.settings.prompt_rules.schema_version }}</p>
-      <p>{{ t`模块数` }}: {{ globalStore.settings.prompt_rules.modules.length }}</p>
-      <p>{{ t`条目池` }}: {{ globalStore.settings.master_pool.length }} {{ t`条` }}</p>
-      <p>{{ t`配置数` }}: {{ globalStore.settings.configs.length }}</p>
-      <p>{{ t`API 数` }}: {{ globalStore.settings.apis.length }}</p>
+      <p>{{ t`Module Count` }}: {{ globalStore.settings.prompt_rules.modules.length }}</p>
+      <p>{{ t`Entry Pool` }}: {{ globalStore.settings.master_pool.length }} {{ t`entries` }}</p>
+      <p>{{ t`Config Count` }}: {{ globalStore.settings.configs.length }}</p>
+      <p>{{ t`API Count` }}: {{ globalStore.settings.apis.length }}</p>
     </div>
 
-    <ChoiceSectionCard title="上次生成的消息" icon="fa-solid fa-terminal">
-      <div v-if="!lastBuildMessages" class="choice-empty-hint">{{ t`尚未生成过` }}</div>
+    <ChoiceSectionCard title="Last generated message" icon="fa-solid fa-terminal">
+      <div v-if="!lastBuildMessages" class="choice-empty-hint">{{ t`Never generated` }}</div>
       <div v-else class="choice-debug-messages">
         <div v-for="(m, i) in lastBuildMessages" :key="i" class="choice-debug-msg">
           <span class="choice-debug-role" :class="'role-' + m.role">{{ m.role }}</span>
@@ -20,26 +20,26 @@
       </div>
     </ChoiceSectionCard>
 
-    <ChoiceSectionCard title="上次去重报告" icon="fa-solid fa-clone">
+    <ChoiceSectionCard title="Last deduplication report" icon="fa-solid fa-clone">
       <div v-if="!lastDedupReport || !lastDedupReport.details.length" class="choice-empty-hint">
-        {{ t`去重未触发（未启用或无重复）` }}
+        {{ t`Dedup not triggered (disabled or no duplicates)` }}
       </div>
       <div v-else class="choice-debug-messages">
         <div class="choice-debug-msg">
-          <span class="choice-debug-role">{{ t`剔除数` }}</span>
+          <span class="choice-debug-role">{{ t`Removed count` }}</span>
           <span class="choice-debug-content">{{ lastDedupReport.dropped }}</span>
         </div>
         <div class="choice-debug-msg">
-          <span class="choice-debug-role">{{ t`补齐` }}</span>
-          <span class="choice-debug-content">{{ lastDedupReport.refilled ? t`是` : t`否` }}</span>
+          <span class="choice-debug-role">{{ t`Top up` }}</span>
+          <span class="choice-debug-content">{{ lastDedupReport.refilled ? t`Yes` : t`No` }}</span>
         </div>
         <div class="choice-debug-msg">
-          <span class="choice-debug-role">{{ t`阈值` }}</span>
+          <span class="choice-debug-role">{{ t`Threshold` }}</span>
           <span class="choice-debug-content">{{ lastDedupReport.threshold }}</span>
         </div>
       </div>
       <div v-if="lastDedupReport?.refs.length" class="choice-debug-dedup-refs">
-        <div class="choice-debug-dedup-refs-title">{{ t`参照池（${lastDedupReport.refs.length} 条）` }}</div>
+        <div class="choice-debug-dedup-refs-title">{{ t`reference pool (${lastDedupReport.refs.length} Article)` }}</div>
         <div class="choice-debug-dedup-refs-list">
           <div v-for="(ref, i) in lastDedupReport.refs" :key="i" class="choice-debug-dedup-ref-item">
             {{ truncate(ref, 100) }}
@@ -51,7 +51,7 @@
           <div class="choice-debug-dedup-candidate">{{ truncate(d.candidate, 80) }}</div>
           <div class="choice-debug-dedup-meta">
             <span :class="['choice-debug-dedup-reason', 'reason-' + d.reason]">
-              {{ d.reason === 'title' ? t`标题精确匹配` : t`Jaccard ${d.score?.toFixed(2)}` }}
+              {{ d.reason === 'title' ? t`Exact title match` : t`Jaccard ${d.score?.toFixed(2)}` }}
             </span>
             <span class="choice-debug-dedup-matched">{{ t`⇐` }} {{ truncate(d.matchedRef, 60) }}</span>
           </div>
@@ -59,9 +59,9 @@
       </div>
     </ChoiceSectionCard>
 
-    <ChoiceSectionCard title="占位符速查" icon="fa-solid fa-dollar-sign">
+    <ChoiceSectionCard title="Placeholder Quick Look" icon="fa-solid fa-dollar-sign">
       <p class="choice-debug-hint">
-        {{ t`模块内容里可写的变量，生成时自动替换成实际值（供复制到提示词模块中使用）` }}
+        {{ t`Variables usable in module content, auto-replaced with real values at generation time (copy into prompt modules)` }}
       </p>
       <div class="choice-debug-ph-list">
         <div v-for="ph in PLACEHOLDER_DOCS" :key="ph.syntax" class="choice-debug-ph">
@@ -71,10 +71,10 @@
       </div>
     </ChoiceSectionCard>
 
-    <ChoiceSectionCard title="危险操作" icon="fa-solid fa-triangle-exclamation" tone="danger" default-open>
-      <button class="menu_button" :title="t`删除所有设置并恢复为插件出厂默认值`" @click="factoryReset">
+    <ChoiceSectionCard title="Dangerous operation" icon="fa-solid fa-triangle-exclamation" tone="danger" default-open>
+      <button class="menu_button" :title="t`Delete all settings and restore plugin to factory defaults`" @click="factoryReset">
         <i class="fa-solid fa-rotate-left"></i>
-        {{ t`恢复出厂设置` }}
+        {{ t`Factory Reset` }}
       </button>
     </ChoiceSectionCard>
   </div>
@@ -91,33 +91,33 @@ const globalStore = useGlobalSettingsStore();
 /** 占位符速查表：名称 + 中文说明。说明必须与 generator.ts 的 sub() 替换语义一致，
  *  新增占位符时两处同步（此处只是文档，替换逻辑以 sub() 为准）。 */
 const PLACEHOLDER_DOCS = [
-  { syntax: '{{count}}', desc: t`本轮要生成的选项/版本数量（数量设为区间时，是实际抽中的值）` },
-  { syntax: '{{count_minus_1}}', desc: t`数量减一（count - 1）` },
-  { syntax: '{{pinned_count}}', desc: t`固定条目的数量` },
-  { syntax: '{{pinned}}', desc: t`固定条目列表——本轮必须全部用上的素材（选项生成）` },
-  { syntax: '{{pool_selected}}', desc: t`候选条目列表——AI 从中挑选方向的素材（选项生成）` },
-  { syntax: '{{input}}', desc: t`待润色的用户原文（仅润色任务有值）` },
-  { syntax: '{{min_chars}}', desc: t`每条字数下限——选项/润色各自取各自的设置` },
-  { syntax: '{{max_chars}}', desc: t`每条字数上限——选项/润色各自取各自的设置` },
-  { syntax: '{{option_person}}', desc: t`选项叙述人称（如「第三人称」）` },
-  { syntax: '{{enrich_person}}', desc: t`润色人称` },
-  { syntax: '{{enrich_person_style}}', desc: t`润色人称风格整句（含人称与人设要求）` },
-  { syntax: '{{prev_options}}', desc: t`上一楼已生成选项的文本（默认提示词已不使用；自定义模块可引用作参照）` },
+  { syntax: '{{count}}', desc: t`Number of options/versions to generate this round (when count is a range, this is the value actually drawn)` },
+  { syntax: '{{count_minus_1}}', desc: t`Decrease count by one (count - 1)` },
+  { syntax: '{{pinned_count}}', desc: t`Number of pinned entries` },
+  { syntax: '{{pinned}}', desc: t`Pinned entries — material that must all be used this round (option generation)` },
+  { syntax: '{{pool_selected}}', desc: t`Candidate entries — material the AI picks directions from (option generation)` },
+  { syntax: '{{input}}', desc: t`Original user text to enrich (only set for enrich tasks)` },
+  { syntax: '{{min_chars}}', desc: t`Per-option character floor — options and enrichment each use their own setting` },
+  { syntax: '{{max_chars}}', desc: t`Per-option character cap — options and enrichment each use their own setting` },
+  { syntax: '{{option_person}}', desc: t`Narrative person for options (e.g. "third person")` },
+  { syntax: '{{enrich_person}}', desc: t`Polish Person` },
+  { syntax: '{{enrich_person_style}}', desc: t`Enrichment person/style directive (whole sentence, incl. persona requirements)` },
+  { syntax: '{{prev_options}}', desc: t`Text of the options generated for the previous floor (unused by default prompts; custom modules may reference it)` },
   {
-    syntax: '{{user}} 等酒馆宏',
-    desc: t`由酒馆宏引擎替换（assistant 角色模块内同样执行）`,
+    syntax: '{{user}} and other pub macros',
+    desc: t`Replaced by the SillyTavern macro engine (also runs inside assistant-role modules)`,
   },
 ];
 
 function factoryReset() {
   if (
     !confirm(
-      t`确定要恢复插件所有设置为出厂默认值吗？\n\n这将删除所有条目池、提示词配置、API 设置、UI 偏好等。\n此操作不可撤销！`,
+      t`Are you sure you want to restore all plug-in settings to factory defaults? \n\nThis will delete all entry pools, prompt word configurations, API settings, UI preferences, etc. \nThis operation is irreversible!`,
     )
   )
     return;
   globalStore.factoryReset();
-  toastr.success(t`已恢复出厂设置`);
+  toastr.success(t`Factory reset completed`);
 }
 
 function truncate(s: string, n = 120): string {

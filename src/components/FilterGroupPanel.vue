@@ -1,7 +1,7 @@
 <template>
   <div v-if="group" class="choice-filter-group-card" :class="{ 'choice-filter-group-dimmed': dimmed }">
     <div class="choice-filter-group-header" @click="expanded = !expanded">
-      <DragHandle class="choice-drag-handle--group" :title="t`拖动排序/换区`" @click.stop />
+      <DragHandle class="choice-drag-handle--group" :title="t`Drag to reorder or move between areas`" @click.stop />
       <i class="fa-solid choice-filter-group-caret" :class="expanded ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
       <span v-if="renamingId !== groupId" class="choice-filter-group-name">{{ group.name }}</span>
       <input
@@ -16,7 +16,7 @@
       <button
         v-if="dimmed && locked"
         class="choice-icon-btn choice-lock-btn"
-        :title="t`点击解锁后可编辑`"
+        :title="t`Click to unlock for editing`"
         @click.stop="locked = false"
       >
         <i class="fa-solid fa-lock"></i>
@@ -24,7 +24,7 @@
       <button
         v-else-if="dimmed && !locked"
         class="choice-icon-btn choice-lock-btn"
-        :title="t`已解锁，可编辑`"
+        :title="t`Unlocked. Editing enabled`"
         @click.stop="locked = true"
       >
         <i class="fa-solid fa-lock-open"></i>
@@ -32,33 +32,33 @@
       <button
         class="choice-icon-btn"
         :disabled="dimmed && locked"
-        :title="renamingId === groupId ? t`保存` : t`重命名`"
+        :title="renamingId === groupId ? t`Save` : t`Rename`"
         @click.stop="renamingId === groupId ? finishRename() : startRename()"
       >
         <i :class="renamingId === groupId ? 'fa-solid fa-check' : 'fa-solid fa-pen-to-square'"></i>
       </button>
-      <button v-if="renamingId === groupId" class="choice-icon-btn" :title="t`取消`" @click.stop="cancelRename">
+      <button v-if="renamingId === groupId" class="choice-icon-btn" :title="t`Cancel`" @click.stop="cancelRename">
         <i class="fa-solid fa-xmark"></i>
       </button>
-      <label class="choice-check" :title="group.enabled ? t`启用` : t`禁用`" @click.stop>
+      <label class="choice-check" :title="group.enabled ? t`Enable` : t`Disabled`" @click.stop>
         <input type="checkbox" :checked="group.enabled" :disabled="dimmed && locked" @change="toggleEnabled" />
       </label>
       <button
         class="choice-icon-btn"
         data-tour="filter-group-addlib"
         :disabled="dimmed && locked"
-        :title="t`从正则库添加`"
+        :title="t`Add from regex library`"
         @click.stop="emit('addFromLibrary')"
       >
         <i class="fa-solid fa-book-open"></i>
       </button>
-      <button class="choice-icon-btn" :disabled="dimmed && locked" :title="t`新增规则`" @click.stop="addInlineRule">
+      <button class="choice-icon-btn" :disabled="dimmed && locked" :title="t`Add Rule`" @click.stop="addInlineRule">
         <i class="fa-solid fa-plus"></i>
       </button>
       <button
         class="choice-icon-btn choice-delete-btn"
         :disabled="dimmed && locked"
-        :title="t`删除分组`"
+        :title="t`Delete Group`"
         @click.stop="emit('delete')"
       >
         <i class="fa-solid fa-trash-can"></i>
@@ -68,18 +68,18 @@
         <span class="choice-filter-binding">
           <i :class="bindingIcon"></i>
           <span class="choice-bound-badge" :class="{ 'choice-bound-char': bindingIcon.includes('address-card') }">
-            {{ bindingLabel || t`未绑定` }}
+            {{ bindingLabel || t`Unbound` }}
           </span>
         </span>
         <button
           v-if="bindingLabel && isNotCurrentPreset"
           class="choice-icon-btn"
-          :title="t`绑定到当前预设`"
+          :title="t`Bind to current preset`"
           @click.stop="emit('bindToCurrent')"
         >
           <i class="fa-solid fa-link"></i>
         </button>
-        <button v-if="bindingLabel" class="choice-icon-btn" :title="t`取消绑定`" @click.stop="emit('unbind')">
+        <button v-if="bindingLabel" class="choice-icon-btn" :title="t`Unbind`" @click.stop="emit('unbind')">
           <i class="fa-solid fa-link-slash"></i>
         </button>
       </template>
@@ -92,7 +92,7 @@
         :class="{ 'choice-filter-row--duplicate': duplicateIndices.has(idx) }"
         :data-entry-idx="idx"
       >
-        <DragHandle :title="t`拖动排序`" />
+        <DragHandle :title="t`Drag to reorder`" />
         <template v-if="entry.library_entry_id">
           <span class="choice-inline-cat-badge">
             <i class="fa-solid fa-bookmark"></i>
@@ -114,20 +114,20 @@
             :disabled="dimmed && locked"
             @change="changeRuleType(entry, ($event.target as HTMLSelectElement).value)"
           >
-            <option value="tag">{{ t`标签匹配` }}</option>
-            <option value="regex">{{ t`正则表达式` }}</option>
+            <option value="tag">{{ t`Tag Match` }}</option>
+            <option value="regex">{{ t`Regex Pattern` }}</option>
           </select>
           <template v-if="entry.inline_rule!.type === 'tag'">
             <input
               v-model="entry.inline_rule!.start"
               class="choice-input choice-filter-field"
-              :placeholder="t`标签头`"
+              :placeholder="t`Tag Start`"
               :disabled="dimmed && locked"
             />
             <input
               v-model="entry.inline_rule!.end"
               class="choice-input choice-filter-field"
-              :placeholder="t`标签尾`"
+              :placeholder="t`Tag End`"
               :disabled="dimmed && locked"
             />
           </template>
@@ -138,7 +138,7 @@
             v-else-if="entry.inline_rule!.type === 'regex'"
             v-model="entry.inline_rule!.pattern"
             class="choice-input choice-filter-field"
-            :placeholder="t`正则表达式`"
+            :placeholder="t`Regex Pattern`"
             :disabled="dimmed && locked"
           />
           <button class="choice-icon-btn choice-delete-btn" :disabled="dimmed && locked" @click="removeEntry(idx)">
@@ -147,7 +147,7 @@
         </template>
       </div>
       <div v-if="group.entries.length === 0" class="choice-empty-hint">
-        <span>{{ t`暂无规则，点击「从正则库添加」或「+」添加` }}</span>
+        <span>{{ t`No rules. Add from the regex library or with '+'.` }}</span>
       </div>
     </div>
   </div>
@@ -207,7 +207,7 @@ const isNotCurrentPreset = computed(() => {
 
 const getLibEntryCategory = (id: string) => {
   const entry = gs.settings.filter_settings.regex_library.find(e => e.id === id);
-  return entry?.category || t`未分组`;
+  return entry?.category || t`Ungrouped`;
 };
 
 const getLibEntryDisplay = (id: string) => {
@@ -215,7 +215,7 @@ const getLibEntryDisplay = (id: string) => {
   if (!entry) return '';
   if (entry.type === 'tag') return `${entry.start || '...'} ... ${entry.end || '...'}`;
   if (entry.type === 'extract') return `<${entry.tag_name || '...'}>…</${entry.tag_name || '...'}>`;
-  return entry.pattern || '(空)';
+  return entry.pattern || '(empty)';
 };
 
 // 切换规则类型时重建规则对象而非直接改 type：discriminatedUnion 各分支字段不同，

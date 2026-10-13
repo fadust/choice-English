@@ -1,3 +1,4 @@
+import { truncateWords } from '@/util/words';
 /**
  * 角色 AI 主题卡池**分批**生成（§6）：开启卡牌 / 幸运数开卡包 / 购买卡包用到某角色时，
  * 若该角色 `card_character_pools` 未满（上限 CARD_POOL_MAX_CARDS），异步调 AI 按当前角色卡
@@ -49,39 +50,39 @@ import type { Card, CardEffect } from '@/type/settings';
 
 /** 生成系统提示：说明产出的是「效果卡规则」而非行动选项，强调触发/效果越界会被作废。
  *  引导 AI 深读角色设定提炼标志性特质、做双刃/代价卡（不止纯利好）。 */
-const SYSTEM_PROMPT = `你是一位卡牌设计师，为特定角色的冒险主题设计「效果卡」。
-每张卡是可装备的效果规则：满足「触发条件」时对一次行动判定施加效果。
+const SYSTEM_PROMPT = `You are a card designer, designing "effect cards" for a specific character's adventure theme.
+Each card is an equippable effect rule: when the "trigger condition" is met, the effect is applied to an action judgment.
 
-【设计要求——贴合角色】
-- 深入读角色的描述/性格/场景设定，提炼该角色跨场景恒定的意象、能力体系、性格矛盾、人际关系与世界观词汇。
-- 卡名、叙事文本要体现角色独有特质（不要泛泛的"力量卡/守护卡"，要用该角色会说的词、会做的事、与其背景绑定的物件与场景）。
-- 效果与角色设定有逻辑关联：治愈系角色出保命/续命卡，莽撞型出孤注一掷的高风险卡，智谋型出改需求/转化的算计卡，etc。
+【 design requirements - fit the character 】
+- Read the character's description/personality/scene setting in depth, and refine the character's constant imagery, ability system, personality conflicts, interpersonal relationships, and worldview vocabulary across scenes.
+- The card name and narrative text should reflect the unique characteristics of the character (not a general "power card/guardian card", use the words the character can say, the things he can do, and the objects and scenes bound to his background).
+- The effect is logically related to the character setting: the healing character plays a life-saving/life-extending card, the reckless character plays a desperate high-risk card, and the resourceful character plays a calculation card that requires change/transformation, etc.
 
-【设计要求——跨场景通用】
-- 卡池是该角色整个冒险历程中反复掉落的常驻池，不是为某一幕剧情定制的：卡名/触发/叙事不得绑定当前场景、地点、正在发生的具体事件或一次性情节道具——剧情推进后这些卡必须仍然适用、仍然可读。
-- 设计素材以角色卡设定（身份/能力体系/性格矛盾/人际关系）与世界观（世界书）为准；最近的对话仅用于把握语言风格、称谓与人物口吻。
+【 design requirements - universal 】 across scenarios
+- The card pool is a permanent pool that is repeatedly dropped throughout the character's adventure, and is not customized for a certain plot: the card name/trigger/narrative must not be bound to the current scene, location, specific events taking place, or one-time plot props - these cards must still be applicable and readable after the plot progresses.
+- The design materials are based on the character card settings (identity/ability system/character conflicts/interpersonal relationships) and world view (World Info); recent conversations are only used to grasp the language style, titles and tone of the characters.
 
-【设计要求——双刃与取舍】
-- 不要每张卡都纯利好。试炼（trial）类型专做「高风险高收益」的双刃卡：允许负向 amount 作为代价。
-  例：低骰触发时降骰（roll_bonus 负值）但大失败时强制重掷救命；大胆行动加骰但升需求（demand_mod 正值）让判定更刺激。
-- 高星卡可以更强，但代价也应更大；低星卡可做稳健小利或小代价。给出有取舍感的平衡设计。
-- demand/roll 触发区间跨度超过 80 的高星卡，若效果全为正向数值（无任何代价/保命/演出效果），会被校验作废——宽触发区间只留给带取舍的设计。
+【 design requirements - double edges and trade-offs 】
+- Don’t make every card purely beneficial. The Trial (trial) type specializes in "high-risk, high-return" double-edged cards: allowing negative amount as a price.
+  For example: when a low die is triggered, the die is reduced (roll_bonus negative value), but when a big failure occurs, a re-roll is forced to save life; a bold action increases the die but requires an increase (demand_mod positive value) to make the judgment more exciting.
+- High-star cards can be stronger, but the cost should also be greater; low-star cards can make steady small profits or small costs. Gives a balanced design with a sense of trade-off.
+- For demand/roll high-star cards whose trigger range span exceeds 80, if the effects are all positive values (without any cost/life-saving/performance effects), they will be invalidated by the verification - the wide trigger range is only reserved for designs with trade-offs.
 
-输出必须是 JSON 数组（张数以用户消息要求为准），数组元素结构：
-{"name":"卡名","type":"weapon|spell|blessing|trial","star":"1|2|3|4|5","trigger":{"kind":"type|grade|demand|roll|outcome",...},"effects":[...],"narrative":"（可选，卡面叙事文本）"}
-字段约束（结构非法/效果集为空必被作废；数值若落在范围外会被钳制到边界，仍请尽量在范围内）：
-- star: 1=最常见到 5=最稀有最强，高星卡应更强但不要每张都顶配。
-- trigger: 与五种 kind 对应的字段只填一种，其余省略。type→typeValue（选项类型关键词，用 2-4 字宽泛题材词，如 战斗/交涉/潜行/探索——过窄的具体动作词几乎匹配不到选项标题，卡将无法触发）；grade→grade（conservative/balanced/bold）；demand→min/max（需求值区间 0-100，跨度建议 ≤60）；roll→min/max（骰值区间 1-100，跨度建议 ≤60）；outcome→outcome（success/fail/crit_success/crit_fail）。
-- effects（数组，至少 1 个，最多 3 个）：{"kind":"roll_bonus","amount":±30以内} 或 {"kind":"demand_mod","amount":±40以内} 或 {"kind":"crit_window","success_delta":±5,"fail_delta":±5} 或 {"kind":"outcome_convert","from":"fail|crit_fail|crit_success","to":"success|crit_success"} 或 {"kind":"reroll","on":"fail|crit_fail"} 或 {"kind":"narrative","text":"≤40字"}。amount 极性约定：roll_bonus 正值=利好；demand_mod 正值=升需求=代价、负值=收益（运行时按判定方向自动换算，两种模式下设计极性一致）。
-- narrative（卡的卡面叙事文本）≤40字，体现角色特质。
-- 数值请严格落在上述范围内。`;
+The output must be a JSON array (the number of sheets is subject to user message requirements), and the array element structure is:
+{"name":"Card name","type":"weapon|spell|blessing|trial","star":"1|2|3|4|5 ","trigger":{"kind":"type|grade|demand|roll|outcome",...},"effects":[...],"narrative":"(optional, card face narrative text)"}
+Field constraints (illegal structure/empty effect set will be invalidated; if the value falls outside the range, it will be clamped to the boundary, please try to stay within the range):
+- star: 1=The most common 5=The rarest and strongest, high-star cards should be stronger but don’t match every one.
+- trigger: Fill in only one field corresponding to the five types of kind, and omit the others. type→typeValue (option type keywords, use one to three broad theme words, such as combat/negotiation/stealth/exploration - too narrow specific action words can hardly match the option title, and the card will not be triggered); grade→grade (conservative/balanced/bold); demand→min/max (demand value range 0-100, recommended span ≤60); roll→min/max (dice value range 1-100, recommended span ≤60); outcome→outcome (success/fail/crit_success/crit_fail).
+- effects (array, at least 1, at most 3): {"kind":"roll_bonus","amount":within ±30} or {"kind":"demand_mod","amount":within ±40} or {"kind":"crit_window","success_delta":±5,"fail_delta":±5} or {"kind":"outcome_convert","from":"fail|crit_fail|crit_success","to":"success|crit_success"} or {"kind":"reroll","on":"fail|crit_fail"} or {"kind":"narrative","text":"≤40"}. amount polarity agreement: roll_bonus positive value = good; demand_mod positive value = increase demand = cost, negative value = benefit (automatic conversion according to the judgment direction during operation, the design polarity is consistent in the two modes).
+- narrative (narrative text on the card face) ≤ 40, reflecting the characteristics of the character.
+- Please keep the value strictly within the above range.`;
 
 /** 聊天记录前的用途声明（卡牌特有，对齐 SYSTEM_PROMPT 的跨场景通用要求）：
  *  约束放在素材旁边弱模型才看得见——单靠 system 头部的远距离指令，部分模型会把
  *  最近对话里的场景/事件直接当题材写进卡名。仅在有历史时随历史一起发。 */
 const CHAT_HISTORY_NOTE =
-  '以下是最近的对话记录，仅用于把握语言风格、称谓习惯与人物关系；' +
-  '设计卡牌时禁止以当前场景、地点、正在发生的具体事件或一次性情节道具为题材——卡池需在该角色整个冒险历程中反复适用。';
+  'The following is a recent conversation record, which is only used to grasp the language style, address habits and character relationships;' +
+  'When designing cards, it is forbidden to use the current scene, location, specific events taking place, or one-time plot props as themes - the card pool needs to be used repeatedly throughout the character\'s adventure.';
 
 /** 输出契约：解析 AI 返回的 JSON 数组，容忍被 ```json ... ``` 包裹，失败返回 []。 */
 function parseCardPool(raw: string): Card[] {
@@ -119,7 +120,7 @@ function sanitizeCard(input: Card, charId: string, charName: string, takenIds?: 
   // trigger 按 kind 归一（交叉字段/类型幻觉是持久化投毒的最后一个洞，见 normalizeTrigger 注释）
   base.trigger = normalizeTrigger(base.trigger);
   base.effects = (base.effects ?? []).map(clampEffect).filter((e): e is CardEffect => !!e);
-  base.narrative = (base.narrative ?? '').slice(0, 40);
+  base.narrative = truncateWords(base.narrative ?? '', 40);
   return base;
 }
 
@@ -238,7 +239,7 @@ async function runPoolBatch(charId: string): Promise<Card[]> {
     if (personaDesc) {
       messages.push({
         role: 'system',
-        content: `<user_persona>\n以下是用户本人（用户=主角=user）的人物设定：\n${substituteParams(personaDesc)}\n</user_persona>`,
+        content: `<user_persona>\nThe following is the character setting of the user himself (user = protagonist = user): \n${substituteParams(personaDesc)}\n</user_persona>`,
       });
     }
     // 世界书背景桶（world_info_before：before+anBefore+em）
@@ -270,21 +271,21 @@ async function runPoolBatch(charId: string): Promise<Card[]> {
     // 已有卡摘要随请求下发：跨批去重的第一层靠 AI 错开题材（签名判重 isDuplicateCard 只能拦
     // 「同构」卡，拦不住「意思重复但字段不同」的同侧面卡）；分批生成后 refCards 真实非空。
     const refCards = (pool?.card_ids ?? []).map(id => gs.settings.card_definitions[id]).filter((c): c is Card => !!c);
-    const refLines = refCards.map(c => `- ${c.name}（${CARD_TYPE_LABEL[c.type]}·${c.star}星）`).join('\n');
+    const refLines = refCards.map(c => `- ${c.name}（${CARD_TYPE_LABEL[c.type]}·${c.star}star)`).join('\n');
     messages.push({
       role: 'user',
       content:
-        `请为「${charName}」设计 ${target} 张主题效果卡` +
-        (refCards.length ? `（该角色池已有 ${refCards.length} 张，本批为补充生成）` : '（首批）') +
-        `。设计基准是角色的身份、能力体系、性格与世界整体设定——卡在其整个冒险历程中反复适用，` +
-        `不得绑定当前场景、地点、正在发生的具体事件或一次性情节道具（最近对话仅用于把握文风与人物关系）。` +
+        `Please provide "${charName}"Design ${target} theme effect card` +
+        (refCards.length ? `(This character pool already has ${refCards.length} cards, this batch is a supplementary generation)` : '(first batch)') +
+        `. The design basis is the character's identity, ability system, personality, and overall world setting - which the card applies repeatedly throughout his adventure.` +
+        `Do not bind the current scene, location, specific events taking place, or one-time plot props (recent dialogue is only used to capture the style of writing and character relationships).` +
         (refCards.length
-          ? `\n已有主题卡（本批的题材/意象/触发思路须与它们明显错开，不要重复它们已覆盖的侧面）：\n${refLines}\n` +
-            `本批可侧重近期剧情中展现的角色侧面或阶段主题切入，但卡本身仍须跨场景可复用。`
+          ? `\n already has theme cards (the themes/imagery/trigger ideas of this batch must be clearly staggered from them, and do not repeat the sides they have covered): \n${refLines}\n` +
+            `This batch can focus on character aspects or stage themes shown in recent plots, but the cards themselves must still be reusable across scenes.`
           : '') +
-        `要求：卡名用该角色独有的词汇与意象、效果与其设定有逻辑关联、至少含 1 张双刃/代价卡` +
-        `（试炼类型优先做高风险高收益）。各张卡的触发与效果应彼此有明显差异，避免效果雷同。` +
-        `输出 JSON 数组，若无法或不全生成，数量可以更少，但必须是合法的 JSON。`,
+        `Requirements: The card name uses the vocabulary and imagery unique to the character, the effect is logically related to its setting, and it contains at least 1 double-edged/price cards.` +
+        `(Trial types give priority to high risk and high returns). The triggers and effects of each card should be significantly different from each other to avoid similar effects.` +
+        `Output the JSON array. If it cannot or is not fully generated, the number can be smaller, but it must be legal JSON.`,
     });
 
     const raw = await callSecondaryApiWithRetry(

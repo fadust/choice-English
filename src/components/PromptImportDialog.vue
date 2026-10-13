@@ -1,42 +1,42 @@
 <template>
   <ChoiceDialog
     :open="open"
-    :title="t`导入提示词模块`"
+    :title="t`Import Prompt Modules`"
     icon="fa-solid fa-file-import"
     width="480px"
     @close="$emit('close')"
   >
     <table class="prompt-import-info">
       <tr v-if="summary?.fileName">
-        <td class="prompt-import-label">{{ t`文件` }}</td>
+        <td class="prompt-import-label">{{ t`File` }}</td>
         <td class="prompt-import-value">{{ summary.fileName }}</td>
       </tr>
       <tr>
-        <td class="prompt-import-label">{{ t`导入范围` }}</td>
+        <td class="prompt-import-label">{{ t`Import Scope` }}</td>
         <td class="prompt-import-value">{{ modeLabel }}</td>
       </tr>
       <template v-if="mode === 'new'">
         <tr>
-          <td class="prompt-import-label">{{ t`导入模块` }}</td>
-          <td class="prompt-import-value">{{ summary?.totalCount ?? 0 }} {{ t`个` }}</td>
+          <td class="prompt-import-label">{{ t`Imported modules` }}</td>
+          <td class="prompt-import-value">{{ summary?.totalCount ?? 0 }} {{ t`items` }}</td>
         </tr>
         <tr>
-          <td class="prompt-import-label">{{ t`补齐自当前配置` }}</td>
-          <td class="prompt-import-value">{{ summary?.keptCount ?? 0 }} {{ t`个` }}</td>
+          <td class="prompt-import-label">{{ t`Backfilled from current config` }}</td>
+          <td class="prompt-import-value">{{ summary?.keptCount ?? 0 }} {{ t`items` }}</td>
         </tr>
       </template>
       <template v-else>
         <tr>
-          <td class="prompt-import-label">{{ t`覆盖现有` }}</td>
-          <td class="prompt-import-value">{{ summary?.overwriteCount ?? 0 }} {{ t`个` }}</td>
+          <td class="prompt-import-label">{{ t`Overwrite Existing` }}</td>
+          <td class="prompt-import-value">{{ summary?.overwriteCount ?? 0 }} {{ t`items` }}</td>
         </tr>
         <tr>
-          <td class="prompt-import-label">{{ t`新增` }}</td>
-          <td class="prompt-import-value">{{ summary?.addCount ?? 0 }} {{ t`个` }}</td>
+          <td class="prompt-import-label">{{ t`New` }}</td>
+          <td class="prompt-import-value">{{ summary?.addCount ?? 0 }} {{ t`items` }}</td>
         </tr>
         <tr>
-          <td class="prompt-import-label">{{ t`保留现有` }}</td>
-          <td class="prompt-import-value">{{ summary?.keptCount ?? 0 }} {{ t`个` }}</td>
+          <td class="prompt-import-label">{{ t`Keep Existing` }}</td>
+          <td class="prompt-import-value">{{ summary?.keptCount ?? 0 }} {{ t`items` }}</td>
         </tr>
       </template>
     </table>
@@ -44,38 +44,38 @@
     <div class="prompt-import-mode">
       <label class="prompt-import-radio">
         <input v-model="mode" type="radio" value="merge" />
-        <span>{{ t`合并到现有模块（同 ID 覆盖内容，保留现有顺序）` }}</span>
+        <span>{{ t`Merge into existing modules (same ID overwrites content, keeps current order)` }}</span>
       </label>
       <label class="prompt-import-radio">
         <input v-model="mode" type="radio" value="replace" />
-        <span class="prompt-import-replace-label">{{ t`整体替换现有模块` }}</span>
+        <span class="prompt-import-replace-label">{{ t`Replace all existing modules` }}</span>
       </label>
       <label class="prompt-import-radio">
         <input v-model="mode" type="radio" value="new" />
-        <span>{{ t`作为新建配置导入（当前配置不受影响，导入后切换到新配置）` }}</span>
+        <span>{{ t`Import as a new config (current config untouched; switches to it after import)` }}</span>
       </label>
       <label v-if="mode === 'new'" class="prompt-import-field">
-        <span class="prompt-import-label">{{ t`配置名称` }}</span>
+        <span class="prompt-import-label">{{ t`Config name` }}</span>
         <input v-model="newName" class="text_pole" />
       </label>
       <p v-if="mode === 'new' && isDup" class="prompt-import-warning">
-        {{ t`已存在同名配置，请换一个名称` }}
+        {{ t`A config with this name already exists. Please choose another.` }}
       </p>
       <p v-if="mode === 'replace'" class="prompt-import-warning">
-        {{ t`⚠ 整体替换将丢弃不在导入文件中的现有模块（含自建模块），不可撤销。` }}
+        {{ t`⚠ Replace-all discards existing modules not present in the file (including custom ones). This cannot be undone.` }}
       </p>
     </div>
 
     <template #footer>
       <button class="menu_button" @click="$emit('close')">
-        {{ t`取消` }}
+        {{ t`Cancel` }}
       </button>
       <button
         class="menu_button menu_button_default"
         :disabled="mode === 'new' && isDup"
         @click="$emit('confirm', { mode, newName: newName.trim() })"
       >
-        {{ t`确认导入` }}
+        {{ t`Confirm Import` }}
       </button>
     </template>
   </ChoiceDialog>
@@ -125,11 +125,11 @@ watch(
 const modeLabel = computed(() => {
   switch (props.summary?.mode) {
     case 'option':
-      return t`仅选项模块`;
+      return t`Option modules only`;
     case 'enrich':
-      return t`仅润色模块`;
+      return t`Enrich modules only`;
     default:
-      return t`全部模块`;
+      return t`All modules`;
   }
 });
 </script>

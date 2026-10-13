@@ -5,61 +5,61 @@
         <div class="choice-cfdlg-header">
           <span class="choice-cfdlg-title">
             <i class="fa-solid fa-file-import"></i>
-            {{ t`导入条目库` }}
+            {{ t`Import Entry Pool` }}
           </span>
-          <button class="choice-cfdlg-close" :title="t`取消`" @click="emit('close')">&times;</button>
+          <button class="choice-cfdlg-close" :title="t`Cancel`" @click="emit('close')">&times;</button>
         </div>
 
         <div class="choice-cfdlg-body">
           <table class="import-dlg-info">
             <tr v-if="data?.fileName">
-              <td class="import-dlg-label">{{ t`文件` }}</td>
+              <td class="import-dlg-label">{{ t`File` }}</td>
               <td class="import-dlg-value">{{ data?.fileName }}</td>
             </tr>
             <tr v-if="data?.exportedAt">
-              <td class="import-dlg-label">{{ t`导出时间` }}</td>
+              <td class="import-dlg-label">{{ t`Exported At` }}</td>
               <td class="import-dlg-value">{{ formatDate(data?.exportedAt) }}</td>
             </tr>
             <tr v-if="data?.partial">
-              <td class="import-dlg-label">{{ t`范围` }}</td>
-              <td class="import-dlg-value">{{ t`部分导出（仅勾选的条目）` }}</td>
+              <td class="import-dlg-label">{{ t`Scope` }}</td>
+              <td class="import-dlg-value">{{ t`Partial export (checked entries only)` }}</td>
             </tr>
             <tr>
-              <td class="import-dlg-label">{{ t`条目数` }}</td>
-              <td class="import-dlg-value">{{ (data?.master_pool ?? []).length }} {{ t`条` }}</td>
+              <td class="import-dlg-label">{{ t`Entry count` }}</td>
+              <td class="import-dlg-value">{{ (data?.master_pool ?? []).length }} {{ t`entries` }}</td>
             </tr>
             <tr v-if="!data?.partial">
-              <td class="import-dlg-label">{{ t`配置数` }}</td>
-              <td class="import-dlg-value">{{ (data?.configs ?? []).length }} {{ t`个` }}</td>
+              <td class="import-dlg-label">{{ t`Config Count` }}</td>
+              <td class="import-dlg-value">{{ (data?.configs ?? []).length }} {{ t`items` }}</td>
             </tr>
             <tr>
-              <td class="import-dlg-label">{{ t`分组数` }}</td>
-              <td class="import-dlg-value">{{ (data?.group_order ?? []).length }} {{ t`个` }}</td>
+              <td class="import-dlg-label">{{ t`Group Count` }}</td>
+              <td class="import-dlg-value">{{ (data?.group_order ?? []).length }} {{ t`items` }}</td>
             </tr>
           </table>
 
           <div class="import-dlg-mode">
             <label class="import-dlg-radio">
               <input v-model="mode" type="radio" value="merge" />
-              <span>{{ t`合并到现有条目库` }}</span>
+              <span>{{ t`Merge into existing entry pool` }}</span>
             </label>
             <label
               class="import-dlg-radio"
               :class="{ 'import-dlg-radio--disabled': data?.partial }"
-              :title="data?.partial ? t`部分导出没有完整配置，仅支持合并` : ''"
+              :title="data?.partial ? t`Partial exports lack full configs and only support merging` : ''"
             >
               <input v-model="mode" type="radio" value="replace" :disabled="data?.partial" />
-              <span class="import-dlg-replace-label">{{ t`替换现有条目库（⚠ 不可撤销）` }}</span>
+              <span class="import-dlg-replace-label">{{ t`Replace existing entry pool (⚠ irreversible)` }}</span>
             </label>
           </div>
         </div>
 
         <div class="choice-cfdlg-footer">
           <button class="menu_button" @click="emit('close')">
-            {{ t`取消` }}
+            {{ t`Cancel` }}
           </button>
           <button class="menu_button menu_button_default" @click="emit('confirm', mode)">
-            {{ t`确认导入` }}
+            {{ t`Confirm Import` }}
           </button>
         </div>
       </div>

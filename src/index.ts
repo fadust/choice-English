@@ -1,6 +1,7 @@
 import toastr from 'toastr';
 import '@/theme.css';
 import '@/global.css';
+import '@/english.css';
 import { initPanelMount } from '@/core/panel-mount';
 import { initWandMenu } from '@/core/wand-menu';
 import {
@@ -34,11 +35,11 @@ $(() => {
       fn();
     } catch (error) {
       console.error(`[Choice] init ${name} failed`, error);
-      toastr.error(t`Choice ${name}初始化失败: ${error instanceof Error ? error.message : String(error)}`);
+      toastr.error(t`Choice ${name}Initialization failed: ${error instanceof Error ? error.message : String(error)}`);
     }
   };
 
-  step('设置 store', () => {
+  step('Setting up store', () => {
     useCharacterSettingsStore();
     useChatSettingsStore();
   });
@@ -52,7 +53,7 @@ $(() => {
   // 挂起判定回写：玩家消息入 chat（MESSAGE_SENT）时把判定注释前插进该消息——时序早于
   // Generate 的提示词构建（script.js:4394 sendMessageAsUser 先行、5858 emit 后才组装），
   // 回写必然被本次请求读到。
-  step('判定契约', () => {
+  step('judgment contract', () => {
     const gs = useGlobalSettingsStore();
     clearDiceTurnPrompt(); // init 兜底：清掉会话内可能残留的上一回合裁定
     clearPendingTurn();
@@ -99,7 +100,7 @@ $(() => {
     console.error('[Choice] event subscription failed', error);
   }
 
-  step('悬浮球', initFloatingApp);
-  step('魔棒菜单', initWandMenu);
-  step('主面板', initPanelMount);
+  step('suspended ball', initFloatingApp);
+  step('magic wand menu', initWandMenu);
+  step('Main panel', initPanelMount);
 });

@@ -10,12 +10,12 @@
           <div class="choice-sedlg-header-actions">
             <button
               class="choice-icon-btn"
-              :title="allGroupsExpanded ? t`全部收起` : t`全部展开`"
+              :title="allGroupsExpanded ? t`Collapse All` : t`Expand All`"
               @click="toggleExpandAll"
             >
               <i :class="allGroupsExpanded ? 'fa-solid fa-compress' : 'fa-solid fa-expand'"></i>
             </button>
-            <button class="choice-sedlg-close" :title="t`取消`" @click="onCancel">&times;</button>
+            <button class="choice-sedlg-close" :title="t`Cancel`" @click="onCancel">&times;</button>
           </div>
         </div>
 
@@ -32,7 +32,7 @@
                   @click="toggleGroup(group.key)"
                 ></i>
                 <span class="choice-sedlg-group-name" @click="toggleGroup(group.key)">{{
-                  group.key || t`未分组`
+                  group.key || t`Ungrouped`
                 }}</span>
                 <span class="choice-sedlg-group-count" @click="toggleGroup(group.key)"
                   >({{ group.entries.length }})</span
@@ -47,7 +47,7 @@
                     <i
                       class="fa-solid choice-sedlg-expand"
                       :class="expandedEntries.has(entry.id) ? 'fa-chevron-down' : 'fa-chevron-right'"
-                      :title="t`查看条目内容与规则`"
+                      :title="t`View entry content and rule`"
                       @click.stop="toggleExpandEntry(entry.id)"
                     ></i>
                     <span class="choice-sedlg-entry-text" @click="toggleExpandEntry(entry.id)">{{
@@ -61,7 +61,7 @@
                       <div class="choice-sedlg-detail-text">{{ field.value }}</div>
                     </div>
                     <div v-if="entryDetailFields(entry).length === 0" class="choice-sedlg-detail-empty">
-                      {{ t`该条目无内容与规则` }}
+                      {{ t`This entry has no content or rule` }}
                     </div>
                   </div>
                 </div>
@@ -69,14 +69,14 @@
             </div>
           </div>
           <div v-else class="choice-empty-hint">
-            <span>{{ t`条目库为空` }}</span>
+            <span>{{ t`Entry pool is empty` }}</span>
           </div>
         </div>
 
         <div class="choice-sedlg-footer">
-          <span class="choice-sedlg-count">{{ t`已选 ${pending.size} 条` }}</span>
-          <button class="menu_button" @click="onCancel">{{ t`取消` }}</button>
-          <button class="menu_button menu_button_default" @click="onConfirm">{{ t`确认` }}</button>
+          <span class="choice-sedlg-count">{{ t`Selected ${pending.size} entries` }}</span>
+          <button class="menu_button" @click="onCancel">{{ t`Cancel` }}</button>
+          <button class="menu_button menu_button_default" @click="onConfirm">{{ t`Confirm` }}</button>
         </div>
       </div>
     </div>
@@ -146,15 +146,15 @@ const groupedEntries = computed<EntryGroup[]>(() => {
 });
 
 // 折叠摘要只显示条目标识，与 PoolEditor.entrySummary 同格式（共享 helper）；完整内容/规则仅在展开详情出现
-const entrySummary = (entry: PoolEntry): string => entrySummaryText(entry.type, entry.content, t`<空条目>`);
+const entrySummary = (entry: PoolEntry): string => entrySummaryText(entry.type, entry.content, t`<Empty Entry>`);
 
 type DetailField = { label: string; value: string };
 
 // 只读详情字段：内容/规则非空才显示对应块；两块都空时由模板的空态分支兜底
 const entryDetailFields = (entry: PoolEntry): DetailField[] => {
   const fields: DetailField[] = [];
-  if (entry.content.trim()) fields.push({ label: t`内容`, value: entry.content });
-  if (entry.rule.trim()) fields.push({ label: t`规则`, value: entry.rule });
+  if (entry.content.trim()) fields.push({ label: t`Content`, value: entry.content });
+  if (entry.rule.trim()) fields.push({ label: t`Rules`, value: entry.rule });
   return fields;
 };
 

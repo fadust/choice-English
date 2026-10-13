@@ -309,11 +309,11 @@ export function resolveCardRoll(
         if (!eff) continue;
         if (eff.kind === 'roll_bonus') {
           rollBonus += eff.amount * modeSign;
-          note(eq, `骰值${signed(eff.amount * modeSign)}`);
+          note(eq, `die value${signed(eff.amount * modeSign)}`);
         } else if (eff.kind === 'demand_mod') {
           const before = rate;
           rate = clamp0100(rate + eff.amount * modeSign);
-          note(eq, `需求${signed(eff.amount * modeSign)}（${before}→${rate}）`);
+          note(eq, `demand${signed(eff.amount * modeSign)}（${before}→${rate}）`);
         } else if (eff.kind === 'crit_window') {
           ({ critS, critF } = applyCritWindow(critS, critF, eff.success_delta, eff.fail_delta, mode));
           note(eq, effectSummary(eff));
@@ -351,12 +351,12 @@ export function resolveCardRoll(
         const before = roll;
         postRollBonus += eff.amount * modeSign;
         roll = clamp0100(roll + eff.amount * modeSign);
-        note(eq, `骰值${signed(eff.amount * modeSign)}（${before}→${roll}）`);
+        note(eq, `die value${signed(eff.amount * modeSign)}（${before}→${roll}）`);
         postModified = true;
       } else if (eff.kind === 'demand_mod') {
         const before = rate;
         rate = clamp0100(rate + eff.amount * modeSign);
-        note(eq, `需求${signed(eff.amount * modeSign)}（${before}→${rate}）`);
+        note(eq, `demand${signed(eff.amount * modeSign)}（${before}→${rate}）`);
         postModified = true;
       } else if (eff.kind === 'crit_window') {
         ({ critS, critF } = applyCritWindow(critS, critF, eff.success_delta, eff.fail_delta, mode));
@@ -386,7 +386,7 @@ export function resolveCardRoll(
         const rr = clamp0100(rerollRaw + rollBonus + postRollBonus);
         outcome = judgeOutcome(rr, rate, critS, critF, mode);
         roll = rr;
-        note(eq, `重掷（${prevRoll}→${roll}）`);
+        note(eq, `reroll(${prevRoll}→${roll}）`);
       }
     }
   }
@@ -402,10 +402,10 @@ export function resolveCardRoll(
   for (const eq of fired) {
     const notes = effectNotes.get(eq);
     if (!notes || notes.length === 0) continue;
-    mechanicalLines.push(`「${eq.card.name}」发动：${notes.join('、')}`);
+    mechanicalLines.push(`「${eq.card.name}"Start:${notes.join('、')}`);
   }
   if (mechanicalLines.length > 0) {
-    narrativeLines.push('机制记录（仅供理解因果，演绎时转化为剧情表现，勿在正文写数值）：', ...mechanicalLines);
+    narrativeLines.push('Mechanism record (for understanding cause and effect only, converted into plot performance during deduction, do not write numerical values in the text):', ...mechanicalLines);
   }
 
   // 满编共鸣：4 槽全装且本次有卡触发 → 小额奖励（鼓励凑满一套装备）。
@@ -504,7 +504,7 @@ export function commitCardRun(resolution: CardResolution): CardOffer | undefined
   resolution.brokenCards = applyDurabilityLoss(resolution);
   if (resolution.brokenCards.length > 0) {
     for (const b of resolution.brokenCards) {
-      toastr.warning(t`「${b.card.name}」耐久耗尽，已从卡组卸下——可在收藏页修复或更换其他卡`);
+      toastr.warning(t`「${b.card.name}"The durability is exhausted and has been removed from the deck - you can repair or replace other cards on the collection page`);
     }
   }
   // 行动币收支（结局驱动；0 时失败不再减，不扣穿）
@@ -554,7 +554,7 @@ function acquireOrConvert(s: GlobalSettings, card: Card): void {
   if (existing) {
     const gain = CARD_DUPLICATE_VALUE[card.star] ?? 1;
     s.card_currency += gain;
-    toastr.info(t`「${card.name}」已拥有，折算 +${gain} 行动币`);
+    toastr.info(t`「${card.name}"Already owned, converted +${gain} Action Coins`);
     return;
   }
   s.card_collection[card.id] = {
@@ -618,10 +618,10 @@ export function equipCard(configId: string, cardId: string): { ok: boolean; erro
   const gs = useGlobalSettingsStore();
   const card = cardDefById(cardId);
   const owned = gs.settings.card_collection[cardId];
-  if (!card || !owned) return { ok: false, errors: ['卡不存在或未拥有'] };
-  if (isCardBroken(owned)) return { ok: false, errors: ['该卡已破损，需修复后才能装备'] };
-  if (!CARD_SLOT_TYPES.includes(card.type)) return { ok: false, errors: ['该类型卡没有对应槽位'] };
-  if (resolveDeckSlots(configId).some(s => s.card_id === cardId)) return { ok: false, errors: ['该卡已装备'] };
+  if (!card || !owned) return { ok: false, errors: ['Card does not exist or is not owned'] };
+  if (isCardBroken(owned)) return { ok: false, errors: ['This card is damaged and needs to be repaired before it can be equipped'] };
+  if (!CARD_SLOT_TYPES.includes(card.type)) return { ok: false, errors: ['There is no corresponding slot for this type of card'] };
+  if (resolveDeckSlots(configId).some(s => s.card_id === cardId)) return { ok: false, errors: ['The card is equipped'] };
   const budget = canEquipInDeck(configId, card);
   if (!budget.ok) return budget;
   const deck = (gs.settings.card_decks[configId] ??= { config_id: configId, slots: [] });
@@ -629,7 +629,7 @@ export function equipCard(configId: string, cardId: string): { ok: boolean; erro
   if (gs.settings.auto_deck_enabled) {
     deck.slots = autoDeckCards();
     gs.settings.auto_deck_enabled = false;
-    toastr.info(t`已切换为手动卡组（可在卡组页重新开启自动编组）`);
+    toastr.info(t`Switched to a manual deck (re-enable auto-deck on the Deck page)`);
   }
   deck.slots = normalizeDeckSlots(deck.slots);
   const slot = deck.slots.find(s => s.type === card.type);
@@ -656,17 +656,17 @@ export function repairCard(cardId: string): { ok: boolean; errors: string[]; cos
   const gs = useGlobalSettingsStore();
   const card = cardDefById(cardId);
   const owned = gs.settings.card_collection[cardId];
-  if (!card || !owned) return { ok: false, errors: ['卡不存在或未拥有'] };
-  if (!isCardBroken(owned)) return { ok: false, errors: ['「' + card.name + '」未破损，无需修复'] };
+  if (!card || !owned) return { ok: false, errors: ['Card does not exist or is not owned'] };
+  if (!isCardBroken(owned)) return { ok: false, errors: ['「' + card.name + '"Not broken, no need to repair'] };
   const cost = cardRepairCost(card);
   if (gs.settings.card_currency < cost) {
-    return { ok: false, errors: [`行动币不足，修复需 ${cost} 币`] };
+    return { ok: false, errors: [`Insufficient action coins, need to repair ${cost} coins`] };
   }
   gs.settings.card_currency -= cost;
   owned.durability = owned.max_durability || cardMaxDurability(card);
   owned.broken = false;
   recordCurrencySpent(cost);
-  toastr.success(t`「${card.name}」已修复至满耐久`);
+  toastr.success(t`「${card.name}"Repaired to full durability`);
   return { ok: true, errors: [], cost };
 }
 
@@ -676,7 +676,7 @@ export function repairCard(cardId: string): { ok: boolean; errors: string[]; cos
 export function buyPack(configId: string): { ok: boolean; errors: string[]; offer?: CardOffer } {
   const gs = useGlobalSettingsStore();
   if (gs.settings.card_currency < CARD_PACK_PRICE) {
-    return { ok: false, errors: [`行动币不足（需 ${CARD_PACK_PRICE}）`] };
+    return { ok: false, errors: [`Insufficient action coins (required ${CARD_PACK_PRICE}）`] };
   }
   gs.settings.card_currency -= CARD_PACK_PRICE;
   recordCurrencySpent(CARD_PACK_PRICE);
@@ -709,7 +709,7 @@ export function clearCharacterPool(charId: string): void {
   const parked = parkedCardPack.value;
   if (parked && parked.offer.options.some(o => o.card.character_id === charId)) {
     parkedCardPack.value = null;
-    toastr.info(t`挂起中的卡包已随清池作废`);
+    toastr.info(t`Parked card pack discarded along with the cleared pool`);
   }
 }
 
@@ -738,14 +738,14 @@ export function ensureCharacterPool(): void {
   void (async () => {
     try {
       const name = getStCharacter(charId)?.name ?? '';
-      toastr.info(t`正在为「${name}」生成主题卡…`);
+      toastr.info(t`Working on "${name}"Generate theme card...`);
       const cards = await generateCharacterPool(charId);
       if (cards.length > 0) {
         // 卡名清单先算再插值：插值里嵌反引号模板会让运行时 i18n 键与对账提取口径错位
         const names = cards.map(c => `「${c.name}」`).join('');
-        toastr.success(t`「${name}」主题卡 +${cards.length} ${names}`);
+        toastr.success(t`「${name}》Theme Card +${cards.length} ${names}`);
       } else {
-        toastr.warning(t`「${name}」主题卡生成失败，本次开卡包先用现有池，下次触发自动重试`);
+        toastr.warning(t`「${name}"The theme card generation failed. This card opening package will use the existing pool first. It will automatically retry next time.`);
       }
     } catch {
       /* 防御兜底：generateCharacterPool 内部已全 catch，正常不会走到 */

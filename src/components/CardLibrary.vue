@@ -1,13 +1,13 @@
 <template>
   <div class="choice-card-library">
     <div class="choice-section">
-      <h4 class="choice-section-title"><i class="fa-solid fa-layer-group"></i> {{ t`我的卡` }}</h4>
+      <h4 class="choice-section-title"><i class="fa-solid fa-layer-group"></i> {{ t`My cards` }}</h4>
       <p class="choice-lib-hint">
-        {{ t`你拥有的卡（含内置/套装/角色主题卡），可装备到卡组；重复抽到的卡在开卡包时自动折算行动币。` }}
+        {{ t`Your cards (built-in / set / character theme cards) can be equipped into decks; duplicates drawn from packs auto-convert to Action Coins.` }}
       </p>
       <div class="choice-lib-balance">
         <span class="choice-shop-coins"><i class="fa-solid fa-coins"></i>{{ gs.settings.card_currency }}</span>
-        <span class="choice-shop-balance-hint">{{ t`行动币` }}</span>
+        <span class="choice-shop-balance-hint">{{ t`Action Coins` }}</span>
       </div>
     </div>
 
@@ -16,7 +16,7 @@
     </div>
     <div v-else class="choice-empty">
       <i class="fa-solid fa-coins"></i>
-      <div>{{ t`还没有卡——到收藏页开卡包或游玩中幸运掉落获得。` }}</div>
+      <div>{{ t`No cards yet — open card packs on the Collection page or win lucky drops during play.` }}</div>
     </div>
   </div>
 </template>

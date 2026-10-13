@@ -45,7 +45,7 @@
                     :key="pc.id"
                     class="choice-card-tag choice-card-tag--preview"
                     :class="`choice-card-star--${pc.star}`"
-                    :title="`${pc.name}：${t`判定可触发`} · ${pc.effects.map(effectSummary).join('·')}`"
+                    :title="`${pc.name}：${t`Check can trigger`} · ${pc.effects.map(effectSummary).join('·')}`"
                     ><i class="fa-solid fa-bolt"></i>{{ pc.name }}</span
                   ></span
                 ></template
@@ -69,7 +69,7 @@
                 v-if="isPending(index)"
                 class="choice-roll-reroll"
                 role="button"
-                :title="t`重掷`"
+                :title="t`Reroll`"
                 @click.stop="onReroll(option, index)"
                 ><i class="fa-solid fa-rotate"></i></span
             ></span>
@@ -77,13 +77,13 @@
         </template>
         <div v-else-if="isGenerating" class="choice-floating-options-empty">
           <i class="fa-solid fa-spinner fa-spin"></i>
-          {{ t`生成中…` }}
+          {{ t`Generating...` }}
         </div>
         <div v-else class="choice-floating-options-empty">
-          <div>{{ t`点击生成按钮获取选项` }}</div>
+          <div>{{ t`Click the "Generate" button to have the AI create action options based on the current config.` }}</div>
           <button v-if="!apiReady" class="menu_button choice-float-empty-action" @click="openApiOnboarding">
             <i class="fa-solid fa-plug"></i>
-            {{ t`去配置 API` }}
+            {{ t`Go configure the API` }}
           </button>
         </div>
       </div>
@@ -95,19 +95,19 @@
       <div v-if="adjusting" class="choice-floating-adjust-bar">
         <span
           class="choice-float-adjust-grip"
-          :title="t`拖动调整弹窗宽度`"
+          :title="t`Drag to resize the dialog width`"
           @pointerdown.stop.prevent="onWidthResizeStart"
         >
           <i class="fa-solid fa-arrows-left-right"></i>
-          {{ t`宽度` }}
+          {{ t`Width` }}
         </span>
         <span
           class="choice-float-adjust-grip"
-          :title="t`拖动调整弹窗高度`"
+          :title="t`Drag to resize the dialog height`"
           @pointerdown.stop.prevent="onHeightResizeStart"
         >
           <i class="fa-solid fa-arrows-up-down"></i>
-          {{ t`高度` }}
+          {{ t`Height` }}
         </span>
       </div>
 
@@ -129,25 +129,25 @@
               {{ opt.label }}
             </button>
           </div>
-          <button class="choice-tool-btn" :title="t`恢复默认弹窗大小与字号`" @click="onResetSize">
+          <button class="choice-tool-btn" :title="t`Restore default dialog size and font`" @click="onResetSize">
             <i class="fa-solid fa-rotate-left"></i>
           </button>
           <span class="choice-float-bar-spacer"></span>
-          <button class="choice-tool-btn choice-tool-btn--active" :title="t`完成调整`" @click="onToggleAdjust">
+          <button class="choice-tool-btn choice-tool-btn--active" :title="t`Done adjusting`" @click="onToggleAdjust">
             <i class="fa-solid fa-sliders"></i>
           </button>
         </template>
         <!-- 正常态：原工具条内容 -->
         <template v-else>
           <span v-if="generations.length > 1" class="choice-float-pager">
-            <button class="choice-tool-btn" :disabled="currentIndex <= 0" :title="t`上一组`" @click="onPrev">
+            <button class="choice-tool-btn" :disabled="currentIndex <= 0" :title="t`Previous`" @click="onPrev">
               <i class="fa-solid fa-chevron-left"></i>
             </button>
             <span class="choice-float-pager-text">{{ currentIndex + 1 }}/{{ generations.length }}</span>
             <button
               class="choice-tool-btn"
               :disabled="currentIndex >= generations.length - 1"
-              :title="t`下一组`"
+              :title="t`Next`"
               @click="onNext"
             >
               <i class="fa-solid fa-chevron-right"></i>
@@ -158,7 +158,7 @@
                生成→锁→设置的顺序保持一致 -->
           <button
             class="choice-tool-btn choice-tool-btn--main"
-            :title="isGenerating ? t`取消生成` : t`生成选项`"
+            :title="isGenerating ? t`Cancel generation` : t`Generate options`"
             @click="onToggle"
           >
             <i :class="isGenerating ? 'fa-solid fa-stop' : 'fa-solid fa-wand-magic-sparkles'"></i>
@@ -168,7 +168,7 @@
           <button
             class="choice-tool-btn"
             :class="{ 'choice-tool-btn--active': locked }"
-            :title="locked ? t`解锁弹窗（点选项后收起）` : t`锁定弹窗（点选项后不收起）`"
+            :title="locked ? t`Unlock dialog (closes after picking an option)` : t`Lock dialog (stays open after picking)`"
             @click="onToggleLock"
           >
             <i :class="locked ? 'fa-solid fa-lock' : 'fa-solid fa-lock-open'"></i>
@@ -179,16 +179,16 @@
             v-if="locked && hoverable.matches"
             class="choice-tool-btn"
             :class="{ 'choice-tool-btn--active': dimEnabled }"
-            :title="dimEnabled ? t`淡化已开启：锁定态移出选项栏变半透明` : t`淡化已关闭：锁定态移出不淡化`"
+            :title="dimEnabled ? t`Dim closed: on — locked entries turn semi-transparent in the option bar` : t`Dim closed: off — locked entries are removed without dimming`"
             @click="onToggleDim"
           >
             <i class="fa-solid fa-circle-half-stroke"></i>
           </button>
           <!-- 设置入口恒在工具区最右；调整按钮在其左侧（同主面板调整在设置左侧） -->
-          <button class="choice-tool-btn" :title="t`调整弹窗大小与字号`" @click="onToggleAdjust">
+          <button class="choice-tool-btn" :title="t`Adjust dialog size and font`" @click="onToggleAdjust">
             <i class="fa-solid fa-sliders"></i>
           </button>
-          <button class="choice-tool-btn" :title="t`打开设置`" @click="openSettings">
+          <button class="choice-tool-btn" :title="t`Open Settings`" @click="openSettings">
             <i class="fa-solid fa-gear"></i>
           </button>
         </template>
@@ -327,9 +327,9 @@ const formulaOf = (option: ChoiceOption): string | null =>
 // 与主面板 ActionOptionsPanel 同构（并行模式，两处需同步改动）
 const rateTitle = (option: ChoiceOption): string => {
   const formula = formulaOf(option);
-  if (formula) return `${t`骰式`} ${formula}（${t`难度`} ${rateOf(option)}）`;
-  if (gs.settings.dice.low_roll) return t`COC：掷出 ≤ 该值才算成功`;
-  return t`DND：掷出 ≥ 该值才算成功`;
+  if (formula) return `${t`Dice expr`} ${formula}（${t`Difficulty`} ${rateOf(option)}）`;
+  if (gs.settings.dice.low_roll) return t`COC: roll ≤ this value to succeed`;
+  return t`DND: roll ≥ this value to succeed`;
 };
 // 徽标语义色按需求值分档：high 难度制（≥70 难=橙 / 40-69 青 / <40 易=绿，v56）；
 // low（COC）需求值 = 能力值（值越大越易），色档随方向镜像——与 rateTitle 同源。
@@ -376,7 +376,7 @@ const keyOf = (index: number): string => `${generationId.value}:${index}`;
 const rollOf = (index: number): RollResult | null => rollResults.value.get(keyOf(index)) ?? null;
 const isPending = (index: number): boolean => pendingApply.value.has(keyOf(index));
 const rollLabel = (o: DiceOutcome): string =>
-  o === 'crit_success' ? t`大成功` : o === 'crit_fail' ? t`大失败` : o === 'success' ? t`成功` : t`失败`;
+  o === 'crit_success' ? t`Critical success` : o === 'crit_fail' ? t`Critical failure` : o === 'success' ? t`Success` : t`Failed`;
 // 带符号差值：正数加 +、0 显示 0（恰好达标），负数为 −
 const fmtMargin = (m: number): string => (m > 0 ? `+${m}` : String(m));
 const rollChipText = (r: RollResult): string => `${rollLabel(r.outcome)} ${fmtMargin(r.margin)}`;
@@ -385,7 +385,7 @@ const rollChipText = (r: RollResult): string => `${rollLabel(r.outcome)} ${fmtMa
 const brokenText = (r: RollResult): string => {
   const broken = r.cards?.brokenCards ?? [];
   if (broken.length === 0) return '';
-  return ` · ${broken.map(b => b.card.name).join('、')}耐久耗尽`;
+  return ` · ${broken.map(b => b.card.name).join('、')}durability exhausted`;
 };
 
 // 关闭淡化瞬间若正处于半透明态，立即恢复不透明：避免"关了开关但弹窗还淡着"
@@ -418,7 +418,7 @@ const onToggle = async () => {
   }
   // 前置拦截而非等 generateOptions 内部报错（同主面板 onToggle 口径）
   if (!apiReady.value) {
-    toastr.error(t`请先在设置中配置 API（API 地址 + 模型）`);
+    toastr.error(t`Configure the API in settings first (API address + model)`);
     autoOpenApiOnboarding();
     return;
   }
@@ -482,8 +482,8 @@ const onSelect = async (option: ChoiceOption, index: number) => {
     // send 路径发送失败（共享层按聊天快照判定是否兜底恢复后重抛）：吞掉会变 unhandled rejection 且
     // 跳过选中收尾。保留重掷 stage 态——再次点击即用同一判定结果重试应用。
     // 文案按行为分流：send 才涉及「是否已发出」，其余行为失败与发送无关
-    console.warn('[Choice] 选项应用失败', err);
-    toastr.error(behavior.value === 'send' ? t`发送失败，请查看聊天记录确认是否已发出` : t`选项应用失败，请重试`);
+    console.warn('[Choice] Option application failed', err);
+    toastr.error(behavior.value === 'send' ? t`Send failed — check the chat log to confirm whether it was sent` : t`Failed to apply option — please try again`);
     return;
   }
   // 行内判定 chip（v57 骰子结果：结局+差值，返回值非 null = 本次真的掷了骰）
@@ -564,10 +564,10 @@ const popoverY = computed(() => {
 const adjusting = ref(false);
 
 const adjustFontOptions = [
-  { value: 'auto', label: t`自动`, tip: t`跟随全局字体档（不额外缩放）` },
-  { value: 'small', label: t`小`, tip: t`弹窗内小号文字，更紧凑` },
-  { value: 'medium', label: t`中`, tip: t`弹窗内默认文字大小` },
-  { value: 'large', label: t`大`, tip: t`弹窗内大号文字，阅读更舒适` },
+  { value: 'auto', label: t`Auto`, tip: t`Follow the global font size (no extra scaling)` },
+  { value: 'small', label: t`Small`, tip: t`Small dialog text, more compact` },
+  { value: 'medium', label: t`Medium`, tip: t`Default dialog text size` },
+  { value: 'large', label: t`Large`, tip: t`Large dialog text, easier reading` },
 ];
 const isAdjustFontActive = (v: string) =>
   v === 'auto'

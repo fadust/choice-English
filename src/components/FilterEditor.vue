@@ -1,24 +1,24 @@
 <template>
   <div class="choice-filter-editor">
     <div class="choice-section">
-      <h4 class="choice-section-title"><i class="fa-solid fa-filter"></i>{{ t`过滤设置` }}</h4>
+      <h4 class="choice-section-title"><i class="fa-solid fa-filter"></i>{{ t`Filter settings` }}</h4>
       <!-- 状态栏 -->
       <div class="choice-config-status">
-        <span class="choice-config-status-label">{{ t`当前生效` }}:</span>
+        <span class="choice-config-status-label">{{ t`Active` }}:</span>
         <span class="choice-bound-badge">
-          <i class="fa-solid fa-globe"></i> {{ t`全局` }} {{ globalActiveCount }}
+          <i class="fa-solid fa-globe"></i> {{ t`Global` }} {{ globalActiveCount }}
         </span>
         <span v-if="gs.currentPresetName" class="choice-bound-badge">
           <i class="fa-solid fa-sliders"></i> {{ gs.currentPresetName }} {{ presetActiveCount }}
         </span>
         <span v-else class="choice-bound-badge choice-bound-fallback">
-          <i class="fa-solid fa-sliders"></i> {{ t`预设（无）` }}
+          <i class="fa-solid fa-sliders"></i> {{ t`Preset (none)` }}
         </span>
-        <span v-if="currentCharName !== t`未选择`" class="choice-bound-badge choice-bound-char">
+        <span v-if="currentCharName !== t`Not selected`" class="choice-bound-badge choice-bound-char">
           <i class="fa-solid fa-address-card"></i> {{ currentCharName }} {{ charActiveCount }}
         </span>
         <span v-else class="choice-bound-badge choice-bound-fallback">
-          <i class="fa-solid fa-address-card"></i> {{ t`角色卡（未选择）` }}
+          <i class="fa-solid fa-address-card"></i> {{ t`Character (not selected)` }}
         </span>
       </div>
 
@@ -26,14 +26,14 @@
          再走本页过滤规则。关 = 只用本页规则，避免预设正则清空旧层 user 输入
          导致 assistant 配对断裂、相邻合并。 -->
       <div class="choice-stregex-head" data-tour="filter-stregex-toggle">
-        <span class="choice-inline-label"><i class="fa-solid fa-scroll"></i> {{ t`走酒馆正则` }}</span>
+        <span class="choice-inline-label"><i class="fa-solid fa-scroll"></i> {{ t`Apply SillyTavern regex` }}</span>
         <span class="choice-stregex-desc">{{
-          t`开：聊天记录先过酒馆全局/预设/角色卡正则，再走本页规则；关：跳过酒馆正则，只用本页规则`
+          t`On: chat history first passes SillyTavern global/preset/character regex, then this page's rules. Off: skip SillyTavern regex, use only this page's rules`
         }}</span>
         <ChoiceSwitch
           v-model="gs.settings.filter_settings.st_regex_enabled"
           class="choice-stregex-switch"
-          :title="gs.settings.filter_settings.st_regex_enabled ? t`酒馆正则已启用` : t`酒馆正则已关闭，仅使用本页规则`"
+          :title="gs.settings.filter_settings.st_regex_enabled ? t`SillyTavern regex enabled` : t`SillyTavern regex is off; only this page's rules apply`"
         />
       </div>
     </div>
@@ -45,37 +45,37 @@
          预览行实时演示"填的名字 → 匹配的标签对"，消除"单框到底填什么"的疑惑 -->
       <div class="choice-extract-quick" data-tour="filter-extract-quick">
         <div class="choice-extract-quick-head">
-          <span class="choice-inline-label"><i class="fa-solid fa-bolt"></i> {{ t`标签提取` }}</span>
+          <span class="choice-inline-label"><i class="fa-solid fa-bolt"></i> {{ t`Tag Extraction` }}</span>
           <span class="choice-extract-quick-desc">{{
-            t`新手推荐：只保留 AI 输出里指定标签对之间的内容，其余丢弃；用户输入原样保留`
+            t`Recommended for beginners: keep only the content between the specified tag pair in AI output and discard the rest; user input is kept as-is`
           }}</span>
           <!-- 提取总开关：关 = 规则保留但全部停用（不受下方任何分组开关影响） -->
           <ChoiceSwitch
             v-model="gs.extractGroupEnabled"
             class="choice-extract-quick-switch"
-            :title="gs.extractGroupEnabled ? t`标签提取已启用` : t`标签提取已停用（规则保留）`"
+            :title="gs.extractGroupEnabled ? t`Tag extraction enabled` : t`Tag extraction disabled (rules kept)`"
           />
         </div>
         <div class="choice-extract-quick-row">
           <input
             v-model="extractInput"
             class="choice-input choice-extract-input"
-            :placeholder="t`只填标签名，如：正文`"
+            :placeholder="t`Only fill in the tag name, such as: text`"
             @keydown.enter="addExtract"
           />
           <button class="choice-btn-sm choice-btn-new" @click="addExtract">
-            <i class="fa-solid fa-plus"></i> {{ t`提取该标签` }}
+            <i class="fa-solid fa-plus"></i> {{ t`Extract this tag` }}
           </button>
         </div>
         <!-- 实时预览：填"正文"就展示 <正文>…</正文>，所见即所提取 -->
         <div class="choice-extract-preview">
           <span v-if="extractPreviewName">
-            {{ t`对 AI 输出只保留 ${extractPreviewName} 之间的内容（含标签本身），其余丢弃；用户输入原样保留：` }}
+            {{ t`Only reserved for AI output ${extractPreviewName} The content between (including the tag itself) is discarded; the user input is retained as is:` }}
             <code class="choice-extract-preview-tag"
               >&lt;{{ extractPreviewName }}&gt;…&lt;/{{ extractPreviewName }}&gt;</code
             >
           </span>
-          <span v-else>{{ t`示例：卡里的剧情若包在 &lt;正文&gt;…&lt;/正文&gt; 里，这里就填「正文」` }}</span>
+          <span v-else>{{ t`Example: If the plot of Kali is included in &lt;Text&gt;…&lt;/Text&gt; 里，这里就填「正文」` }}</span>
         </div>
         <div
           v-if="gs.extractTagNames.length > 0"
@@ -84,7 +84,7 @@
         >
           <span v-for="name in gs.extractTagNames" :key="name" class="choice-extract-chip">
             <span class="choice-extract-chip-tag">&lt;{{ name }}&gt;</span>
-            <i class="fa-solid fa-xmark" :title="t`移除该提取标签`" @click="gs.removeExtractRule(name)"></i>
+            <i class="fa-solid fa-xmark" :title="t`Remove this extract tag`" @click="gs.removeExtractRule(name)"></i>
           </span>
         </div>
       </div>
@@ -92,9 +92,9 @@
 
     <div class="choice-section" data-tour="filter-global-head">
       <div class="choice-filter-card-head">
-        <h4 class="choice-section-title"><i class="fa-solid fa-globe"></i>{{ t`全局正则区` }}</h4>
+        <h4 class="choice-section-title"><i class="fa-solid fa-globe"></i>{{ t`Global Regex` }}</h4>
         <button class="choice-btn-sm choice-btn-new" @click="gs.addFilterGroup('global')">
-          <i class="fa-solid fa-plus"></i> {{ t`新增分组` }}
+          <i class="fa-solid fa-plus"></i> {{ t`Add Group` }}
         </button>
       </div>
       <div ref="globalListEl" class="choice-filter-group-list" data-area="global">
@@ -113,16 +113,16 @@
           @unbind="() => {}"
         />
         <div v-if="globalGroups.length === 0" class="choice-empty-hint">
-          <span>{{ t`暂无全局分组，点击「新增分组」创建` }}</span>
+          <span>{{ t`No global groups. Click 'New Group' to create one.` }}</span>
         </div>
       </div>
     </div>
 
     <div class="choice-section">
       <div class="choice-filter-card-head">
-        <h4 class="choice-section-title"><i class="fa-solid fa-sliders"></i>{{ t`预设正则区` }}</h4>
+        <h4 class="choice-section-title"><i class="fa-solid fa-sliders"></i>{{ t`Preset Regex` }}</h4>
         <button class="choice-btn-sm choice-btn-new" @click="gs.addFilterGroup('preset')">
-          <i class="fa-solid fa-plus"></i> {{ t`新增分组` }}
+          <i class="fa-solid fa-plus"></i> {{ t`Add Group` }}
         </button>
       </div>
       <div ref="presetListEl" class="choice-filter-group-list" data-area="preset">
@@ -142,16 +142,16 @@
           @bind-to-current="bindPresetToCurrent(group)"
         />
         <div v-if="presetGroups.length === 0" class="choice-empty-hint">
-          <span>{{ t`暂无预设分组，点击「新增分组」创建` }}</span>
+          <span>{{ t`No preset groups. Click 'New Group' to create one.` }}</span>
         </div>
       </div>
     </div>
 
     <div class="choice-section">
       <div class="choice-filter-card-head">
-        <h4 class="choice-section-title"><i class="fa-solid fa-address-card"></i>{{ t`角色卡正则区` }}</h4>
+        <h4 class="choice-section-title"><i class="fa-solid fa-address-card"></i>{{ t`Character Regex` }}</h4>
         <button class="choice-btn-sm choice-btn-new" @click="addCharGroup">
-          <i class="fa-solid fa-plus"></i> {{ t`新增分组` }}
+          <i class="fa-solid fa-plus"></i> {{ t`Add Group` }}
         </button>
       </div>
       <div ref="charListEl" class="choice-filter-group-list" data-area="character">
@@ -170,7 +170,7 @@
           @unbind="unbindCharacter(group)"
         />
         <div v-if="charGroups.length === 0" class="choice-empty-hint">
-          <span>{{ t`暂无角色卡分组，点击「新增分组」创建` }}</span>
+          <span>{{ t`No character groups. Click 'New Group' to create one.` }}</span>
         </div>
       </div>
     </div>
@@ -178,11 +178,11 @@
     <button
       class="choice-entrypool-btn"
       data-tour="filter-library"
-      :title="t`打开正则库管理弹窗`"
+      :title="t`Open regex library manager`"
       @click="showLibrary = true"
     >
       <i class="fa-solid fa-code"></i>
-      {{ t`正则库` }} ({{ gs.settings.filter_settings.regex_library.length }})
+      {{ t`Regex Library` }} ({{ gs.settings.filter_settings.regex_library.length }})
     </button>
 
     <RegexLibraryDialog
@@ -195,19 +195,19 @@
 
     <ConfirmDialog
       :open="deleteTarget !== null"
-      :title="t`删除分组`"
-      :message="t`确定要删除该分组及其所有规则吗？此操作不可撤销。`"
-      :confirm-text="t`删除`"
-      :cancel-text="t`取消`"
+      :title="t`Delete Group`"
+      :message="t`Delete this group and all its rules? This cannot be undone.`"
+      :confirm-text="t`Delete`"
+      :cancel-text="t`Cancel`"
       @confirm="onDeleteConfirm"
       @cancel="deleteTarget = null"
     />
 
     <ConfirmDialog
       :open="showCharWarning"
-      :title="t`提示`"
-      :message="t`请先在酒馆中选择一个角色卡`"
-      :confirm-text="t`确定`"
+      :title="t`Notice`"
+      :message="t`Select a character card in SillyTavern first`"
+      :confirm-text="t`Confirm`"
       :cancel-text="''"
       @confirm="showCharWarning = false"
     />
@@ -275,7 +275,7 @@ const isCharActive = (group: FilterGroup) => group.character_id === gs.currentCh
 
 const currentCharName = computed(() => {
   const ch = getStCharacter(this_chid);
-  return ch?.name || t`未选择`;
+  return ch?.name || t`Not selected`;
 });
 
 const getCharName = (chid: string | number | null) => {
@@ -369,7 +369,7 @@ const onDeleteConfirm = () => {
 };
 
 const addCharGroup = () => {
-  if (currentCharName.value === (t`未选择` as string)) {
+  if (currentCharName.value === (t`Not selected` as string)) {
     showCharWarning.value = true;
     return;
   }

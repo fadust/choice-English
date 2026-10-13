@@ -5,41 +5,41 @@
         <div class="choice-strdlg-header">
           <span class="choice-strdlg-title">
             <i class="fa-solid fa-file-import"></i>
-            {{ t`从酒馆导入` }}
+            {{ t`Import from SillyTavern` }}
           </span>
-          <button class="choice-strdlg-close" :title="t`取消`" @click="onCancel">&times;</button>
+          <button class="choice-strdlg-close" :title="t`Cancel`" @click="onCancel">&times;</button>
         </div>
 
         <div class="choice-strdlg-body choice-scrollbar">
           <!-- 导入方式与目标：目标是正则库内部分组（category），与过滤页的三个正则区无关 -->
           <div class="choice-strdlg-fields">
             <label class="choice-strdlg-field">
-              <span class="choice-strdlg-field-label">{{ t`导入来源` }}</span>
+              <span class="choice-strdlg-field-label">{{ t`Import Source` }}</span>
               <select v-model="zone" class="text_pole">
-                <option value="global">{{ t`全局正则（酒馆全局）` }}</option>
+                <option value="global">{{ t`Global (SillyTavern global)` }}</option>
                 <option value="preset">{{ presetOptionLabel }}</option>
                 <option value="character">{{ characterOptionLabel }}</option>
               </select>
             </label>
             <label class="choice-strdlg-field">
-              <span class="choice-strdlg-field-label">{{ t`导入到正则库分组` }}</span>
+              <span class="choice-strdlg-field-label">{{ t`Import into Regex Library group` }}</span>
               <select v-model="targetMode" class="text_pole">
                 <option v-for="c in categories" :key="c.value" :value="c.value">{{ c.label }}</option>
-                <option value="__new__">{{ t`新建分组…` }}</option>
+                <option value="__new__">{{ t`New Group…` }}</option>
               </select>
             </label>
           </div>
           <!-- 新建分组的命名独立成整行，避免挤在半列里；重名时行内警告并禁用确认 -->
           <div v-if="targetMode === '__new__'" class="choice-strdlg-field choice-strdlg-newname">
-            <span class="choice-strdlg-field-label">{{ t`分组名称` }}</span>
+            <span class="choice-strdlg-field-label">{{ t`Group Name` }}</span>
             <input
               v-model="newCategoryName"
               class="text_pole"
               :class="{ 'is-conflict': newNameConflict }"
-              :placeholder="t`输入新分组名称`"
+              :placeholder="t`Enter new group name`"
             />
             <span v-if="newNameConflict" class="choice-strdlg-warn">
-              {{ t`已存在同名分组，请换一个名称，或直接在上方选择它` }}
+              {{ t`A group with this name already exists. Choose another name, or select it above.` }}
             </span>
           </div>
 
@@ -49,16 +49,16 @@
               :key="i"
               class="choice-strdlg-entry"
               :class="{ 'is-disabled': s.disabled, 'is-display-only': isDisplayOnly(s) }"
-              :title="isDisplayOnly(s) ? t`该正则仅用于聊天显示美化，导入为过滤规则会改废正文，已禁止导入` : undefined"
+              :title="isDisplayOnly(s) ? t`This regex is for chat display only. Importing it as a filter rule would corrupt message text, so it cannot be imported.` : undefined"
             >
               <input type="checkbox" :checked="selected.has(i)" :disabled="isDisplayOnly(s)" @change="toggle(i)" />
-              <span class="choice-strdlg-name">{{ s.scriptName || s.script_name || t`未命名` }}</span>
+              <span class="choice-strdlg-name">{{ s.scriptName || s.script_name || t`Unnamed` }}</span>
               <span v-if="isDisplayOnly(s)" class="choice-strdlg-badge choice-strdlg-badge--warn">{{
-                t`仅显示美化`
+                t`Display Only`
               }}</span>
-              <span v-else-if="s.promptOnly && s.markdownOnly" class="choice-strdlg-badge">{{ t`显示+提示词` }}</span>
-              <span v-else-if="s.promptOnly" class="choice-strdlg-badge">{{ t`仅提示词` }}</span>
-              <span v-if="s.disabled" class="choice-strdlg-badge">{{ t`已禁用` }}</span>
+              <span v-else-if="s.promptOnly && s.markdownOnly" class="choice-strdlg-badge">{{ t`Display + Prompt` }}</span>
+              <span v-else-if="s.promptOnly" class="choice-strdlg-badge">{{ t`Prompt Only` }}</span>
+              <span v-if="s.disabled" class="choice-strdlg-badge">{{ t`Disabled` }}</span>
               <span class="choice-strdlg-pattern" :title="s.findRegex">{{ preview(s.findRegex) }}</span>
               <span v-if="s.replaceString" class="choice-strdlg-replace" :title="s.replaceString">
                 → {{ preview(s.replaceString) }}
@@ -71,14 +71,14 @@
         </div>
 
         <div class="choice-strdlg-footer">
-          <span class="choice-strdlg-count">{{ t`已选 ${selected.size} 条` }}</span>
-          <button class="menu_button" @click="onCancel">{{ t`取消` }}</button>
+          <span class="choice-strdlg-count">{{ t`Selected ${selected.size} entries` }}</span>
+          <button class="menu_button" @click="onCancel">{{ t`Cancel` }}</button>
           <button
             class="menu_button menu_button_default"
             :disabled="selected.size === 0 || newNameConflict"
             @click="onConfirm"
           >
-            {{ t`确认导入` }}
+            {{ t`Confirm Import` }}
           </button>
         </div>
       </div>
@@ -120,7 +120,7 @@ watch(
       scripts.value = getStRegexScripts(zone.value);
       selected.value = new Set();
       newCategoryName.value =
-        zone.value === 'global' ? t`酒馆全局正则` : zone.value === 'preset' ? t`酒馆预设正则` : t`酒馆角色卡正则`;
+        zone.value === 'global' ? t`SillyTavern Global Regex` : zone.value === 'preset' ? t`SillyTavern Preset Regex` : t`SillyTavern Character Regex`;
     }
   },
   { immediate: true },
@@ -134,7 +134,7 @@ const categories = computed(() => {
     if (c) set.add(c);
   }
   return [
-    { value: '', label: t`未分组` },
+    { value: '', label: t`Ungrouped` },
     ...[...set].sort((a, b) => a.localeCompare(b)).map(c => ({ value: c, label: c })),
   ];
 });
@@ -144,23 +144,23 @@ const newNameConflict = computed(() => {
   if (targetMode.value !== '__new__') return false;
   const name = newCategoryName.value.trim();
   if (!name) return false;
-  return name === t`未分组` || categories.value.some(c => c.value === name);
+  return name === t`Ungrouped` || categories.value.some(c => c.value === name);
 });
 
 const presetOptionLabel = computed(() =>
-  gs.currentPresetName ? `${t`预设正则`}（${gs.currentPresetName}）` : `${t`预设正则`}（${t`未选择预设`}）`,
+  gs.currentPresetName ? `${t`Preset Regex`}（${gs.currentPresetName}）` : `${t`Preset Regex`}（${t`No preset selected`}）`,
 );
 const characterOptionLabel = computed(() => {
   const cname = getStCharacterName(gs.currentCharacterId);
-  return cname ? `${t`角色卡正则`}（${cname}）` : `${t`角色卡正则`}（${t`未选择角色卡`}）`;
+  return cname ? `${t`Character Regex`}（${cname}）` : `${t`Character Regex`}（${t`No character selected`}）`;
 });
 
 const emptyHint = computed(() =>
   zone.value === 'global'
-    ? t`酒馆全局正则为空`
+    ? t`SillyTavern global regex list is empty`
     : zone.value === 'character'
-      ? t`未选择角色卡或该角色卡无局部正则`
-      : t`未选择预设或该预设无正则`,
+      ? t`No character selected, or the character has no local regex`
+      : t`No preset selected, or the preset has no regex`,
 );
 
 const preview = (s: string) => (s.length > 56 ? s.slice(0, 56) + '…' : s);
@@ -181,7 +181,7 @@ const onConfirm = () => {
   if (targetMode.value === '__new__') {
     category = newCategoryName.value.trim();
     if (!category) {
-      toastr.error(t`请输入新分组名称`);
+      toastr.error(t`Please enter a new group name`);
       return;
     }
   } else {
@@ -212,12 +212,12 @@ const onConfirm = () => {
     added++;
   }
 
-  const label = category || t`未分组`;
+  const label = category || t`Ungrouped`;
   if (added === 0) {
-    toastr.info(t`所选正则均已存在于分组「${label}」`);
+    toastr.info(t`The selected regular expressions already exist in the group "${label}」`);
   } else {
-    const parts = [t`已导入 ${added} 条到分组「${label}」`];
-    if (dup > 0) parts.push(t`跳过 ${dup} 条重复`);
+    const parts = [t`Imported ${added} Article to group "${label}」`];
+    if (dup > 0) parts.push(t`skip ${dup} duplicates`);
     toastr.success(parts.join('，'));
   }
   emit('close');

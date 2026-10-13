@@ -157,9 +157,9 @@ export const buildMessages = async (
     minChars: isEnrich ? pr.enrich_min_chars : pr.option_min_chars,
     maxChars: isEnrich ? pr.enrich_max_chars : pr.option_max_chars,
     enrichPersonStyle:
-      pr.enrich_person_style || (pr.enrich_person ? `统一使用${pr.enrich_person} {{user}} 为主语` : ''),
-    optionPerson: pr.option_person || '第三人称',
-    enrichPerson: pr.enrich_person || '第三人称',
+      pr.enrich_person_style || (pr.enrich_person ? `Use uniformly${pr.enrich_person} {{user}} is the subject` : ''),
+    optionPerson: pr.option_person || 'third person',
+    enrichPerson: pr.enrich_person || 'third person',
   };
   const msgs: ChatMsg[] = [];
   const wiBuckets = wi.enabled ? await buildWI() : null;
@@ -188,7 +188,7 @@ export const buildMessages = async (
         if (personaDesc) {
           msgs.push({
             role: 'system',
-            content: `<user_persona>\n以下是用户本人（用户=主角=user）的人物设定：\n${substituteParams(personaDesc)}\n</user_persona>`,
+            content: `<user_persona>\nThe following is the character setting of the user himself (user = protagonist = user): \n${substituteParams(personaDesc)}\n</user_persona>`,
           });
         }
         break;
@@ -243,7 +243,7 @@ export const buildMessages = async (
         if (text) {
           msgs.push({
             role: 'system',
-            content: `<baibai_summary>\n以下为记忆系统对已发生剧情的压缩摘要，记录的是已离开当前上下文窗口、不再直接可见的历史角色扮演事件。仅供你参考以保持剧情连贯，不得在回复中直接引用或复述其中内容。\n${text}\n</baibai_summary>`,
+            content: `<baibai_summary>\nThe following is a compressed summary of the plot that has occurred by the memory system. It records historical role-playing events that have left the current context window and are no longer directly visible. It is provided for your reference only to keep the plot coherent, and may not be quoted or repeated directly in your reply. \n${text}\n</baibai_summary>`,
           });
         }
         break;
@@ -356,7 +356,7 @@ export const buildChatHistory = (contextRounds: number, wrapCurrentScene = true)
           content = content.replace(new RegExp(rule.pattern, 'gs'), rule.replace ?? '');
         }
       } catch {
-        console.warn('[choice] 无效过滤规则:', rule);
+        console.warn('[choice] Invalid filter rule:', rule);
       }
     }
     if (!content.trim()) continue;
@@ -645,7 +645,7 @@ export const applyWIExcl = async (
           }
         }
       } catch (err) {
-        console.warn('[Choice] applyWIExcl 条目变异失败（保持酒馆原状）:', name, err);
+        console.warn('[Choice] applyWIExcl entry mutation failed (leaving SillyTavern as is):', name, err);
       }
     }
 
@@ -912,7 +912,7 @@ const buildConfigRuleText = (config: PoolConfig | null): string => config?.rules
 // _target 预留：调用方语义上指定生成目标楼层，当前实现始终读取最新楼层上下文
 export async function generateOptions(_target: GenerateTarget): Promise<ChoiceGeneration | null> {
   if (generatorState.loading) {
-    toastr.info(t`选项生成中,请稍候`);
+    toastr.info(t`Generating options, please wait...`);
     return null;
   }
   const gs = useGlobalSettingsStore(),
@@ -953,7 +953,7 @@ export async function generateOptions(_target: GenerateTarget): Promise<ChoiceGe
     const renderEntryLine = (e: PoolEntry): string => {
       let line = e.type;
       if (e.content.trim()) line += ': ' + e.content.trim();
-      if (e.rule.trim()) line += ` [规则: ${e.rule.trim()}]`;
+      if (e.rule.trim()) line += ` [Rules: ${e.rule.trim()}]`;
       return line;
     };
     const poolSelectedText = pool.drawn.map(renderEntryLine).join('\n');
@@ -999,15 +999,15 @@ export async function generateOptions(_target: GenerateTarget): Promise<ChoiceGe
       count,
       pinnedCount,
       pinned: pool.pinned.map(renderEntryLine).join('\n'),
-      poolSelected: poolSelectedTextFull || '无',
+      poolSelected: poolSelectedTextFull || 'None',
       input: '',
       // 直接取全局设置而非硬编码：buildMessages 的 augmentedCtx 会再按 isEnrich 覆盖，
       // 这里提供一致的非死值，避免误导后人（审计 A4）
       minChars: gs.settings.prompt_rules.option_min_chars,
       maxChars: gs.settings.prompt_rules.option_max_chars,
       enrichPersonStyle: '',
-      optionPerson: '第三人称',
-      enrichPerson: '第三人称',
+      optionPerson: 'third person',
+      enrichPerson: 'third person',
       prevOptions,
     };
     const rules = gs.settings.prompt_rules;
@@ -1016,7 +1016,7 @@ export async function generateOptions(_target: GenerateTarget): Promise<ChoiceGe
     // 全禁用兜底：静默回退全量默认模块——用户「全部关闭」的意图被无声推翻，至少明示。
     // 不改为「发空提示词」：那只会产出更离谱的回复且浪费一次请求。
     if (!enabledModules || enabledModules.length === 0) {
-      toastr.warning(t`提示词模块已全部禁用，本次按默认模块生成`);
+      toastr.warning(t`All prompt modules are disabled — generating with the default modules this time`);
       enabledModules = [...DEFAULT_MODULES].filter(m => !m.enrich_only).sort((a, b) => a.order - b.order);
     }
     // WI 排他窗口（互斥 + 即用即还，见 runWIExclWindow）：只有消息构建读取酒馆世界书，后续
@@ -1050,7 +1050,7 @@ export async function generateOptions(_target: GenerateTarget): Promise<ChoiceGe
     // 指令（运行时多 token，不改用户提示词），让 AI 在相关选项上输出真实骰式。
     if (gs.settings.dice.allow_formula) {
       appendRuntimeLine(
-        t`可选进阶：若某条选项涉及具体骰子检定，可在标题标注真实骰式与需求值，格式 [标题|骰式|需求值]（如 [攻击|2d6+3|70]）；不涉及的选项保持原有格式即可。`,
+        t`Advanced, optional: if an option involves a concrete dice check, annotate the title with the real dice expression and DC in the form [title|dice|DC] (e.g. [Attack|2d6+3|70]); options without checks keep the original format.`,
       );
     }
 
@@ -1060,7 +1060,7 @@ export async function generateOptions(_target: GenerateTarget): Promise<ChoiceGe
     // low 模式下难度整体反转。同骰式行：运行时追加，不改用户提示词。
     if (gs.settings.dice.enabled && gs.settings.dice.low_roll) {
       appendRuntimeLine(
-        t`判定方向（COC 百分位，覆盖前文「越难标得越高」的说明）：标题第三段的需求值代表达成该行动所需的能力/技艺水平（0-100），掷出 ≤ 需求值才算成功——行动对能力要求越高标得越低，越有把握标得越高。`,
+        t`Check direction (COC percentile, overrides the "harder = higher DC" note above): the third title segment is the ability/skill level needed (0–100); roll ≤ DC to succeed — the higher the demand on ability, the lower the value; the more confident, the higher.`,
       );
     }
 
@@ -1074,7 +1074,7 @@ export async function generateOptions(_target: GenerateTarget): Promise<ChoiceGe
 
     const api = resolveCustomApi(gs.settings.active_api_id, gs.settings.apis);
     if (!api) {
-      toastr.error(t`请先在设置中配置 API（API 地址 + 模型），然后重新生成`);
+      toastr.error(t`Please configure an API (URL + model) in Settings first, then regenerate`);
       return null;
     }
 
@@ -1091,7 +1091,7 @@ export async function generateOptions(_target: GenerateTarget): Promise<ChoiceGe
     if (cancelled) return null;
     const parsed = parseOptions(raw, count).map(t => ({ text: t, sourceEntryId: null }));
     if (!parsed.length) {
-      toastr.error(t`未能解析出任何选项,请检查模型输出`);
+      toastr.error(t`Could not parse any options. Check model output.`);
       return null;
     }
     let options: ChoiceOption[] = parsed;
@@ -1126,7 +1126,7 @@ export async function generateOptions(_target: GenerateTarget): Promise<ChoiceGe
             role: 'user',
             // 剔除数用当前累计值（dropped），首轮后恒等 r1 数字会与实际不符；
             // dropped 含同批内互相重复（dedupOptions 批内互重），措辞勿只提「此前选项」
-            content: `以上 <options> 中有 ${dropped} 条重复选项已剔除（含与此前选项及同批内互相重复）。请再生成恰好 ${need} 条新的行动选项，不得与已给选项及此前方向重复；格式、人称、场景锚定要求不变，先 <thinking> 后 <options>。`,
+            content: `Among the above <options> ${dropped} Duplicate options have been eliminated (including duplicates with previous options and within the same batch). Please reproduce it exactly ${need} A new action option must not be repeated with the given option and the previous direction; the format, person, and scene anchoring requirements remain unchanged, first <thinking> and then <options>.`,
           },
         ];
         lastBuildMessages.value = structuredClone(refillMessages);
@@ -1160,11 +1160,11 @@ export async function generateOptions(_target: GenerateTarget): Promise<ChoiceGe
         refs: dedupRefs,
       };
       if (dropped > 0) {
-        toastr.warning(t`剔除 ${dropped} 条重复选项，已补齐 ${kept.length - r1.kept.length} 条`);
+        toastr.warning(t`Cull ${dropped} Duplicate options have been completed ${kept.length - r1.kept.length} entries`);
       }
     }
     if (!options.length) {
-      toastr.error(t`未能解析出任何选项,请检查模型输出`);
+      toastr.error(t`Could not parse any options. Check model output.`);
       return null;
     }
     // 本轮实际进入候选菜单的池条目 id 集合（固定必发 pinned + 抽签 drawn）：随消息持久化，
@@ -1202,7 +1202,7 @@ export async function generateOptions(_target: GenerateTarget): Promise<ChoiceGe
     // 跨聊天防护：身份不符（切聊天/删楼重编号）整体丢弃——统计记账、L1 入队与消息落库
     // 必须同进同退，否则统计已记、结果写进别家楼层的单侧分裂
     if (!isSameLayerIdentity(layerIdentity, _target.messageId)) {
-      toastr.info(t`聊天已切换，本次生成的选项已丢弃`);
+      toastr.info(t`Chat switched — these generated options were discarded`);
       return null;
     }
     // 新手引导第 8 步"去生成第一组选项"的完成信号：只在选项生成成功时置位，
@@ -1222,7 +1222,7 @@ export async function generateOptions(_target: GenerateTarget): Promise<ChoiceGe
   } catch (e) {
     if (cancelled) return null;
     console.error('Choice generation failed', e);
-    toastr.error(t`选项生成失败:${e instanceof Error ? e.message : String(e)}`);
+    toastr.error(t`Options generation failed:${e instanceof Error ? e.message : String(e)}`);
     return null;
   } finally {
     cancelled = false;

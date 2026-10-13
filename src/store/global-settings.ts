@@ -41,6 +41,7 @@ import { detectSTTheme, getSTInkFallback, watchSTTheme } from '@/core/theme-dete
 import { getStCharacter } from '@/core/st-character';
 import { scheduleCharacterPersist } from '@/util/character-bindings';
 import { BUILTIN_CARDS } from '@/core/cards-builtin';
+import { localizeBuiltins } from '@/util/localize-builtins';
 import { cardMaxDurability } from '@/core/cards-constraints';
 
 /**
@@ -68,13 +69,13 @@ const LEGACY_DEFAULT_ENTRY_TYPES = new Set([
  * 独立成组保证各组特色获得稳定但不过分的出场占比。
  */
 const POOL_GROUP_ORDER = [
-  '用户主体',
-  '其他角色主体',
-  '时间流逝',
-  '剧情续写规划',
-  '环境与事件',
-  '对话交锋',
-  '情感关系',
+  'user principal',
+  'Other role subjects',
+  'time passes',
+  'Plot continuation plan',
+  'environment and events',
+  'Conversation',
+  'emotional relationship',
   'NSFW',
 ] as const;
 
@@ -116,10 +117,10 @@ const createPoolEntry = (category: string, type: string, content: string, pinned
  */
 function buildGeneralEntries(): PoolEntry[] {
   return [
-    createPoolEntry('通用', '顺势推进', '紧承前文当下的留白，给出情境中最自然顺承的推进方向', true),
-    createPoolEntry('通用', '风格反差', '与近几轮选项的基调或行动类型形成反差，制造新鲜与意外', true),
-    createPoolEntry('通用', '角色本心', '从 {{user}} 的性格核心与当下心境出发，给出贴合其人设的选择'),
-    createPoolEntry('通用', '开放余地', '给出一个不急于收束、留有后续展开空间的方向'),
+    createPoolEntry('Universal', 'Advance with the trend', 'Following the blank space of the previous article, it gives the most natural and consistent direction of advancement in the situation.', true),
+    createPoolEntry('Universal', 'style contrast', 'Contrast with the tone or action type of recent rounds of options to create freshness and surprise', true),
+    createPoolEntry('Universal', 'Character\'s heart', 'Starting from the core of {{user}}’s character and current state of mind, a choice is given that suits his personality.'),
+    createPoolEntry('Universal', 'open space', 'Give a direction that is not rushed to end and leaves room for subsequent expansion.'),
   ];
 }
 
@@ -132,22 +133,22 @@ function buildGeneralEntries(): PoolEntry[] {
  */
 function buildUserSubjectEntries(): PoolEntry[] {
   return [
-    createPoolEntry('用户主体', '顺势行动', '由 {{user}} 紧承当前情境中最自然的一步，做出顺理成章的行动或回应', true),
-    createPoolEntry('用户主体', '打破僵局', '由 {{user}} 主动打破当前停滞或尴尬，让场景重新动起来'),
-    createPoolEntry('用户主体', '正面交锋', '由 {{user}} 直面眼前的矛盾或人物，把话挑明、把事说破，不再迂回'),
-    createPoolEntry('用户主体', '迂回试探', '由 {{user}} 旁敲侧击、以退为进，先探清对方的底细与态度'),
-    createPoolEntry('用户主体', '吐露心声', '由 {{user}} 在此刻表露真实情绪或心事，可以坦诚，也可以半真半假'),
-    createPoolEntry('用户主体', '身体先行', '由 {{user}} 以行动代替言语表态，让靠近、回避、递出或阻拦等动作传达态度'),
-    createPoolEntry('用户主体', '出人意料', '由 {{user}} 做出有悖当下预期的事，为局面注入一个合理的新变量'),
-    createPoolEntry('用户主体', '目标推进', '由 {{user}} 朝自己的目标或牵挂的人事物迈出具体一步，不停留在空想或等待'),
-    createPoolEntry('用户主体', '求助托付', '由 {{user}} 开口向可信的人求助、委派或托付一件事，把难题分出去一部分'),
-    createPoolEntry('用户主体', '安抚示好', '由 {{user}} 先递台阶——安慰、道歉、道谢或以小动作示好，修补或拉近关系'),
+    createPoolEntry('user principal', 'Take advantage of the trend', 'By {{user}} Take the most natural step in the current situation and make a logical action or response', true),
+    createPoolEntry('user principal', 'break the deadlock', '{{user}} takes the initiative to break the current stagnation or embarrassment and make the scene move again'),
+    createPoolEntry('user principal', 'head-to-head confrontation', 'By {{user}} Face the conflict or character in front of you, speak clearly, tell the truth, and stop beating around the bush'),
+    createPoolEntry('user principal', 'roundabout way', 'By {{user}}, make insinuations, retreat in order to advance, and first find out the opponent’s background and attitude'),
+    createPoolEntry('user principal', 'confide in one\'s heart', 'By {{user}} Show your true emotions or thoughts at this moment, you can be honest, you can also be half-truth or half-false'),
+    createPoolEntry('user principal', 'body first', 'By {{user}} Use actions instead of words to express your attitude, letting actions such as approaching, avoiding, passing or blocking convey your attitude.'),
+    createPoolEntry('user principal', 'Unexpected', '{{user}} does something contrary to current expectations and injects a reasonable new variable into the situation'),
+    createPoolEntry('user principal', 'Goal advancement', 'By {{user}} Take concrete steps toward your goals or the people and things you care about, instead of just dreaming or waiting.'),
+    createPoolEntry('user principal', 'Ask for help and entrust', 'By {{user}} Asking a trusted person for help, delegating or entrusting something to solve a problem'),
+    createPoolEntry('user principal', 'Appease and show kindness', '{{user}} takes the lead - comfort, apologize, thank you or show goodwill with small gestures, repair or bring the relationship closer'),
     createPoolEntry(
-      '用户主体',
-      '观察等待',
-      '由 {{user}} 不急于行动，先观察、倾听或按兵不动，给局面和对方留出变化的余地',
+      'user principal',
+      'Watch and wait',
+      'By {{user}} Don’t rush into action. Observe, listen or stand still first, leaving room for changes in the situation and the other party.',
     ),
-    createPoolEntry('用户主体', '讨价还价', '由 {{user}} 就条件、代价或利益开口谈价，试探对方能让步的底线'),
+    createPoolEntry('user principal', 'bargain', '{{user}} talks about terms, prices or benefits to test the bottom line of the other party\'s concessions'),
   ];
 }
 
@@ -158,14 +159,14 @@ function buildUserSubjectEntries(): PoolEntry[] {
  */
 function buildCharacterSubjectEntries(): PoolEntry[] {
   return [
-    createPoolEntry('其他角色主体', '角色回响', '让在场某个角色先回应刚才的局势或 {{user}} 的话，可以接住，也可以岔开'),
-    createPoolEntry('其他角色主体', '内心显影', '切入某个角色此刻的内心视角，呈现其真正想法或尚未说出口的内容'),
-    createPoolEntry('其他角色主体', '主动逼近', '由某个角色主动靠近、发难或提出要求，接管当前场面的节奏'),
-    createPoolEntry('其他角色主体', '关系试探', '某个角色借由话题或动作试探与 {{user}} 的距离、态度和底线'),
-    createPoolEntry('其他角色主体', '反常之举', '某个角色做出与平时表现不同但仍合乎人设的举动，露出隐藏的一面'),
-    createPoolEntry('其他角色主体', '角色交锋', '让两个在场角色发生对峙或争执，把潜在矛盾摆到台面上'),
-    createPoolEntry('其他角色主体', '求助托付', '某个角色向 {{user}} 求助、示弱或托付一件事，把选择权交回对方'),
-    createPoolEntry('其他角色主体', '暗中筹谋', '某个角色在台面下推进自己的盘算，为后续剧情留下可追踪的暗线'),
+    createPoolEntry('Other role subjects', 'character echo', 'Let a character present respond first to the situation or {{user}}, you can catch it or divert it.'),
+    createPoolEntry('Other role subjects', 'inner development', 'Cut into a character\'s inner perspective at the moment and present what they are really thinking or what they have not yet said.'),
+    createPoolEntry('Other role subjects', 'Active approach', 'A character takes the initiative to approach, challenge or make demands, taking over the rhythm of the current scene.'),
+    createPoolEntry('Other role subjects', 'relationship test', 'A certain character uses topics or actions to test the distance, attitude and bottom line with {{user}}'),
+    createPoolEntry('Other role subjects', 'abnormal behavior', 'A character behaves differently than usual but still fits the character, revealing a hidden side'),
+    createPoolEntry('Other role subjects', 'character clash', 'Let two characters present confront or argue, bringing potential conflicts to the table.'),
+    createPoolEntry('Other role subjects', 'Ask for help and entrust', 'A character asks {{user}} for help, to show weakness, or to entrust you with something, handing the choice back to the other party'),
+    createPoolEntry('Other role subjects', 'secretly planning', 'A certain character is advancing his own plans behind the scenes, leaving traceable hidden clues for the subsequent plot.'),
   ];
 }
 
@@ -176,24 +177,24 @@ function buildCharacterSubjectEntries(): PoolEntry[] {
 function buildTimeJumpEntries(): PoolEntry[] {
   return [
     createPoolEntry(
-      '时间跳跃',
-      '须臾之间',
-      '只推进几分钟到半小时的微小时间，用茶凉、雨停、天色暗下一格这类细节完成对话间隙的自然过渡',
+      'time jump',
+      'In a moment',
+      'Only a few minutes to half an hour are pushed forward, and details such as the tea cooling, the rain stopping, and the sky getting dark are used to complete the natural transition between conversations.',
     ),
-    createPoolEntry('时间跳跃', '翌日清晨', '跳到第二天早晨，以晨间光线、声音或身体感受开场，昨夜的事件沉淀为余韵'),
+    createPoolEntry('time jump', 'next morning', 'Skip to the next morning, starting with the morning light, sound or body feeling, and the events of last night settle into the aftertaste.'),
     createPoolEntry(
-      '时间跳跃',
-      '数日之后',
-      '跳过两三天到一周，用新习惯、将愈未愈的伤、来往的消息等细节交代这段时间留下的痕迹',
+      'time jump',
+      'a few days later',
+      'Skip two or three days to a week and use new habits, unhealed wounds, news and other details to describe the traces left during this period.',
     ),
-    createPoolEntry('时间跳跃', '季节更迭', '大幅推进到换季时节，环境物候明显变化，人物关系与心境随时间产生微妙位移'),
-    createPoolEntry('时间跳跃', '多年以后', '跨度数年到数十年，外貌、身份、关系发生显著变化，带一丝物是人非的怅然'),
+    createPoolEntry('time jump', 'Seasons change', 'It has greatly advanced to the season change, the environmental phenology has changed significantly, and the relationships and moods of the characters have undergone subtle shifts over time.'),
+    createPoolEntry('time jump', 'many years later', 'Spanning several years to decades, appearance, identity, and relationships have undergone significant changes, with a hint of sadness that things are right and people are different.'),
     createPoolEntry(
-      '时间跳跃',
-      '回溯闪回',
-      '反向跳跃：插入一段过去的回忆场景，与当下形成呼应或对照，结尾回到当前时间点',
+      'time jump',
+      'flashback',
+      'Reverse jump: Insert a past memory scene to echo or contrast with the present, and end with returning to the current point in time.',
       false,
-      '此项为回忆插叙，需明确时间线标记，结尾必须落回当前时间点',
+      'This is a reminiscence narration, the timeline must be clearly marked, and the ending must return to the current time point.',
     ),
   ];
 }
@@ -205,74 +206,74 @@ function buildTimeJumpEntries(): PoolEntry[] {
  */
 function buildTimePassEntries(): PoolEntry[] {
   return [
-    createPoolEntry('时间流逝', '须臾之间', '只推进几分钟到半小时，用茶凉、雨停、灯影移动等细节完成自然过渡'),
-    createPoolEntry('时间流逝', '翌日清晨', '跳到第二天早晨，以光线、声音或身体感受开场，让前一晚的事件沉淀为余韵'),
-    createPoolEntry('时间流逝', '数日之后', '跳过两三天到一周，用新习惯、伤势变化、往来消息等细节交代时间痕迹'),
-    createPoolEntry('时间流逝', '季节更迭', '推进到换季时节，让环境物候、人物关系和心境产生可感知的位移'),
-    createPoolEntry('时间流逝', '多年以后', '推进数年或更久，让外貌、身份、关系或目标发生足以改变局势的变化'),
+    createPoolEntry('time passes', 'In a moment', 'Only advance for a few minutes to half an hour, and use details such as the tea to cool down, the rain to stop, and the lights to move to complete the natural transition.'),
+    createPoolEntry('time passes', 'next morning', 'Skip to the next morning, opening with light, sound or physical sensations, letting the events of the previous night settle into the aftertaste.'),
+    createPoolEntry('time passes', 'a few days later', 'Skip two to three days to a week, and use details such as new habits, changes in injuries, and messages to explain the traces of time.'),
+    createPoolEntry('time passes', 'Seasons change', 'Advance to the season change, allowing perceptible shifts in environmental phenology, character relationships, and mood.'),
+    createPoolEntry('time passes', 'many years later', 'Moving forward over several years or more to create a situation-changing change in appearance, identity, relationships, or goals'),
     createPoolEntry(
-      '时间流逝',
-      '回溯闪回',
-      '插入一段与当前相关的过去场景，用呼应或对照补充信息，结尾必须回到当前时间点',
+      'time passes',
+      'flashback',
+      'Insert a past scene related to the present, supplement the information with echoes or contrasts, and the ending must return to the current point in time.',
     ),
-    createPoolEntry('时间流逝', '夜色渐深', '在同一段夜晚内缓慢推进时间，让灯光、困意、酒意或气氛随钟点发生变化'),
-    createPoolEntry('时间流逝', '等待间隙', '描写一段被拉长的等待、赶路、守候或恢复过程，让时间流逝本身改变人物状态'),
+    createPoolEntry('time passes', 'The night is getting darker', 'Slowly advance time during the same night, allowing the lights, sleepiness, alcohol or atmosphere to change with the clock'),
+    createPoolEntry('time passes', 'waiting gap', 'Describe a prolonged process of waiting, rushing, waiting or recovering, and let the passage of time itself change the character\'s state'),
   ];
 }
 
 /** 「剧情续写规划」分组：8 条计划/试探/布局类方向素材，对应提示词的"计划或试探"尺度。 */
 function buildPlotPlanningEntries(): PoolEntry[] {
   return [
-    createPoolEntry('剧情续写规划', '谋定后动', '先调查、准备或安排后手，再让主体采取行动，行动应服务于当前目标'),
-    createPoolEntry('剧情续写规划', '设局布局', '为后续目标布置一枚眼前不显眼但可回收的棋子或条件'),
-    createPoolEntry('剧情续写规划', '抛砖引玉', '用一个小话题、小动作或小利益引出更大的信息，观察局中人的反应'),
-    createPoolEntry('剧情续写规划', '摊牌时刻', '坦白关键事实、亮出底牌或提出明确条件，结束一段持续的含糊与绕行'),
-    createPoolEntry('剧情续写规划', '后手留白', '为当前事件留下一个具体而未解决的尾巴，形成自然的后续入口'),
-    createPoolEntry('剧情续写规划', '化险为夷', '从当前困局中寻找不撕破脸的解法，通过补台、圆场或各退一步改变局面'),
-    createPoolEntry('剧情续写规划', '火中取栗', '抓住混乱、误会或权力空隙，在承担风险的同时达成一个现实目的'),
-    createPoolEntry('剧情续写规划', '承上启下', '收束当前小节，同时把新的线索、目标、地点或期限摆到后续剧情中'),
+    createPoolEntry('Plot continuation plan', 'Act after making a decision', 'Investigate, prepare or arrange backup first, and then let the subject take action. The action should serve the current goal.'),
+    createPoolEntry('Plot continuation plan', 'Set up the layout', 'Place an inconspicuous but recoverable piece or condition for subsequent goals'),
+    createPoolEntry('Plot continuation plan', 'To attract good ideas', 'Use a small topic, small action or small benefit to elicit larger information and observe the reactions of people in the game'),
+    createPoolEntry('Plot continuation plan', 'showdown moment', 'Confess key facts, show your cards, or put forward clear conditions to end a period of continuous ambiguity and detours'),
+    createPoolEntry('Plot continuation plan', 'Leave the back hand blank', 'Leave a concrete and unresolved tail for the current event, forming a natural follow-up entry'),
+    createPoolEntry('Plot continuation plan', 'Turn danger into safety', 'Find solutions to the current predicament without breaking up, and change the situation by making up for it, rounding things off, or taking a step back.'),
+    createPoolEntry('Plot continuation plan', 'Taking chestnuts from the fire', 'Seize confusion, misunderstanding, or power gaps to achieve a realistic goal while taking risks'),
+    createPoolEntry('Plot continuation plan', 'Connect the previous and the next', 'Conclude the current section while introducing new clues, goals, locations, or deadlines into subsequent plots'),
   ];
 }
 
 /** 「环境与事件」分组：8 条环境演变/外部事件方向素材，对应提示词的"环境的演变"尺度。 */
 function buildEnvironmentEventEntries(): PoolEntry[] {
   return [
-    createPoolEntry('环境与事件', '天气突变', '天气或自然环境突然变化，打断当前进程并迫使在场者调整安排'),
-    createPoolEntry('环境与事件', '意外声响', '一个突然的声音或动静把注意力从当前话题拉向新的方向'),
-    createPoolEntry('环境与事件', '不速之客', '新的角色带着消息、请求或威胁介入当前场面'),
-    createPoolEntry('环境与事件', '消息传来', '一条消息、书信、传闻或公告抵达，改变在场者对局势的判断'),
-    createPoolEntry('环境与事件', '器物变化', '身边物品出现、损坏、遗失或被发现，引出与当前剧情相关的新信息'),
-    createPoolEntry('环境与事件', '景物映心', '用具体环境细节承接或反衬人物当下心境，避免直接解释情绪'),
-    createPoolEntry('环境与事件', '突发事故', '一个不受控但合理的小事故打破既定节奏，制造即时处理的问题'),
-    createPoolEntry('环境与事件', '远方余波', '背景世界正在发生的事件通过声音、告示、价格、人员或气氛传到当前场景'),
+    createPoolEntry('environment and events', 'sudden changes in weather', 'Sudden changes in weather or natural environment interrupt the current process and force those present to adjust their arrangements'),
+    createPoolEntry('environment and events', 'unexpected noise', 'A sudden sound or movement pulls attention away from the current topic in a new direction'),
+    createPoolEntry('environment and events', 'Uninvited guest', 'New characters intervene in the current scene with messages, requests or threats'),
+    createPoolEntry('environment and events', 'news comes', 'A piece of news, letter, rumor or announcement arrives that changes the judgment of those present on the situation.'),
+    createPoolEntry('environment and events', 'Changes in utensils', 'Objects around you appear, are damaged, lost or discovered, eliciting new information related to the current plot.'),
+    createPoolEntry('environment and events', 'Scenery reflects the heart', 'Use specific environmental details to reflect or contrast the character\'s current state of mind, and avoid directly explaining emotions.'),
+    createPoolEntry('environment and events', 'emergency', 'An uncontrolled but reasonable small accident breaks the established rhythm and creates problems for immediate processing'),
+    createPoolEntry('environment and events', 'Distant aftermath', 'Events happening in the background world are conveyed to the current scene through sounds, notices, prices, people or atmosphere'),
   ];
 }
 
 /** 「对话交锋」分组：8 条对话/言语方向素材，主体由当前场景决定（提示词允许主体不固定）。 */
 function buildDialogueEntries(): PoolEntry[] {
   return [
-    createPoolEntry('对话交锋', '话中有话', '让一句表面平常的话同时承载试探、告诫、暗示或未明说的要求'),
-    createPoolEntry('对话交锋', '打破沉默', '让合适的在场者先开口，直接改变僵持、尴尬或无人接话的状态'),
-    createPoolEntry('对话交锋', '嘴硬心软', '通过口是心非、反话或刻意冷淡表达关心、在意或不愿承认的情绪'),
-    createPoolEntry('对话交锋', '步步紧逼', '通过连续追问、质问或补充条件压缩对方回避的空间'),
-    createPoolEntry('对话交锋', '玩笑化解', '用玩笑、自嘲或轻微调侃卸下紧张气氛，但不抹去潜在矛盾'),
-    createPoolEntry('对话交锋', '直白挑明', '用一句清楚的话说出此前一直回避的要求、立场或心意'),
-    createPoolEntry('对话交锋', '话赶话争执', '让一次回应牵出下一次反驳，争执逐步暴露真正的分歧'),
-    createPoolEntry('对话交锋', '沉默回应', '让没有说出口的回答通过停顿、回避或未完成的话产生明确分量'),
+    createPoolEntry('Conversation', 'There is something in the words', 'Let a seemingly ordinary statement also carry temptations, warnings, hints or unstated requests.'),
+    createPoolEntry('Conversation', 'break the silence', 'Let the appropriate person present speak first, directly changing the situation of deadlock, embarrassment or no answer.'),
+    createPoolEntry('Conversation', 'Hard-spoken but soft-hearted', 'Express care, concern, or unwillingness to admit emotions through duplicity, sarcasm, or deliberate indifference.'),
+    createPoolEntry('Conversation', 'Pressing step by step', 'Condensing the space for the other party to avoid through continuous questioning, interrogation or supplementary conditions'),
+    createPoolEntry('Conversation', 'joke resolved', 'Use jokes, self-deprecation, or light teasing to relieve tension without erasing underlying conflicts'),
+    createPoolEntry('Conversation', 'straightforward', 'Use one clear sentence to express the request, position or intention that you have been avoiding before.'),
+    createPoolEntry('Conversation', 'Talking and arguing', 'Let one response lead to the next rebuttal, and disputes gradually reveal real differences.'),
+    createPoolEntry('Conversation', 'silent response', 'Give unspoken answers clear weight through pauses, avoidances, or unfinished words'),
   ];
 }
 
 /** 「情感关系」分组：8 条关系/情绪张力方向素材，升温、疏离、猜忌、依赖等关系变化。 */
 function buildEmotionRelationEntries(): PoolEntry[] {
   return [
-    createPoolEntry('情感关系', '暧昧升温', '通过距离、温度、语气或一个细小照顾，让关系向亲近方向移动半步'),
-    createPoolEntry('情感关系', '若即若离', '让一方忽近忽远、欲言又止，使关系重新变得不确定'),
-    createPoolEntry('情感关系', '醋意暗涌', '因第三人、旧事或被忽视而产生微妙介意，情绪先从细节中泄露'),
-    createPoolEntry('情感关系', '旧事重提', '一段往事、承诺或旧伤被重新触及，使当前关系出现新的波动'),
-    createPoolEntry('情感关系', '患难与共', '让人物共同处理一个麻烦，在合作、保护或承担中改变信任程度'),
-    createPoolEntry('情感关系', '心生芥蒂', '一件具体的小事在关系中留下裂痕，表面的客套逐渐变得不自然'),
-    createPoolEntry('情感关系', '依赖成习', '让人物开始习惯对方的存在、帮助、等待或消息，并在细节中显露出来'),
-    createPoolEntry('情感关系', '界限试探', '一方以试探性的言语或行动触碰关系边界，观察对方是否接受'),
+    createPoolEntry('emotional relationship', 'Ambiguity heats up', 'Through distance, temperature, tone or a small care, let the relationship move half a step towards intimacy.'),
+    createPoolEntry('emotional relationship', 'If you are away', 'Let one party be close and far away, and stop talking, making the relationship uncertain again.'),
+    createPoolEntry('emotional relationship', 'Undercurrent of jealousy', 'Subtle concerns arise due to a third person, old events, or being ignored. Emotions are first revealed in the details.'),
+    createPoolEntry('emotional relationship', 'Bringing up old things again', 'A past event, commitment or old injury is revisited, causing new fluctuations in the current relationship.'),
+    createPoolEntry('emotional relationship', 'Sharing weal and woe', 'Let the characters deal with a problem together, changing the level of trust in cooperation, protection or commitment'),
+    createPoolEntry('emotional relationship', 'Feeling grudge', 'A specific little incident leaves a rift in the relationship, and the superficial politeness gradually becomes unnatural'),
+    createPoolEntry('emotional relationship', 'Dependence', 'Let the characters become accustomed to each other\'s presence, help, waiting or news, and show it in the details'),
+    createPoolEntry('emotional relationship', 'Boundary testing', 'One party touches the relationship boundary with tentative words or actions to see if the other party accepts it'),
   ];
 }
 
@@ -285,17 +286,17 @@ function buildEmotionRelationEntries(): PoolEntry[] {
  */
 function buildNsfwEntries(): PoolEntry[] {
   return [
-    createPoolEntry('NSFW', 'NSFW·主动出击', '给出一个由 {{user}} 主动发起或加码亲密接触的方向，火候贴合当前氛围'),
-    createPoolEntry('NSFW', 'NSFW·顺势而为', '抓住当前氛围里的微妙信号顺势回应，让默契自然升温而不突兀点破'),
-    createPoolEntry('NSFW', 'NSFW·交出主导', '给出一个把节奏或主导权交给对方的方向，重点呈现信任与反应'),
-    createPoolEntry('NSFW', 'NSFW·半推半就', '让口头矜持与实际行动形成符合人物关系的反差，不强行违背意愿'),
-    createPoolEntry('NSFW', 'NSFW·变换位置', '给出一个换到别处或调整姿势继续的方向，让空间变化服务于当前氛围'),
-    createPoolEntry('NSFW', 'NSFW·语言调情', '通过调情、挑逗或羞人请求推进亲密互动，表达贴合人物说话方式'),
-    createPoolEntry('NSFW', 'NSFW·事后温存', '把亲近后的依偎、耳语、照料或余韵作为下一拍，关注关系变化而非重复过程'),
+    createPoolEntry('NSFW', 'NSFW·Take the initiative', 'Give a direction for {{user}} to actively initiate or increase intimate contact, and the intensity should suit the current atmosphere.'),
+    createPoolEntry('NSFW', 'NSFW·Follow the trend', 'Seize the subtle signals in the current atmosphere and respond accordingly, allowing the tacit understanding to naturally heat up without breaking it suddenly.'),
+    createPoolEntry('NSFW', 'NSFW·Give the Dominance', 'Give a direction to hand over the rhythm or control to the other party, focusing on trust and response'),
+    createPoolEntry('NSFW', 'NSFW·Half push and half success', 'Let verbal restraint and actual actions form a contrast that is consistent with the relationship between the characters, and do not force against one\'s will'),
+    createPoolEntry('NSFW', 'NSFW·Change position', 'Give a direction to move elsewhere or adjust your posture to continue, so that spatial changes serve the current atmosphere.'),
+    createPoolEntry('NSFW', 'NSFW·Verbal Flirting', 'Promote intimate interactions through flirting, teasing, or embarrassing requests, expressing yourself in a character-appropriate way of speaking.'),
+    createPoolEntry('NSFW', 'NSFW·Tenderness afterwards', 'Use the snuggle, whisper, care or aftertaste after closeness as the next beat, focusing on the changes in the relationship rather than repeating the process'),
     createPoolEntry(
       'NSFW',
-      'NSFW·大胆尝试',
-      '给出一个此前未尝试、此刻有动机尝试的亲密方向，由人物边界和当前情境决定尺度',
+      'NSFW·Bold attempt',
+      'Give an intimate direction that has not been tried before and is motivated to try at this moment. The scale is determined by the character boundary and the current situation.',
     ),
   ];
 }
@@ -401,7 +402,7 @@ const migratePromptModules = (
     if (oldRules.length > 0 && validated.prompt_rules.chat_filter_groups.length === 0) {
       const group: ChatFilterGroup = {
         id: uuidv4(),
-        name: '默认分组',
+        name: 'Default grouping',
         enabled: true,
         rules: klona(oldRules),
         // 迁移自旧平铺列表，无绑定信息；留空否则运行时为 undefined，分区判定会把分组错当预设/角色卡绑定
@@ -462,7 +463,7 @@ const migratePromptModules = (
       const enrichContent = validated.prompt_rules.enrich_prompt || defaultEnrich?.content || '';
       validated.prompt_rules.modules.push({
         id: 'enrich_prompt',
-        name: '润色提示词',
+        name: 'polishing tips',
         role: 'system',
         content: enrichContent,
         marker: false,
@@ -487,7 +488,7 @@ const migratePromptModules = (
   if (version < 10) {
     // v10: 更新 user_instruction 模板（去掉过时的"跳过场景"规则，改用 {{pinned_count}}）
     const ui = validated.prompt_rules.modules.find(m => m.id === 'user_instruction');
-    if (ui && ui.content.includes('其中 1 个固定为"跳过场景"类型')) {
+    if (ui && ui.content.includes('Among them, 1 are fixed as "skip scene" type')) {
       ui.content = USER_INSTRUCTION_DEFAULT;
     }
   }
@@ -583,8 +584,8 @@ const migratePromptModules = (
     validated.prompt_rules.enrich_min_chars ??= 30;
     validated.prompt_rules.enrich_max_chars ??= 80;
     validated.prompt_rules.enrich_person_style ??= DEFAULT_ENRICH_PERSON_STYLE;
-    validated.prompt_rules.option_person ??= '第三人称';
-    validated.prompt_rules.enrich_person ??= '第三人称';
+    validated.prompt_rules.option_person ??= 'third person';
+    validated.prompt_rules.enrich_person ??= 'third person';
   }
 
   validated.prompt_rules.schema_version = 17;
@@ -619,11 +620,11 @@ const ensureBuiltinPromptConfigs = (validated: GlobalSettingsType) => {
   // 1. 创建"经典"配置（快照当前状态）
   const classicConfig: PromptConfig = {
     id: uuidv4(),
-    name: '经典',
+    name: 'Classic',
     is_default: false,
     modules: klona(pr.modules),
-    option_person: pr.option_person ?? '第三人称',
-    enrich_person: pr.enrich_person ?? '第三人称',
+    option_person: pr.option_person ?? 'third person',
+    enrich_person: pr.enrich_person ?? 'third person',
     enrich_person_style: pr.enrich_person_style ?? DEFAULT_ENRICH_PERSON_STYLE,
     option_min_chars: pr.option_min_chars ?? 30,
     option_max_chars: pr.option_max_chars ?? 80,
@@ -645,11 +646,11 @@ const ensureBuiltinPromptConfigs = (validated: GlobalSettingsType) => {
 
   const simpleConfig: PromptConfig = {
     id: uuidv4(),
-    name: '简洁',
+    name: 'Simple',
     is_default: true,
     modules: simplifiedModules,
-    option_person: '第三人称',
-    enrich_person: '第三人称',
+    option_person: 'third person',
+    enrich_person: 'third person',
     enrich_person_style: DEFAULT_ENRICH_PERSON_STYLE,
     option_min_chars: 30,
     option_max_chars: 80,
@@ -665,8 +666,8 @@ const ensureBuiltinPromptConfigs = (validated: GlobalSettingsType) => {
 
   // 3. 将"简洁"配置加载到 prompt_rules
   pr.modules = klona(simpleConfig.modules);
-  pr.option_person = '第三人称';
-  pr.enrich_person = '第三人称';
+  pr.option_person = 'third person';
+  pr.enrich_person = 'third person';
   pr.enrich_person_style = DEFAULT_ENRICH_PERSON_STYLE;
   pr.option_min_chars = 30;
   pr.option_max_chars = 80;
@@ -703,11 +704,11 @@ const ensureDefaultPromptConfig = (validated: GlobalSettingsType) => {
   validated.prompt_configs = [
     {
       id: uuidv4(),
-      name: '简洁',
+      name: 'Simple',
       is_default: true,
       modules: klona(pr.modules),
-      option_person: pr.option_person ?? '第三人称',
-      enrich_person: pr.enrich_person ?? '第三人称',
+      option_person: pr.option_person ?? 'third person',
+      enrich_person: pr.enrich_person ?? 'third person',
       enrich_person_style: pr.enrich_person_style ?? DEFAULT_ENRICH_PERSON_STYLE,
       option_min_chars: pr.option_min_chars ?? 30,
       option_max_chars: pr.option_max_chars ?? 80,
@@ -913,7 +914,7 @@ const applyDefaults = (
     // 否则 buildAllPoolEntries 与 buildDefaultEntries 各自生成的 uuid 互不对应，引用成孤儿
     if (configs.length === 0) {
       const allEntries = buildAllPoolEntries();
-      const defaultEntries = allEntries.filter(e => e.category === '用户主体');
+      const defaultEntries = allEntries.filter(e => ['用户主体', 'user principal'].includes(e.category));
       validated.master_pool = [...allEntries];
       configs.push({
         id: uuidv4(),
@@ -977,7 +978,7 @@ const applyDefaults = (
     // v13: 对已迁移但池为空的用户，补建完整条目库和只引用「用户主体」的默认配置
     if (validated.master_pool.length === 0 && validated.configs.length === 0) {
       const allEntries = buildAllPoolEntries();
-      const defaultEntries = allEntries.filter(e => e.category === '用户主体');
+      const defaultEntries = allEntries.filter(e => ['用户主体', 'user principal'].includes(e.category));
       validated.master_pool = [...allEntries];
       validated.configs = [
         {
@@ -1713,7 +1714,7 @@ const applyDefaults = (
 
     const defaultConfig = validated.configs.find(config => config.is_default);
     if (defaultConfig) {
-      const defaultEntries = validated.master_pool.filter(entry => entry.category === '用户主体');
+      const defaultEntries = validated.master_pool.filter(entry => ['用户主体', 'user principal'].includes(entry.category));
       defaultConfig.entries = defaultEntries.map(entry => ({
         entry_id: entry.id,
         pinned: entry.pinned,
@@ -1853,7 +1854,7 @@ const applyDefaults = (
       );
       if (hasAllLegacy) {
         defaultConfig.entries = validated.master_pool
-          .filter(entry => entry.category === '用户主体')
+          .filter(entry => ['用户主体', 'user principal'].includes(entry.category))
           .map(entry => ({
             entry_id: entry.id,
             pinned: entry.pinned,
@@ -2558,10 +2559,10 @@ export const useGlobalSettingsStore = defineStore('global-settings', () => {
     validated = validateInplace(GlobalSettings, existing);
   } catch (err) {
     corruptReset = true;
-    console.error('[Choice] 设置档解析失败，已备份原档并使用默认设置启动', err, existing);
+    console.error('[Choice] Configuration file parsing failed, original file has been backed up and started with default settings', err, existing);
     try {
       _.set(extension_settings, `${setting_field}_corrupt_backup`, klona(existing));
-      toastr.error(t`扩展设置档已损坏，已重置为默认（原档备份在控制台与 choice_corrupt_backup 键）`);
+      toastr.error(t`Extension settings file is corrupted and has been reset to defaults (original backed up in console and under the choice_corrupt_backup key)`);
     } catch {
       /* 备份/提示失败不阻塞启动 */
     }
@@ -2610,6 +2611,10 @@ export const useGlobalSettingsStore = defineStore('global-settings', () => {
 
   // 显式标注：ref() 的 UnwrapRef 推断遇 zod4 输出类型（含 StandardSchema 符号键）会退化成 any，
   // 导致所有消费方 settings.configs/master_pool 等变 any[]，回调参数全变隐式 any
+  if (localizeBuiltins(validated)) {
+    _.set(extension_settings, setting_field, klona(validated));
+    saveSettingsDebounced();
+  }
   const settings = ref<GlobalSettingsType>(validated);
 
   // 落盘 watch 防抖（nextTick 级合并）：deep watch 对每次变更同步 klona 整个 settings（现含
@@ -2639,7 +2644,7 @@ export const useGlobalSettingsStore = defineStore('global-settings', () => {
           saveSettingsDebounced();
         } catch (e) {
           // 快照/落盘抛错不静默丢变更：留痕（下一次变更会重走本 flush）
-          console.error('[Choice] settings 落盘失败', e);
+          console.error('[Choice] settings placement failed', e);
         }
       });
     },
@@ -2738,7 +2743,7 @@ export const useGlobalSettingsStore = defineStore('global-settings', () => {
   function addModule(_afterId?: string, enrichOnly = false, optionOnly = false) {
     const modules = settings.value.prompt_rules.modules;
     const maxOrder = modules.length ? Math.max(...modules.map(m => m.order)) : -1;
-    const name = optionOnly ? '选项模块' : enrichOnly ? '润色模块' : '通用模块';
+    const name = optionOnly ? 'Options Module' : enrichOnly ? 'Polish Module' : 'General Module';
     const newModule: PromptModuleType = {
       id: uuidv4(),
       name,
@@ -2759,7 +2764,7 @@ export const useGlobalSettingsStore = defineStore('global-settings', () => {
     const fs = settings.value.filter_settings;
     const group: FilterGroup = {
       id: uuidv4(),
-      name: '新分组',
+      name: 'new group',
       enabled: true,
       entries: [],
       preset_name: area === 'preset' ? currentPresetName.value : null,
@@ -2789,7 +2794,7 @@ export const useGlobalSettingsStore = defineStore('global-settings', () => {
     if (!g) {
       g = {
         id: EXTRACT_GROUP_ID,
-        name: t`标签提取`,
+        name: t`Tag Extraction`,
         enabled: true,
         entries: [],
         preset_name: null,
@@ -2931,7 +2936,7 @@ export const useGlobalSettingsStore = defineStore('global-settings', () => {
     const copy: PromptModuleType = {
       ...klona(src),
       id: uuidv4(),
-      name: src.name + '-副本',
+      name: src.name + '-copy',
       system: false,
       order: Math.max(...modules.map(m => m.order)) + 1,
     };
@@ -3231,13 +3236,13 @@ export const useGlobalSettingsStore = defineStore('global-settings', () => {
     ensureDefaultPromptConfig(fresh);
 
     const allEntries = buildAllPoolEntries();
-    const defaultEntries = allEntries.filter(e => e.category === '用户主体');
+    const defaultEntries = allEntries.filter(e => e.category === 'user principal');
     fresh.master_pool = [...allEntries];
     fresh.group_order = [...POOL_GROUP_ORDER];
     fresh.configs = [
       {
         id: uuidv4(),
-        name: '默认配置',
+        name: 'Default config',
         entries: defaultEntries.map(e => ({
           entry_id: e.id,
           pinned: e.pinned,

@@ -28,8 +28,8 @@ export const useCharacterSettingsStore = defineStore('character-settings', () =>
     try {
       return validateInplace(CharacterSettings, readCharacterSettings());
     } catch (e) {
-      console.error('[Choice] 角色设置解析失败，使用默认值', e);
-      toastr.error(t`角色设置数据损坏，已使用默认值`);
+      console.error('[Choice] Role setting parsing failed, using default values', e);
+      toastr.error(t`Character settings data corrupted; defaults loaded`);
       return CharacterSettings.parse({});
     }
   };
@@ -70,7 +70,7 @@ export const useCharacterSettingsStore = defineStore('character-settings', () =>
       // （「绑定无效」根因），不能再用。异步执行；这是角色绑定数据的唯一落盘通道
       // （入口不再显式 persist，见 PoolEditor/PromptEditor 绑定函数），失败需提示
       scheduleCharacterPersist(ch, ok => {
-        if (!ok) toastr.warning(t`角色绑定保存失败，请重试`);
+        if (!ok) toastr.warning(t`Failed to save the character binding; please retry`);
       });
     },
     { deep: true, flush: 'post' },

@@ -67,7 +67,7 @@ export async function renderWorldInfoContent(content: string): Promise<string> {
     const out = await ejs.evalTemplate(text, env);
     if (typeof out === 'string') text = out;
   } catch (e) {
-    console.warn('[choice] 世界书 EJS 渲染失败(退回展宏文本):', e);
+    console.warn('[choice] World Info EJS rendering failed (returned to expanded macro text):', e);
   }
   return text;
 }

@@ -49,8 +49,8 @@ const TURN_KEY = 'choice_dice_turn';
 const TURN_DEPTH = 1;
 
 const CONTRACT_TEXT = [
-  '【跑团辅助·choice】玩家消息开头可能出现 <!--…--> 形式的隐形注释：这是骰子判定系统对该次行动的自动裁定（成功/失败与程度），可能附带卡牌发动的原因信息。',
-  '请按注释中的演绎方向与本回合结局撰写正文；正文中不要提及骰子、点数、需求值等判定细节，也不要模仿或输出任何 HTML 注释。',
+  '【 Team Support · choice】 An invisible comment in the form of <!--...--> may appear at the beginning of the player\'s message: This is the automatic judgment of the action by the dice judgment system (success/failure and degree), and may include information on the reason for the activation of the card.',
+  'Please write the text according to the interpretation direction and the outcome of this round in the comments; do not mention the dice, points, demand values and other determination details in the text, and do not imitate or output any HTML comments.',
 ].join('');
 
 /** 按当前设置同步契约注入（开 = 写入注入段，关 = 清空注入槽）。幂等，可任意频次调用。 */
@@ -67,7 +67,7 @@ export function syncDiceContractPrompt(): void {
       extension_prompt_roles.SYSTEM,
     );
   } catch (error) {
-    console.warn('[Choice] 判定契约注入失败', error);
+    console.warn('[Choice] Determination of contract injection failure', error);
   }
 }
 
@@ -75,10 +75,10 @@ export function syncDiceContractPrompt(): void {
  *  槽内恒为短摘要（结局+程度+受卡名），完整判定注释只活在消息内——回写成功后槽里再放
  *  一份完整注释是与消息内容完全重复的长注入（百余 token/回合），摘要兜底语义不变。 */
 function buildTurnSummary(outcome: DiceOutcome, degree: string, cardNames?: string[]): string {
-  const cards = cardNames?.length ? `，受卡牌「${cardNames.join('」「')}」影响` : '';
+  const cards = cardNames?.length ? `, receive the card "${cardNames.join('」「')}"Influence` : '';
   return (
-    `【跑团辅助·choice】玩家刚发送的行动已由骰子判定：${DICE_OUTCOME_LABEL[outcome]}（程度 ${degree}）${cards}。` +
-    '请按此结局与程度演绎本回合；正文中不得提及骰子、点数、需求值或判定字样。'
+    `【 running group support·choice】 The action just sent by the player has been determined by the dice:${DICE_OUTCOME_LABEL[outcome]}(Degree ${degree}）${cards}。` +
+    'Please interpret this round according to the ending and extent; no dice, points, demand values or judgment words should be mentioned in the text.'
   );
 }
 
@@ -98,7 +98,7 @@ export function armDiceTurnPrompt(outcome: DiceOutcome, degree: string, cardName
       extension_prompt_roles.SYSTEM,
     );
   } catch (error) {
-    console.warn('[Choice] 判定回合注入失败', error);
+    console.warn('[Choice] Determination round injection failed', error);
   }
 }
 
@@ -107,7 +107,7 @@ export function clearDiceTurnPrompt(): void {
   try {
     setExtensionPrompt(TURN_KEY, '', extension_prompt_types.IN_CHAT, TURN_DEPTH, false, extension_prompt_roles.SYSTEM);
   } catch (error) {
-    console.warn('[Choice] 判定回合注入清空失败', error);
+    console.warn('[Choice] Determination round injection clearing failed', error);
   }
 }
 
@@ -169,6 +169,6 @@ export function flushPendingTurnMarker(chatId: number): void {
       );
     }
   } catch (error) {
-    console.warn('[Choice] 判定注释回写失败', error);
+    console.warn('[Choice] Judgment comment writeback failed', error);
   }
 }

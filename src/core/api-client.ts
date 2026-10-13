@@ -45,9 +45,12 @@ export function normalizeApiUrl(url: string): string {
  *  复查锚点：若脚本改掉该契约（fetch wrapper 标记 __keminiAntiTruncation__、函数
  *  callerControlsTools），从这段注释重新核实。 */
 async function callSecondaryApi(messages: ChatMsg[], api: SecondaryApi, signal?: AbortSignal): Promise<string> {
+  if (!messages.some(message => message.content.includes(ENGLISH_OUTPUT_RULE))) {
+    messages = [{ role: 'system', content: ENGLISH_OUTPUT_RULE }, ...messages];
+  }
   // 空 apiurl 会以 reverse_proxy:'' 静默落到酒馆主 OpenAI 配置（主 key/额度被副功能消耗、
   // 报错无指向）——入口拦截，与 ApiEditor 保存校验双保险
-  if (!api.apiurl.trim()) throw new Error('副 API 地址为空，请先在 API 设置中填写 API 地址');
+  if (!api.apiurl.trim()) throw new Error('The secondary API address is empty, please fill in the API address in the API settings first');
   const body: Record<string, unknown> = {
     chat_completion_source: 'openai',
     reverse_proxy: normalizeApiUrl(api.apiurl),
@@ -84,7 +87,7 @@ async function callSecondaryApi(messages: ChatMsg[], api: SecondaryApi, signal?:
 
   if (!resp.ok) {
     const text = await resp.text().catch(() => '');
-    throw new Error(`API 请求失败 (${resp.status}): ${text.slice(0, 300)}`);
+    throw new Error(`API request failed (${resp.status}): ${text.slice(0, 300)}`);
   }
 
   if (api.stream && resp.body) {
@@ -105,7 +108,7 @@ async function callSecondaryApi(messages: ChatMsg[], api: SecondaryApi, signal?:
       } catch {
         return;
       }
-      if (json?.error) throw new Error(json.error.message || 'API 流式返回错误');
+      if (json?.error) throw new Error(json.error.message || 'API Streaming return error');
       full += json?.choices?.[0]?.delta?.content ?? json?.choices?.[0]?.message?.content ?? '';
     };
     try {
@@ -134,9 +137,9 @@ async function callSecondaryApi(messages: ChatMsg[], api: SecondaryApi, signal?:
   try {
     data = await resp.json();
   } catch {
-    throw new Error('API 返回非 JSON 响应（请检查 API 地址是否指向 OpenAI 兼容接口）');
+    throw new Error('API returns non-JSON response (check if API address points to OpenAI compatible interface)');
   }
-  if (data?.error) throw new Error(data.error.message || 'API 返回错误');
+  if (data?.error) throw new Error(data.error.message || 'API returns error');
   return data?.choices?.[0]?.message?.content ?? data?.choices?.[0]?.text ?? '';
 }
 
@@ -182,7 +185,7 @@ export async function callSecondaryApiWithRetry(
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     // 已 aborted 的信号再挂 abort 监听永不触发：入口快速失败，防首轮请求照发
-    if (externalSignal?.aborted) throw new DOMException('已取消', 'AbortError');
+    if (externalSignal?.aborted) throw new DOMException('Cancelled', 'AbortError');
     const attemptController = new AbortController();
 
     const onExternalAbort = () => attemptController.abort();
@@ -207,7 +210,7 @@ export async function callSecondaryApiWithRetry(
         // 且 toastr 已显示"正在重试"造成误导。这里提前拦截，取消立即生效。
         if (externalSignal?.aborted) throw e;
         const delaySec = Math.max(0, retryInterval);
-        if (!quiet) toastr.info(t`正在重试 (${attempt + 1}/${retryCount})，${delaySec}s 后重试...`);
+        if (!quiet) toastr.info(t`Retrying (${attempt + 1}/${retryCount})，${delaySec}Try again after s...`);
         await new Promise(resolve => setTimeout(resolve, delaySec * 1000));
         // sleep 期间若被取消则直接终止，避免醒来后又发起一次注定被 abort 的请求
         if (externalSignal?.aborted) throw e;
@@ -220,3 +223,4 @@ export async function callSecondaryApiWithRetry(
 
   throw lastError;
 }
+import { ENGLISH_OUTPUT_RULE } from '@/util/english-output';

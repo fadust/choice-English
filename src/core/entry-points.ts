@@ -5,9 +5,9 @@ import { useGlobalSettingsStore } from '@/store/global-settings';
 export type EntryKey = 'floating' | 'wand' | 'chat';
 
 const ENTRY_KEY_LABEL: Record<EntryKey, string> = {
-  floating: '悬浮球',
-  wand: '魔棒菜单',
-  chat: '聊天面板',
+  floating: 'suspended ball',
+  wand: 'magic wand menu',
+  chat: 'chat panel',
 };
 
 type UiShape = {
@@ -48,7 +48,7 @@ export function setEntryVisible(key: EntryKey, on: boolean): boolean {
   const anotherOn = otherKeys.some(k => readEnabled(k, ui));
   if (!anotherOn) {
     toastr.warning(
-      t`至少需要保留一个入口：${ENTRY_KEY_LABEL[key]} 是最后一个（${ENTRY_KEY_LABEL[otherKeys[0]]} / ${ENTRY_KEY_LABEL[otherKeys[1]]} 均已关闭）`,
+      t`At least one entry needs to be reserved:${ENTRY_KEY_LABEL[key]} is the last (${ENTRY_KEY_LABEL[otherKeys[0]]} / ${ENTRY_KEY_LABEL[otherKeys[1]]} are closed)`,
     );
     return false;
   }

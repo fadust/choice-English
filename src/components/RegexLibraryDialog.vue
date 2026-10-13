@@ -5,21 +5,21 @@
         <div class="choice-regexlib-header">
           <span class="choice-regexlib-title">
             <i class="fa-solid fa-code"></i>
-            {{ t`正则库` }}
+            {{ t`Regex Library` }}
             <span class="choice-regexlib-count">({{ library.length }})</span>
           </span>
           <div class="choice-regexlib-header-actions" data-tour="regexlib-toolbar">
             <button
               class="choice-icon-btn"
-              :title="allGroupsExpanded ? t`全部收起` : t`全部展开`"
+              :title="allGroupsExpanded ? t`Collapse All` : t`Expand All`"
               @click="toggleExpandAll"
             >
               <i :class="allGroupsExpanded ? 'fa-solid fa-compress' : 'fa-solid fa-expand'"></i>
             </button>
-            <button class="choice-icon-btn" :title="t`新建分组`" @click="createGroup">
+            <button class="choice-icon-btn" :title="t`New Group`" @click="createGroup">
               <i class="fa-solid fa-folder-plus"></i>
             </button>
-            <button class="choice-icon-btn" :title="t`导入文件`" @click="showImportSource = true">
+            <button class="choice-icon-btn" :title="t`Import File`" @click="showImportSource = true">
               <i class="fa-solid fa-file-import"></i>
             </button>
             <button class="choice-icon-btn" :title="exportTitle" @click="onExport">
@@ -29,15 +29,15 @@
             <button
               class="choice-icon-btn"
               data-tour="regexlib-st-import"
-              :title="t`从酒馆正则导入`"
+              :title="t`Import from SillyTavern Regex`"
               @click="showStImport = true"
             >
               <i class="fa-solid fa-cloud-arrow-down"></i>
             </button>
-            <button ref="guideBtn" class="choice-icon-btn" :title="t`页面指引`" @click="showGuide = !showGuide">
+            <button ref="guideBtn" class="choice-icon-btn" :title="t`Page Guide`" @click="showGuide = !showGuide">
               <i class="fa-solid fa-circle-question"></i>
             </button>
-            <button class="choice-regexlib-close" :title="t`关闭`" @click="emit('close')">&times;</button>
+            <button class="choice-regexlib-close" :title="t`Close`" @click="emit('close')">&times;</button>
           </div>
         </div>
 
@@ -45,14 +45,14 @@
           <div v-if="groupedEntries.length > 0" ref="groupListEl" class="choice-regexlib-list">
             <div v-for="group in groupedEntries" :key="group.key" class="choice-regexlib-group">
               <div class="choice-regexlib-group-head" @click="toggleGroup(group.key)">
-                <DragHandle class="choice-drag-handle--group" :title="t`拖动排序`" @click.stop />
+                <DragHandle class="choice-drag-handle--group" :title="t`Drag to reorder`" @click.stop />
                 <!-- 勾选列始终显示：普通视图下勾选分组/条目即可部分导出（selectable 模式另作过滤配置勾选） -->
                 <label class="choice-check" @click.stop>
                   <input type="checkbox" :checked="isGroupAllSelected(group)" @change="toggleSelectGroup(group)" />
                 </label>
                 <i class="fa-solid" :class="expandedGroups.has(group.key) ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
                 <span v-if="groupRenameId !== group.key" class="choice-regexlib-group-name">{{
-                  group.key || t`未分组`
+                  group.key || t`Ungrouped`
                 }}</span>
                 <input
                   v-else
@@ -67,7 +67,7 @@
                 <span class="choice-regexlib-group-count">({{ group.entries.length }})</span>
                 <button
                   class="choice-icon-btn"
-                  :title="groupRenameId === group.key ? t`保存` : t`重命名`"
+                  :title="groupRenameId === group.key ? t`Save` : t`Rename`"
                   @click.stop="groupRenameId === group.key ? finishGroupRename(group.key) : startGroupRename(group.key)"
                 >
                   <i :class="groupRenameId === group.key ? 'fa-solid fa-check' : 'fa-solid fa-pen-to-square'"></i>
@@ -75,17 +75,17 @@
                 <button
                   v-if="groupRenameId === group.key"
                   class="choice-icon-btn"
-                  :title="t`取消`"
+                  :title="t`Cancel`"
                   @click.stop="cancelGroupRename"
                 >
                   <i class="fa-solid fa-xmark"></i>
                 </button>
-                <button class="choice-icon-btn" :title="t`添加条目`" @click.stop="addEntryToGroup(group.key)">
+                <button class="choice-icon-btn" :title="t`Add Entry`" @click.stop="addEntryToGroup(group.key)">
                   <i class="fa-solid fa-plus"></i>
                 </button>
                 <button
                   class="choice-icon-btn choice-delete-btn"
-                  :title="t`删除分组`"
+                  :title="t`Delete Group`"
                   @click.stop="deleteGroupTarget = group.key"
                 >
                   <i class="fa-solid fa-trash-can"></i>
@@ -96,7 +96,7 @@
                 :data-group-key="group.key"
               >
                 <div v-if="group.entries.length === 0" class="choice-empty-hint">
-                  <span>{{ t`暂无条目，点击 + 添加` }}</span>
+                  <span>{{ t`No entries. Click + to add.` }}</span>
                 </div>
                 <div
                   v-for="entry in group.entries"
@@ -104,7 +104,7 @@
                   class="choice-regexlib-entry"
                   :data-entry-id="entry.id"
                 >
-                  <DragHandle :title="t`拖动排序/换组`" />
+                  <DragHandle :title="t`Drag to reorder or move between groups`" />
                   <label class="choice-check">
                     <input type="checkbox" :checked="selectedIds.has(entry.id)" @change="toggleSelect(entry.id)" />
                   </label>
@@ -112,20 +112,20 @@
                        手机上 90px 固定宽会把正则输入挤到不可操作。
                        只提供"过滤"语义（删除/替换）；"提取"只在过滤页顶部的标签提取快速区 -->
                   <select v-model="entry.type" class="text_pole choice-regexlib-type">
-                    <option value="tag">{{ t`标签匹配` }}</option>
-                    <option value="regex">{{ t`正则表达式` }}</option>
+                    <option value="tag">{{ t`Tag Match` }}</option>
+                    <option value="regex">{{ t`Regex Pattern` }}</option>
                   </select>
                   <template v-if="entry.type === 'tag'">
                     <input
                       v-model="entry.start"
                       class="text_pole"
-                      :placeholder="t`标签头`"
+                      :placeholder="t`Tag Start`"
                       style="flex: 1; min-width: 0"
                     />
                     <input
                       v-model="entry.end"
                       class="text_pole"
-                      :placeholder="t`标签尾`"
+                      :placeholder="t`Tag End`"
                       style="flex: 1; min-width: 0"
                     />
                   </template>
@@ -133,14 +133,14 @@
                     v-else
                     v-model="entry.pattern"
                     class="text_pole"
-                    :placeholder="t`正则表达式`"
+                    :placeholder="t`Regex Pattern`"
                     style="flex: 1; min-width: 0"
                   />
                   <input
                     v-if="entry.type === 'regex'"
                     v-model="entry.replace"
                     class="text_pole choice-regexlib-replace"
-                    :placeholder="t`替换为（留空=删除）`"
+                    :placeholder="t`Replace with (empty = delete)`"
                   />
                   <button class="choice-icon-btn choice-delete-btn" @click="removeEntry(entry.id)">
                     <i class="fa-solid fa-xmark"></i>
@@ -150,15 +150,15 @@
             </div>
           </div>
           <div v-else class="choice-empty-hint">
-            <span>{{ t`暂无正则条目，请点击「新建分组」创建` }}</span>
+            <span>{{ t`No regex entries yet. Click 'New Group' to create one.` }}</span>
           </div>
         </div>
 
         <div v-if="selectable" class="choice-regexlib-footer">
           <button class="choice-btn-sm choice-btn-new" :disabled="selectedIds.size === 0" @click="confirmSelection">
-            <i class="fa-solid fa-check"></i> {{ t`确认添加` }} ({{ selectedIds.size }})
+            <i class="fa-solid fa-check"></i> {{ t`Confirm Add` }} ({{ selectedIds.size }})
           </button>
-          <button class="choice-btn-sm" @click="emit('close')">{{ t`取消` }}</button>
+          <button class="choice-btn-sm" @click="emit('close')">{{ t`Cancel` }}</button>
         </div>
       </div>
     </div>
@@ -166,10 +166,10 @@
 
   <ConfirmDialog
     :open="deleteGroupTarget !== null"
-    :title="t`删除分组`"
-    :message="t`确定要删除该分组及其所有条目吗？`"
-    :confirm-text="t`删除`"
-    :cancel-text="t`取消`"
+    :title="t`Delete Group`"
+    :message="t`Delete this group and all its entries?`"
+    :confirm-text="t`Delete`"
+    :cancel-text="t`Cancel`"
     @confirm="onDeleteGroupConfirm"
     @cancel="deleteGroupTarget = null"
   />
@@ -180,7 +180,7 @@
   <!-- 导入源对话框：粘贴/选文件 → 解析并合并直接落库（正则库只有合并语义，无替换） -->
   <ImportSourceDialog
     :open="open && showImportSource"
-    :title="t`导入正则库`"
+    :title="t`Import Regex Library`"
     :error="importSourceError"
     @close="showImportSource = false"
     @merge="onImportSource"
@@ -314,13 +314,13 @@ const confirmSelection = () => {
 };
 
 const createGroup = () => {
-  const name = prompt(t`请输入分组名称`);
+  const name = prompt(t`Enter group name`);
   const cat = name?.trim();
   if (!cat) return;
   const groups = gs.settings.filter_settings.library_groups ?? [];
   // 重名检测：同名分组会让条目归类歧义，提醒后放弃创建
   if (groups.includes(cat)) {
-    toastr.warning(t`分组「${cat}」已存在`);
+    toastr.warning(t`Group "${cat}” already exists`);
     return;
   }
   groups.push(cat);
@@ -346,7 +346,7 @@ const finishGroupRename = (oldKey: string) => {
   if (newKey && newKey !== oldKey) {
     // 重名检测：与其他分组同名会让条目归类歧义，提醒后放弃修改
     if ((gs.settings.filter_settings.library_groups ?? []).includes(newKey)) {
-      toastr.warning(t`分组「${newKey}」已存在`);
+      toastr.warning(t`Group "${newKey}” already exists`);
     } else {
       gs.renameRegexLibraryGroup(oldKey, newKey);
     }
@@ -368,7 +368,7 @@ const onDeleteGroupConfirm = () => {
 // 部分导出：勾选了分组/条目即仅导出勾选的正则（条目自带 category 字段，分组归属随条目走）；
 // 无勾选则全量导出。按钮 title 随勾选数动态提示
 const exportTitle = computed(() =>
-  selectedIds.value.size > 0 ? t`导出文件（仅导出选中的 ${selectedIds.value.size} 条）` : t`导出文件`,
+  selectedIds.value.size > 0 ? t`Export files (export only selected ${selectedIds.value.size} Article)` : t`Export File`,
 );
 
 const onExport = () => {
@@ -376,7 +376,7 @@ const onExport = () => {
   const entries = partial ? library.value.filter(e => selectedIds.value.has(e.id)) : library.value;
   // 空库/空勾选防护：空文件导回去再导入会"成功"却什么都不加（死亡循环），直接阻止
   if (entries.length === 0) {
-    toastr.warning(t`没有可导出的正则（库为空或未勾选任何条目）`);
+    toastr.warning(t`No regex to export (library empty or nothing checked)`);
     return;
   }
   const json = JSON.stringify({ version: 1, exportedAt: isoTimestamp(), partial, entries }, null, 2);
@@ -387,7 +387,7 @@ const onExport = () => {
   a.download = `choice-regex-library-${new Date().toISOString().slice(0, 10)}.json`;
   a.click();
   URL.revokeObjectURL(url);
-  toastr.success(partial ? t`已导出选中的 ${entries.length} 条正则` : t`已导出全部 ${entries.length} 条正则`);
+  toastr.success(partial ? t`Exported selected ${entries.length} rule` : t`Exported all ${entries.length} rule`);
 };
 
 // 导入入口改为 ImportSourceDialog（文件/粘贴双路径）：粘贴不经过文件选择器，
@@ -404,7 +404,7 @@ const onImportSource = ({ text }: { text: string; fileName: string }) => {
     const clean = text.replace(/^\uFEFF/, '').trim();
     data = JSON.parse(clean);
   } catch (err: any) {
-    importSourceError.value = t`JSON 解析失败：${err?.message ?? err}。请确认粘贴的是导出文件的完整内容（从 { 到 }）`;
+    importSourceError.value = t`JSON parsing failed:${err?.message ?? err}. Please make sure you paste the complete contents of the exported file (from { to })`;
     return;
   }
   try {
@@ -460,21 +460,21 @@ const onImportSource = ({ text }: { text: string; fileName: string }) => {
     if (imported.length === 0) {
       // 全部为重复项不是失败，单独提示，避免误报"导入失败"
       if (duplicated > 0) {
-        toastr.info(t`${duplicated} 条正则均已存在，未重复导入`);
+        toastr.info(t`${duplicated} All regular rules already exist and have not been imported repeatedly.`);
         showImportSource.value = false;
         return;
       }
-      throw new Error('未识别到可导入的正则条目');
+      throw new Error('No importable regular entries identified');
     }
     fs.regex_library.push(...imported);
-    const parts = [t`已导入 ${imported.length} 条正则`];
-    if (duplicated > 0) parts.push(t`去重 ${duplicated} 条重复项`);
-    if (invalid > 0) parts.push(t`跳过 ${invalid} 条无效项`);
+    const parts = [t`Imported ${imported.length} rule`];
+    if (duplicated > 0) parts.push(t`Remove duplicates ${duplicated} duplicates`);
+    if (invalid > 0) parts.push(t`skip ${invalid} Invalid items`);
     toastr.success(parts.join('，'));
     showImportSource.value = false; // 落库成功才关源弹窗
   } catch (err) {
     // 失败保持源弹窗打开：粘贴内容不丢失，红字显示具体原因供用户处理
-    importSourceError.value = t`导入失败：${err instanceof Error ? err.message : '无效文件'}`;
+    importSourceError.value = t`Import failed:${err instanceof Error ? err.message : 'Invalid file'}`;
   }
 };
 

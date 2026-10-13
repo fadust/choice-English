@@ -1,16 +1,16 @@
 <template>
   <div class="choice-config-bindings">
-    <span class="choice-config-bindings-label"> <i class="fa-solid fa-address-card"></i> {{ t`已绑定角色` }}: </span>
+    <span class="choice-config-bindings-label"> <i class="fa-solid fa-address-card"></i> {{ t`Character bound` }}: </span>
     <template v-if="boundChars.length > 0">
       <span v-for="bc in boundChars" :key="bc.chid" class="choice-bound-badge choice-bound-char">
         <i class="fa-solid fa-address-card"></i>
         {{ bc.name }}
-        <button class="choice-icon-btn choice-binding-unbind" :title="t`解除绑定`" @click.stop="onUnbind(bc.chid)">
+        <button class="choice-icon-btn choice-binding-unbind" :title="t`Unbind`" @click.stop="onUnbind(bc.chid)">
           <i class="fa-solid fa-link-slash"></i>
         </button>
       </span>
     </template>
-    <span v-else class="choice-bound-badge choice-bound-fallback">{{ t`未绑定角色` }}</span>
+    <span v-else class="choice-bound-badge choice-bound-fallback">{{ t`No character bound` }}</span>
   </div>
 </template>
 
@@ -83,11 +83,11 @@ const onUnbind = (chid: string) => {
   } else if (ch) {
     // 非当前角色：store 感知不到，需显式落盘；fire-and-forget，不阻塞下面的 UI 刷新
     scheduleCharacterPersist(ch, ok => {
-      if (!ok) toastr.warning(t`解绑保存失败，请重试`);
+      if (!ok) toastr.warning(t`Failed to save the unbinding; please retry`);
     });
   }
   revision.value++;
-  toastr.success(t`已解除绑定`);
+  toastr.success(t`Unbound`);
 };
 </script>
 

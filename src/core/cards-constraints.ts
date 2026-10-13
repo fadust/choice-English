@@ -21,6 +21,7 @@ import {
   type CardType,
 } from '@/type/settings';
 import type { DiceOutcome } from '@/core/dice';
+import { truncateWords, wordCount } from '@/util/words';
 
 // ── 效果硬限 ─────────────────────────────────────────────────────────────
 
@@ -198,7 +199,7 @@ export function clampEffect(e: CardEffect): CardEffect | null {
     case 'reroll':
       return e; // 次数恒 1
     case 'narrative':
-      return { kind: 'narrative', text: (e.text ?? '').slice(0, CARD_NARRATIVE_CHARS_LIMIT) };
+      return { kind: 'narrative', text: truncateWords(e.text ?? '', CARD_NARRATIVE_CHARS_LIMIT) };
     default:
       return null;
   }
@@ -266,64 +267,64 @@ export function validateCard(card: Card): { ok: boolean; errors: string[] } {
   const errors: string[] = [];
   // id/name 必须是字符串：这两字段会随卡定义持久化，Card schema 是 z.string()——
   // 弱模型幻觉出数字/对象形态时真值检查放行，下次加载 GlobalSettings 解析整体失败（扩展 init 崩）
-  if (typeof card.id !== 'string' || !card.id) errors.push('缺少 id 或 id 非字符串');
-  if (typeof card.name !== 'string' || !card.name) errors.push('缺少名称或名称非字符串');
-  if (!CARD_TYPES.includes(card.type)) errors.push(`类型非法：${String(card.type)}`);
-  if (!CARD_STARS.includes(card.star)) errors.push(`星级非法：${String(card.star)}`);
+  if (typeof card.id !== 'string' || !card.id) errors.push('Missing id or id non-string');
+  if (typeof card.name !== 'string' || !card.name) errors.push('Name is missing or name is not a string');
+  if (!CARD_TYPES.includes(card.type)) errors.push(`Illegal type:${String(card.type)}`);
+  if (!CARD_STARS.includes(card.star)) errors.push(`Star rating illegal:${String(card.star)}`);
   const trigger = card.trigger;
   if (!trigger || !TRIGGER_KINDS.includes(trigger.kind)) {
-    errors.push('触发条件缺失或 kind 非法');
+    errors.push('Trigger condition is missing or kind is illegal');
   } else {
     switch (trigger.kind) {
       case 'type':
-        if (!trigger.typeValue || !trigger.typeValue.trim()) errors.push('类型触发缺少 typeValue');
+        if (!trigger.typeValue || !trigger.typeValue.trim()) errors.push('Type trigger missing typeValue');
         break;
       case 'grade':
         if (!['conservative', 'balanced', 'bold'].includes(trigger.grade as string))
-          errors.push(`档位触发 grade 非法：${String(trigger.grade)}`);
+          errors.push(`Gear trigger grade illegal:${String(trigger.grade)}`);
         break;
       case 'demand':
       case 'roll':
         // max≥1：[0,0] 退化区间永不命中（rate/roll 恒 ≥1）——AI 漏填 min/max 时
         // schema 补默认 0/0，不拒会产出死卡占池
         if (!isRateRange(trigger.min) || !isRateRange(trigger.max) || trigger.min > trigger.max || trigger.max < 1)
-          errors.push(`${trigger.kind === 'demand' ? '需求' : '骰值'}区间非法（需 0-100、min≤max 且 max≥1）`);
+          errors.push(`${trigger.kind === 'demand' ? 'demand' : 'die value'}Illegal interval (requires 0-100, min≤max and max≥1)`);
         break;
       case 'outcome':
         if (!['success', 'fail', 'crit_success', 'crit_fail'].includes(trigger.outcome as string))
-          errors.push(`结局触发 outcome 非法：${String(trigger.outcome)}`);
+          errors.push(`Ending trigger outcome illegal:${String(trigger.outcome)}`);
         break;
     }
   }
-  if (!Array.isArray(card.effects) || card.effects.length === 0) errors.push('缺少效果');
-  else if (card.effects.length > 3) errors.push('效果数量超过 3 个');
-  const hasNarrative = card.narrative?.length > CARD_NARRATIVE_CHARS_LIMIT;
-  if (hasNarrative) errors.push(`叙事超过 ${CARD_NARRATIVE_CHARS_LIMIT} 字`);
+  if (!Array.isArray(card.effects) || card.effects.length === 0) errors.push('Missing effects');
+  else if (card.effects.length > 3) errors.push('The number of effects exceeds 3');
+  const hasNarrative = wordCount(card.narrative ?? '') > CARD_NARRATIVE_CHARS_LIMIT;
+  if (hasNarrative) errors.push(`Narrative exceeds ${CARD_NARRATIVE_CHARS_LIMIT} words`);
   for (const e of card.effects ?? []) {
     if (!e || !EFFECT_KINDS.includes(e.kind)) {
-      errors.push('存在非法效果项');
+      errors.push('There is an illegal effect item');
       continue;
     }
     switch (e.kind) {
       case 'roll_bonus':
-        if (Math.abs(e.amount) > CARD_ROLL_BONUS_LIMIT) errors.push(`骰值修正超过 ±${CARD_ROLL_BONUS_LIMIT}`);
+        if (Math.abs(e.amount) > CARD_ROLL_BONUS_LIMIT) errors.push(`Dice value correction exceeds ±${CARD_ROLL_BONUS_LIMIT}`);
         break;
       case 'demand_mod':
-        if (Math.abs(e.amount) > CARD_DEMAND_MOD_LIMIT) errors.push(`需求修正超过 ±${CARD_DEMAND_MOD_LIMIT}`);
+        if (Math.abs(e.amount) > CARD_DEMAND_MOD_LIMIT) errors.push(`Demand correction exceeds ±${CARD_DEMAND_MOD_LIMIT}`);
         break;
       case 'crit_window':
         if (Math.abs(e.success_delta) > CARD_CRIT_WINDOW_LIMIT || Math.abs(e.fail_delta) > CARD_CRIT_WINDOW_LIMIT)
-          errors.push(`彩蛋窗口修正超过 ±${CARD_CRIT_WINDOW_LIMIT}`);
+          errors.push(`Critical result range correction exceeded ±${CARD_CRIT_WINDOW_LIMIT}`);
         break;
       case 'outcome_convert':
-        if (!CONVERT_FROM.includes(e.from) || !CONVERT_TO.includes(e.to)) errors.push('结局转化方向非法');
-        else if (e.from === e.to) errors.push('结局转化方向无意义（from 与 to 相同）');
+        if (!CONVERT_FROM.includes(e.from) || !CONVERT_TO.includes(e.to)) errors.push('The direction of the ending change is illegal.');
+        else if (e.from === e.to) errors.push('The ending transformation direction is meaningless (from is the same as to)');
         break;
       case 'reroll':
-        if (!['fail', 'crit_fail'].includes(e.on)) errors.push('重掷触发结局非法');
+        if (!['fail', 'crit_fail'].includes(e.on)) errors.push('Re-roll triggering the ending is illegal');
         break;
       case 'narrative':
-        if (e.text.length > CARD_NARRATIVE_CHARS_LIMIT) errors.push(`叙事超过 ${CARD_NARRATIVE_CHARS_LIMIT} 字`);
+        if (wordCount(e.text) > CARD_NARRATIVE_CHARS_LIMIT) errors.push(`Narrative exceeds ${CARD_NARRATIVE_CHARS_LIMIT} words`);
         break;
     }
   }
@@ -337,7 +338,7 @@ export function validateCard(card: Card): { ok: boolean; errors: string[] } {
     trigger.max - trigger.min >= 80 &&
     isAllPositiveNumeric(card.effects ?? [])
   ) {
-    errors.push('宽触发区间的高星卡必须带代价或负向效果');
+    errors.push('High-star cards with a wide trigger range must have costs or negative effects.');
   }
   return { ok: errors.length === 0, errors: [...new Set(errors)] };
 }
@@ -353,7 +354,7 @@ export function checkDeckBudget(cards: Array<{ star: CardStar }>): { ok: boolean
   const errors: string[] = [];
   for (const [star, max] of Object.entries(CARD_STAR_BUDGET)) {
     const n = cards.filter(c => c.star === star).length;
-    if (n > max) errors.push(`${star}星卡最多 ${max} 张`);
+    if (n > max) errors.push(`At most ${max} ${star}-star cards can be equipped`);
   }
   return { ok: errors.length === 0, errors };
 }

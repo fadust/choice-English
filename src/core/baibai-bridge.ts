@@ -63,7 +63,7 @@ export function getBaiBaiSummary(): string | null {
       if (hist?.relativeText) return hist.relativeText;
     }
   } catch (e) {
-    console.warn('[Choice][BaiBaiBook] 获取摘要失败:', e);
+    console.warn('[Choice][BaiBaiBook] Failed to get summary:', e);
   }
   return null;
 }

@@ -1,5 +1,5 @@
 <template>
-  <span class="choice-drag-handle" :title="title" :aria-label="title ?? '拖动排序'">
+  <span class="choice-drag-handle" :title="title" :aria-label="title ?? 'Drag to reorder'">
     <i class="fa-solid fa-grip-vertical"></i>
   </span>
 </template>

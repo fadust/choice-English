@@ -212,11 +212,11 @@ function buildAttributionPrompt(
     {
       role: 'system',
       content:
-        '你是「行动选项归因器」。角色扮演中 AI 会参考候选条目生成行动选项，输出可能被语义改写、合并或自由发挥。请判断每条输出选项源自哪个候选条目（内容或方向派生自它），与任何候选都无关时归 null。',
+        'You are the Action Options Attributor. During role play, AI will refer to candidate entries to generate action options, and the output may be semantically rewritten, merged, or freely developed. Determine which candidate entry each output option originates from (from which its content or direction is derived), returning to null if it is not related to any candidate.',
     },
     {
       role: 'user',
-      content: `【候选条目】\n${candText}\n\n【输出选项】\n${optText}\n\n输出严格 JSON 数组，不要输出任何其他内容：\n[{"index": 0, "entryId": "候选 id 或 null"}, ...]\n每条选项都必须给出，entryId 只能取上述候选 id 之一或 null。`,
+      content: `【 candidate entry 】\n${candText}\n\n【 Output options 】\n${optText}\n\n output strictly the JSON array, do not output anything else: \n[{"index": 0, "entryId": "Candidate id or null"}, ...]\n Each option must be given, entryId Only one of the above candidates id or null can be taken.`,
     },
   ];
 }

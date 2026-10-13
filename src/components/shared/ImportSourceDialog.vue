@@ -3,19 +3,19 @@
     <div class="choice-importsrc-body">
       <button class="menu_button menu_button_default choice-importsrc-file-btn" @click="onPickFile">
         <i class="fa-solid fa-file-import"></i>
-        {{ t`选择 JSON 文件…` }}
+        {{ t`Choose JSON file…` }}
       </button>
       <div class="choice-importsrc-hint">
         {{
           pickedName
-            ? t`已选择文件：${pickedName}`
-            : t`若上方点击无反应（部分浏览器/套壳会限制文件选择器），可直接把导出的 JSON 文件内容原样粘贴到下面`
+            ? t`File selected:${pickedName}`
+            : t`If the button above does nothing (some browsers/wrappers restrict file pickers), paste the exported JSON content below as-is`
         }}
       </div>
       <textarea
         v-model="text"
         class="text_pole choice-importsrc-textarea"
-        :placeholder="t`把 JSON 内容粘贴到这里（支持 Ctrl+V）`"
+        :placeholder="t`Paste JSON content here (Ctrl+V supported)`"
         rows="8"
         spellcheck="false"
       ></textarea>
@@ -23,13 +23,13 @@
     </div>
     <template #footer>
       <button class="menu_button" @click="onClose">
-        {{ t`取消` }}
+        {{ t`Cancel` }}
       </button>
       <button v-if="showReplace" class="menu_button choice-importsrc-replace-btn" @click="onReplace">
-        {{ t`替换整个条目库…` }}
+        {{ t`Replace entire entry pool…` }}
       </button>
       <button class="menu_button menu_button_default" :disabled="!text.trim()" @click="onMerge">
-        {{ t`解析并合并导入` }}
+        {{ t`Parse & Merge Import` }}
       </button>
     </template>
   </ChoiceDialog>
@@ -84,13 +84,13 @@ const onPickFile = async () => {
 const onMerge = () => {
   const content = text.value.trim();
   if (!content) return;
-  emit('merge', { text: content, fileName: pickedName.value || '粘贴内容' });
+  emit('merge', { text: content, fileName: pickedName.value || 'Paste content' });
 };
 
 const onReplace = () => {
   const content = text.value.trim();
   if (!content) return;
-  emit('replace', { text: content, fileName: pickedName.value || '粘贴内容' });
+  emit('replace', { text: content, fileName: pickedName.value || 'Paste content' });
 };
 
 const onClose = () => emit('close');

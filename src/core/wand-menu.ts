@@ -37,7 +37,7 @@ export function initWandMenu() {
     } else if (pollCount >= MAX_POLLS) {
       clearInterval(interval);
       console.warn(
-        '[Choice] 魔法棒菜单容器 #extensionsMenu 未在 %d 秒内出现，已放弃注入',
+        '[Choice] Magic wand menu container #extensionsMenu did not appear within %d seconds, injection aborted',
         (MAX_POLLS * POLL_INTERVAL) / 1000,
       );
     }
@@ -52,7 +52,7 @@ function createWandEntry($menu: JQuery<HTMLElement>) {
   const $entry = $(`
     <div class="list-group-item flex-container flexGap5">
       <div class="fa-solid fa-chess extensionsMenuExtensionButton"></div>
-      <span>${t`行动选项`}</span>
+      <span>${t`Action Options`}</span>
     </div>
   `);
   $entry.on('click', () => {

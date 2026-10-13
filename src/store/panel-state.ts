@@ -103,7 +103,7 @@ export const usePanelStateStore = defineStore('panel-state', () => {
   /** 完整润色流程：读输入框 → 调 API → 存储结果 → 切换到润色视图 */
   async function triggerEnrich(input: string) {
     if (messageId.value === null) {
-      toastr.error(t`请先发送一条消息后再使用润色功能`);
+      toastr.error(t`Please send a message first before using the enrich feature`);
       return;
     }
     // 楼层快照贯穿全程：await 期间 resync 事件（切楼层/swipe）会改写 messageId/swipeId，
@@ -123,13 +123,13 @@ export const usePanelStateStore = defineStore('panel-state', () => {
       // （AbortError）已在 enrichUserInput 处原样上抛，不会走进这里
       if (options.length === 0) {
         activeView.value = 'options';
-        toastr.info(t`润色未能解析出选项`);
+        toastr.info(t`Enrich produced no parseable options`);
         return;
       }
       // 跨聊天防护：身份不符（切聊天/删楼重编号）丢弃，防写进别家楼层
       if (!isSameLayerIdentity(layerIdentity, targetMessageId)) {
         activeView.value = 'options';
-        toastr.info(t`聊天已切换，本次润色已丢弃`);
+        toastr.info(t`Chat switched — this enrichment was discarded`);
         return;
       }
       const generation: ChoiceGeneration = {
@@ -152,8 +152,8 @@ export const usePanelStateStore = defineStore('panel-state', () => {
     } catch (e) {
       activeView.value = 'options';
       if ((e as Error)?.name !== 'AbortError') {
-        console.error('[Choice] 润色失败', e);
-        toastr.error(t`润色失败: ${e instanceof Error ? e.message : '未知错误'}`);
+        console.error('[Choice] Polishing failed', e);
+        toastr.error(t`Polishing failed: ${e instanceof Error ? e.message : 'unknown error'}`);
       }
     } finally {
       enrichLoading.value = false;

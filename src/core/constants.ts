@@ -8,10 +8,10 @@
  */
 
 /** 空 category 归组的分组名（stats.ts entryGroups 分组键，持久化展示共用） */
-export const CATEGORY_UNGROUPED = '未分组';
+export const CATEGORY_UNGROUPED = 'Ungrouped';
 
 /** 已从 master_pool 删除的条目聚合组名（stats.ts entryGroups 末尾固定组） */
-export const CATEGORY_DELETED = '已删除';
+export const CATEGORY_DELETED = 'Deleted';
 
 /** 已删除组的唯一渲染键前缀：用户自定义分类可能与「已删除」重名，须前缀区分防 Vue key 冲突 */
 export const DELETED_GROUP_PREFIX = 'del:';

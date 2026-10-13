@@ -15,14 +15,14 @@ interface ThemeOption {
 }
 
 export const THEME_OPTIONS: readonly ThemeOption[] = [
-  { id: 'auto', label: '自动', kind: 'mode', swatch: '' },
-  { id: 'st', label: '跟随', kind: 'mode', swatch: '' },
-  { id: 'dark', label: '暗色', kind: 'mode', swatch: '' },
-  { id: 'light', label: '亮色', kind: 'mode', swatch: '' },
-  { id: 'dusk', label: '暮紫', kind: 'preset', swatch: '#9d7ce8' },
-  { id: 'sakura', label: '樱粉', kind: 'preset', swatch: '#b84f77' },
-  { id: 'celadon', label: '青瓷', kind: 'preset', swatch: '#4aa8a0' },
-  { id: 'honey', label: '蜜杏', kind: 'preset', swatch: '#96600f' },
+  { id: 'auto', label: 'Auto', kind: 'mode', swatch: '' },
+  { id: 'st', label: 'Follow', kind: 'mode', swatch: '' },
+  { id: 'dark', label: 'Dark', kind: 'mode', swatch: '' },
+  { id: 'light', label: 'Light', kind: 'mode', swatch: '' },
+  { id: 'dusk', label: 'Mu Zi', kind: 'preset', swatch: '#9d7ce8' },
+  { id: 'sakura', label: 'Sakura powder', kind: 'preset', swatch: '#b84f77' },
+  { id: 'celadon', label: 'celadon', kind: 'preset', swatch: '#4aa8a0' },
+  { id: 'honey', label: 'Honey apricot', kind: 'preset', swatch: '#96600f' },
 ] as const;
 
 /** 循环切换：返回 mode 在 THEME_OPTIONS 中的下一个值（末尾回绕到首个） */

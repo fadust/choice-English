@@ -133,10 +133,10 @@ export const ApplyHistoryEntry = z.object({
 export type ApplyHistoryEntry = z.infer<typeof ApplyHistoryEntry>;
 
 /** 润色人称默认值。选项提示词不再有隐藏的 person_style/option_rules 双来源。 */
-export const DEFAULT_ENRICH_PERSON_STYLE = '统一使用{{enrich_person}} {{user}} 为主语';
+export const DEFAULT_ENRICH_PERSON_STYLE = 'Use {{enrich_person}} {{user}} as the main subject uniformly';
 
 /** 选项/润色人称默认值（PromptConfig 与 PromptRules 共用，勿两处各自硬编码） */
-const DEFAULT_OPTION_PERSON = '第三人称';
+const DEFAULT_OPTION_PERSON = 'third person';
 
 export const PromptModule = z.object({
   id: z.string(),
@@ -199,21 +199,21 @@ export const PromptConfig = z
   .prefault(() => ({ id: '', name: '' }));
 export type PromptConfig = z.infer<typeof PromptConfig>;
 
-export const USER_INSTRUCTION_DEFAULT = `喵可呀，乖～帮主人看看现在这处境能做点什么，给主人备好恰好 {{count}} 条行动选项，不多不少哦。
+export const USER_INSTRUCTION_DEFAULT = `Meow, be good~ Help the master see what he can do in this situation, and prepare exactly {{count}} action options for the master, no more, no less.
 
-下面这几条是这一轮必须全部用上的（带 [规则: xxx] 的按它的写作约束来）：
+The following items must be used in this round (those with [Rule: xxx] are subject to its writing constraints):
 {{pinned}}
 
-这个池子里的比需要的多，你从中挑最贴合当下场景的方向（带 [规则: xxx] 标记的，选用了就守它的写作约束）：
+There are more in this pool than needed. You can choose the direction that best suits the current scene (marked with [Rule: xxx], if you choose it, you must abide by its writing constraints):
 {{pool_selected}}
 
-主人交代的要求：
-0. 以 <current_scene> 标签里的最新消息为准：选项必须是这场景此刻能干的具体行动，每条点名一个具体可见钩子（道具/NPC状态/台词），禁用"利用环境"这类泛词，别凭空蹦到之前的剧情节点。
-1. {{count}} 条选项在切入点、行动方式、情绪色彩、语域上得有明显差异，禁止换皮同质；每轮允许 0-1 条「不行动/撤离/改话题」选项。
-2. 每条选项由"标题"与"内容"组成，格式字数见系统规则；内容开头可用一个 emoji 表达情绪或意图（可选）。
-3. 候选条目比需要多：你挑最贴合当下场景的方向，每条候选至多用一次，最终恰好 {{count}} 条（固定条目必须全含）；要是候选方向都跟场景冲突，可以自己补贴合场景的，但优先用候选池。
-4. 输出顺序固定：先完整的 <thinking> 分析块，再 <options> 选项块，两者之外不许有别的字。
-5. <options> 内每行一条，条数必须和 {{count}} 一致。`;
+Requirements from the host:
+0. Based on the latest news in the <current_scene> tag: the options must be specific actions that can be performed in this scene at the moment. Each item must have a specific visible hook (props/NPC status/lines). General words such as "utilization environment" are prohibited, and do not jump to previous plot nodes out of thin air.
+1. {{count}} options must have obvious differences in entry point, mode of action, emotional color, and register. It is prohibited to change the same skin; 0-1 "no action/evacuate/change topic" options are allowed in each round.
+2. Each option consists of "title" and "content". For the number of words in the format, please refer to the system rules; an emoji can be used at the beginning of the content to express emotion or intention (optional).
+3. There are more candidate entries than needed: you choose the direction that best suits the current scene, and each candidate is used at most once, and in the end there are exactly {{count}} (fixed entries must include all); if the candidate directions conflict with the scene, you can subsidize the ones that fit the scene yourself, but give priority to the candidate pool.
+4. The output sequence is fixed: first the complete <thinking> analysis block, then the <options> option block, and no other words are allowed outside the two.
+5. Each line in <options> contains one item, and the number of items must be consistent with {{count}}.`;
 
 // 迁移用：冻结旧默认任务文本（6 点版，JSON user_instruction 改 meta-guide 前的原内容），
 // 供 v39 迁移比较"用户当前 user_instruction 是否为默认任务"以决定 option_task 回填策略。
@@ -234,30 +234,30 @@ export const LEGACY_USER_INSTRUCTION_TASK = `喵可呀，乖～帮主人看看�
 5. <options> 内每行一条，条数必须和 {{count}} 一致。`;
 
 // user_instruction 模块新默认内容（主人口吻对喵可说话，提示词导航地图）
-export const USER_INSTRUCTION_GUIDE = `喵可呀，主人先给你画张地图，接下来你会按顺序看到几块东西，主人说清楚每块你该怎么用：
+export const USER_INSTRUCTION_GUIDE = `Miaoke, the master will draw you a map first, and then you will see several pieces in order. The master will explain clearly how you should use each piece:
 
-先是一坨 <reference> 包着的故事背景——角色设定、世界书、人格。这是这个世界的事实底座，你的选项要贴合它；但里面可能夹着"输出变量""状态标签""按格式统计"这类给正文续写用的交代，跟选项没关系，你一律当没看见。
+First, there is a bunch of story background wrapped in <reference> - character settings, World Info, and personality. This is the factual base of this world, and your options must fit it; but there may be explanations such as "output variables", "status labels", and "statistics by format" for the continuation of the text. It has nothing to do with the options, and you will ignore them.
 
-接着是已发生的剧情（聊天记录），里面被 <current_scene> 包住的那条最新消息就是"当前场景"。你所有选项必须从这一刻能干的具体行动出发，别蹦回旧节点、别复述已经发生过的事。
+Next is the plot that has happened (chat history), and the latest message wrapped by <current_scene> in it is the "current scene". All your options must start from the specific actions you can take at this moment. Don't jump back to old nodes or repeat what has happened.
 
-历史后面主人会单独给你这一轮的条目池和数量要求——带 [规则: xxx] 的条目，你选用了就守它的写作约束。
+Later in the history, the host will give you the entry pool and quantity requirements for this round separately - entries with [Rule: xxx], you must abide by its writing restrictions if you choose it.
 
-再往后是三段系统规则，你照着来：选项写作规则（独立于正文、防越权、对白用『…』直接引语、每条点名场景钩子、整批有差异、不八股、情绪守分寸）；输出规格（恰好指定数量、每行"[标题]内容"、先 <thinking> 后 <options>、两者之外不许有别的字）；思考框架（先按步骤想一遍，全裹在 <thinking> 里，再进 <options>）。
+Next are three paragraphs of system rules, you should follow them: option writing rules (independent of the main text, preventing overstepping of authority, direct quotations of "..." for dialogue, hooks for each named scene, differences in the whole batch, no stereotypes, and emotional restraint); output specifications (exactly specified number, "[title] content" per line, first <thinking> and then <options>, no other words allowed outside the two); thinking framework (think through the steps first, and wrap it all up) <thinking>, then <options>).
 
-主人给你至高无上的权力——你怎么有趣怎么来，但别越权替别人演反应，选项只写行动本身。`;
+The master gives you supreme power - do whatever makes you interesting, but don't overstep your authority and act out reactions for others. The options only include the action itself.`;
 
 // option_task 模块 v39~v43 的默认内容（冻结快照）。v39 迁移建模块时仍用它兜底创建；
 // v44 起 JSON 默认已换中性新文本，本常量同时作为 v44 迁移对的 from 值（内容仍逐字等于
 // 旧默认才替换，用户自定义过的模块不受影响）。
-export const OPTION_TASK_DEFAULT = `喵可呀，乖～帮主人看看现在这处境能做点什么，给主人备好恰好 {{count}} 条行动选项，不多不少哦。
+export const OPTION_TASK_DEFAULT = `Meow, be good~ Help the master see what he can do in this situation, and prepare exactly {{count}} action options for the master, no more, no less.
 
-这一轮的素材（按主人的话办）：
-固定条目（必须全部用上；带 [规则: xxx] 的守其写作约束）：
+Materials for this round (according to the owner’s instructions):
+Fixed items (must use all; those with [Rule: xxx] are subject to writing restrictions):
 {{pinned}}
-候选条目池（比需要的多，挑最贴合当下场景的方向；带 [规则: xxx] 的选用了就守）：
+Candidate entry pool (more than needed, pick the direction that best suits the current scene; stick to the one with [Rule: xxx]):
 {{pool_selected}}
 
-数量硬约束：最终恰好 {{count}} 条，固定条目全含、候选每条至多用一次；候选方向都跟场景冲突时可自行补贴贴合场景的，但优先用候选池。其余场景钩子、格式、人称、自检规则见前面的系统消息，这里不重复。`;
+Hard quantity constraint: In the end, there will be exactly {{count}} entries, all fixed entries are included, and each candidate can be used at most once; when the candidate directions conflict with the scene, you can subsidize those that fit the scene, but the candidate pool will be used first. For the remaining scene hooks, formats, person names, and self-check rules, see the previous system messages and will not be repeated here.`;
 
 // JSON 导入的 role 推断为 string，与 PromptModule 的字面量联合不兼容；内容受构建期 JSON 约束，
 // 此处断言安全（若 JSON 里 role 拼错，运行时由 zod 解析/生成流程兜底）
@@ -1732,22 +1732,22 @@ export function createEmptyStats(): StatsSettings {
  *  schema 默认与 v67 迁移的 to 值共用这一份，防两处字面量漂移。 */
 export const SEND_TEMPLATE_DEFAULTS = {
   success_send_low_template:
-    '行动只是勉强够到了达标线：请描写略显吃力、磕磕绊绊的勉强达成，可留下一点小代价或遗憾，切勿渲染成轻松完胜。',
-  success_send_mid_low_template: '行动刚刚越过达标线、优势微弱：请描写略带惊险、险中取胜的过程，结果成立但谈不上从容。',
-  success_send_mid_template: '行动干净利落、顺理成章地完成：请描写过程平稳、结果扎实，不过于张扬也不拖泥带水。',
+    'The action just barely reaches the goal line: Please describe the barely achieved achievement with some difficulty and stumbling. You can leave a small price or regret, and do not exaggerate it as an easy victory.',
+  success_send_mid_low_template: 'The action has just crossed the target line and the advantage is weak: Please describe a slightly thrilling process of winning in a close call. The result is established but not easy to say.',
+  success_send_mid_template: 'Actions are completed neatly and logically: Please describe the process as smooth and the results as solid, without being too showy or sloppy.',
   success_send_mid_high_template:
-    '行动以出彩的姿态漂亮完成：请着重描写出色的发挥、加分的光彩，以及顺带带来的好处或余韵。',
-  success_send_high_template: '行动以碾压般的气势一举拿下：请着重描写压倒性的发挥、顺带的连锁好处，以及旁人的惊叹。',
-  fail_send_low_template: '行动几乎就要成了：请描写功亏一篑、与成功失之交臂的落差，以及那一线之差带来的懊恼与遗憾。',
+    'The action was completed with distinction: Focus on the outstanding performance, the brilliance of the extra points, and the incidental benefits or aftertaste.',
+  success_send_high_template: 'The action was won in one fell swoop with a crushing momentum: Please focus on describing the overwhelming performance, the incidental chain benefits, and the amazement of others.',
+  fail_send_low_template: 'The action is almost done: please describe the shortfall, the gap between success and the chagrin and regret caused by that narrow gap.',
   fail_send_mid_low_template:
-    '行动在半途受阻、差口气没能拿下：请描写临门一脚失手的不甘，以及这次失败留下的余地或伏笔。',
-  fail_send_mid_template: '结果与预期相左：请描写行动受阻、实际走向偏离设想的局面，以及由此带来的纠葛或麻烦。',
-  fail_send_mid_high_template: '行动明显失守、局面被动：请描写节节败退、落了下风的处境，以及随之扩大的损失。',
-  fail_send_high_template: '行动一败涂地：请描写灰头土脸的惨况、随之而来的损失或难堪，让角色切实承受这次失败的代价。',
+    'The action was blocked in the middle and failed to win: Please describe your unwillingness to fail at the last moment, and the room or foreshadowing left by this failure.',
+  fail_send_mid_template: 'The result is contrary to expectations: please describe the situation where the action is blocked, the actual direction deviates from the expectation, and the entanglements or troubles caused by it.',
+  fail_send_mid_high_template: 'The action was obviously lost and the situation was passive: Please describe the situation of losing ground and being at a disadvantage, as well as the ensuing losses.',
+  fail_send_high_template: 'The operation failed miserably: Describe the disgrace and subsequent loss or embarrassment so that the character truly feels the cost of the failure.',
   crit_success_send_template:
-    '行动以远超预期的完美方式达成：请着重描写惊艳的发挥、他人的赞叹，以及随之而来的额外好处。',
+    'The action was accomplished in a way that exceeded expectations: Focus on the amazing performance, the admiration of others, and the additional benefits that followed.',
   crit_fail_send_template:
-    '行动不仅失败，还引发了严重的事故或连锁反应：请描写灾难性的后果，并让角色为这一失误付出实实在在的代价。',
+    'The action not only failed, but also caused a serious accident or chain reaction: please describe the catastrophic consequences and make the character pay a real price for this mistake.',
 } as const;
 
 export const DiceSettings = z
@@ -1763,13 +1763,13 @@ export const DiceSettings = z
     /** 大失败阈值（上限）：掷出 ≤ 本值 → 大失败（默认 5，即底部 5%，1–99） */
     crit_fail_max: z.number().min(1).max(99).default(5).catch(5),
     /** send 模板为空时使用的回退文案，支持 {rate}（需求值）和 {roll}（点数）。 */
-    fail_template: z.string().default('【判定失败】'),
+    fail_template: z.string().default('【 judgment failed】'),
     /** 大成功回退文案，同样支持占位符。 */
-    crit_success_template: z.string().default('【大成功】'),
+    crit_success_template: z.string().default('【 great success】'),
     /** 大失败回退文案，同样支持占位符。 */
-    crit_fail_template: z.string().default('【大失败】'),
+    crit_fail_template: z.string().default('【 big failure】'),
     /** 成功后回退文案（v57：成功也注入演绎指令），同样支持占位符。 */
-    success_template: z.string().default('【判定成功】'),
+    success_template: z.string().default('【 determined successfully 】'),
     /** 隐形演绎指令（按程度档位拆分，v58；v67 起默认为纯演绎指令——结局/裁定对象/点数/需求/差值/程度
      *  由代码固定的结构化头部承载，纪律由固定尾注承载，模板只写演绎要求）：
      *  实际包在 HTML 注释中随消息发送/填入，聊天界面不可见；所有点击行为共用

@@ -7,7 +7,7 @@
             <i class="fa-solid fa-triangle-exclamation"></i>
             {{ title }}
           </span>
-          <button class="choice-cfdlg-close" :title="t`取消`" @click="emit('cancel')">&times;</button>
+          <button class="choice-cfdlg-close" :title="t`Cancel`" @click="emit('cancel')">&times;</button>
         </div>
 
         <div class="choice-cfdlg-body">

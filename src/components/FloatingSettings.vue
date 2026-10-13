@@ -17,21 +17,21 @@
         <div ref="headerEl" class="choice-floating-header" data-tour="settings-header">
           <span class="choice-floating-title">
             <i class="fa-solid fa-chess"></i>
-            {{ t`行动选项` }}
+            {{ t`Action Options` }}
           </span>
           <div class="choice-floating-head-actions">
             <button
               ref="guideBtn"
               class="choice-floating-head-btn"
-              :title="t`页面指引`"
+              :title="t`Page Guide`"
               @click="showGuide = !showGuide"
             >
               <i class="fa-solid fa-circle-question"></i>
             </button>
-            <button class="choice-floating-head-btn" :title="t`新手引导 / 功能课堂`" @click="openChapterMenu">
+            <button class="choice-floating-head-btn" :title="t`Onboarding / feature guide`" @click="openChapterMenu">
               <i class="fa-solid fa-graduation-cap"></i>
             </button>
-            <button class="choice-floating-close" :title="t`关闭`" @click="closeSettings">&times;</button>
+            <button class="choice-floating-close" :title="t`Close`" @click="closeSettings">&times;</button>
           </div>
         </div>
 

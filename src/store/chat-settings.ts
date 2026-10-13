@@ -45,8 +45,8 @@ export const useChatSettingsStore = defineStore('chat-settings', () => {
       migrateWorldInfo(parsed.world_info);
       return parsed;
     } catch (e) {
-      console.error('[Choice] 聊天设置解析失败，使用默认值', e);
-      toastr.error(t`聊天设置数据损坏，已使用默认值`);
+      console.error('[Choice] Chat settings parsing failed, using default values', e);
+      toastr.error(t`Chat settings data corrupted; defaults loaded`);
       return ChatSettings.parse({});
     }
   }

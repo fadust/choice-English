@@ -1,9 +1,9 @@
 <template>
   <div class="choice-api-editor">
-    <ChoiceSectionCard title="重试" icon="fa-solid fa-rotate">
+    <ChoiceSectionCard title="Try again" icon="fa-solid fa-rotate">
       <div class="choice-retry-fields">
         <label class="choice-field">
-          <span>{{ t`失败重试次数` }}</span>
+          <span>{{ t`Retry Count` }}</span>
           <input
             v-model.number="globalStore.settings.retry_count"
             type="number"
@@ -15,7 +15,7 @@
           />
         </label>
         <label class="choice-field">
-          <span>{{ t`重试间隔（秒）` }}</span>
+          <span>{{ t`Retry interval (seconds)` }}</span>
           <input
             v-model.number="globalStore.settings.retry_interval"
             type="number"
@@ -28,79 +28,79 @@
         </label>
       </div>
       <span class="choice-field-hint">{{
-        t`重试次数 0 = 不重试；网络错误或 5xx 时自动重试，两次重试之间按"重试间隔"等待（0 = 立即重试）`
+        t`Retries: 0 = no retry; network errors and 5xx retry automatically, waiting the "retry interval" between attempts (0 = retry immediately)`
       }}</span>
 
       <label class="choice-check">
         <input v-model="globalStore.settings.api_tool_choice_none" type="checkbox" />
-        {{ t`请求附带 tool_choice:none` }}
+        {{ t`Attach tool_choice: "none" to requests` }}
       </label>
       <span class="choice-field-hint">{{
-        t`绕过预设防截断类脚本（如 Aether）对生成请求的改写；该字段不会被转发给上游 API，一般无需关闭`
+        t`Bypasses rewriting of generation requests by anti-truncation preset scripts (e.g. Aether); the field is never forwarded to the upstream API — normally leave this on`
       }}</span>
     </ChoiceSectionCard>
 
-    <ChoiceSectionCard title="渠道与模型" icon="fa-solid fa-plug" default-open>
+    <ChoiceSectionCard title="Channels and models" icon="fa-solid fa-plug" default-open>
       <div class="choice-api-select-row">
         <label class="choice-field" style="flex: 1; min-width: 0">
-          <span>{{ t`生成 API` }}</span>
+          <span>{{ t`Generation API` }}</span>
           <select
             :value="selectedApiId"
             class="choice-select"
             @change="selectApi(($event.target as HTMLSelectElement).value)"
           >
             <option v-for="api in globalStore.settings.apis" :key="api.id" :value="api.id">
-              {{ api.name || t`<未命名>` }}
+              {{ api.name || t`<Unnamed>` }}
             </option>
           </select>
         </label>
         <button
           class="menu_button"
           style="flex-shrink: 0; margin-top: auto"
-          :title="t`新建 API 配置`"
+          :title="t`New API Config`"
           @click="createApi"
         >
-          <i class="fa-solid fa-plus"></i> {{ t`新建` }}
+          <i class="fa-solid fa-plus"></i> {{ t`New` }}
         </button>
         <button
           class="menu_button"
           style="flex-shrink: 0; margin-top: auto; color: var(--choice-color-error)"
           :disabled="!selectedApiId"
-          :title="t`删除当前 API`"
+          :title="t`Delete Current API`"
           @click="removeApi"
         >
-          <i class="fa-solid fa-trash-can"></i> {{ t`删除` }}
+          <i class="fa-solid fa-trash-can"></i> {{ t`Delete` }}
         </button>
       </div>
 
       <div class="choice-api-form" data-tour="api-form">
         <div class="choice-api-form-body">
           <div class="choice-api-name-row">
-            <input v-model="draftForm.name" class="choice-input" :placeholder="t`配置名称`" />
+            <input v-model="draftForm.name" class="choice-input" :placeholder="t`Config name`" />
           </div>
           <div class="choice-api-url-row" data-tour="api-url">
-            <input v-model="draftForm.apiurl" class="choice-input" :placeholder="t`API 地址`" />
+            <input v-model="draftForm.apiurl" class="choice-input" :placeholder="t`API URL`" />
           </div>
           <div class="choice-api-key-row">
-            <input v-model="draftForm.key" class="choice-input" type="password" :placeholder="t`API 密钥`" />
+            <input v-model="draftForm.key" class="choice-input" type="password" :placeholder="t`API Key`" />
           </div>
           <div class="choice-model-row">
             <input
               v-model="draftForm.model"
               class="choice-input"
-              :placeholder="t`模型名称`"
+              :placeholder="t`Model`"
               @focus="modelDropdownOpen = true"
               @blur="onModelBlur"
             />
             <button
               class="menu_button choice-fetch-btn"
               :disabled="fetching"
-              :title="t`从 API 拉取可用模型列表`"
+              :title="t`Fetch available models from API`"
               @click="fetchModels"
             >
               <i v-if="fetching" class="fa-solid fa-spinner fa-spin"></i>
               <i v-else class="fa-solid fa-cloud-arrow-down"></i>
-              {{ fetching ? '' : t`拉取` }}
+              {{ fetching ? '' : t`Fetch` }}
             </button>
           </div>
           <div v-if="modelDropdownOpen && modelList.length > 0" class="choice-model-list">
@@ -119,7 +119,7 @@
           </div>
           <div class="choice-api-row">
             <label class="choice-field">
-              <span>{{ t`温度` }}</span>
+              <span>{{ t`Temperature` }}</span>
               <input
                 v-model.number="draftForm.temperature"
                 type="number"
@@ -131,7 +131,7 @@
               />
             </label>
             <label class="choice-field">
-              <span>{{ t`最大 Token` }}</span>
+              <span>{{ t`Max Tokens` }}</span>
               <input
                 v-model.number="draftForm.max_tokens"
                 type="number"
@@ -141,7 +141,7 @@
               />
             </label>
             <label class="choice-field">
-              <span>{{ t`超时(秒)` }}</span>
+              <span>{{ t`Timeout (s)` }}</span>
               <input
                 v-model.number="draftForm.timeout"
                 type="number"
@@ -154,9 +154,9 @@
           </div>
           <div class="choice-api-preset-row">
             <label class="choice-field" style="flex: 1; min-width: 0">
-              <span>{{ t`服务商` }}</span>
+              <span>{{ t`Provider` }}</span>
               <select v-model="selectedPresetId" class="choice-select" @change="onSelectPreset">
-                <option value="">{{ t`自定义（手动填写）` }}</option>
+                <option value="">{{ t`Custom (manual entry)` }}</option>
                 <option v-for="preset in API_PRESETS" :key="preset.id" :value="preset.id">{{ preset.name }}</option>
               </select>
             </label>
@@ -166,13 +166,13 @@
             <div class="choice-api-checks">
               <label class="choice-check">
                 <input v-model="draftForm.stream" type="checkbox" />
-                {{ t`流式` }}
+                {{ t`Stream` }}
               </label>
             </div>
             <input
               v-model="draftForm.exclude_params"
               class="choice-input"
-              :placeholder="t`排除参数`"
+              :placeholder="t`Exclude Params`"
               style="flex: 1; min-width: 0"
             />
           </div>
@@ -180,8 +180,8 @@
       </div>
 
       <div class="choice-api-bottom-actions">
-        <button class="menu_button" data-tour="api-save" @click="save">{{ t`保存` }}</button>
-        <button class="menu_button" @click="reset">{{ t`取消` }}</button>
+        <button class="menu_button" data-tour="api-save" @click="save">{{ t`Save` }}</button>
+        <button class="menu_button" @click="reset">{{ t`Cancel` }}</button>
       </div>
     </ChoiceSectionCard>
   </div>
@@ -267,11 +267,11 @@ const createApi = () => {
 const fetchModels = async () => {
   const helper = window.TavernHelper;
   if (!helper) {
-    toastr.warning(t`酒馆助手未启用,无法拉取模型列表`);
+    toastr.warning(t`JS-Slash-Runner not found. Cannot fetch model list.`);
     return;
   }
   if (!draftForm.value.apiurl) {
-    toastr.warning(t`请先填写 API 地址`);
+    toastr.warning(t`Please fill in the API URL first`);
     return;
   }
   fetching.value = true;
@@ -282,12 +282,12 @@ const fetchModels = async () => {
     });
     modelList.value = models;
     if (models.length === 0) {
-      toastr.info(t`模型列表为空`);
+      toastr.info(t`Model list is empty`);
     } else {
-      toastr.success(t`拉取到 ${models.length} 个模型`);
+      toastr.success(t`Pull to ${models.length} models`);
     }
   } catch (error) {
-    toastr.error(t`拉取模型列表失败:${error instanceof Error ? error.message : String(error)}`);
+    toastr.error(t`Failed to pull model list:${error instanceof Error ? error.message : String(error)}`);
   } finally {
     fetching.value = false;
   }
@@ -307,7 +307,7 @@ const removeApi = () => {
   syncPresetFromUrl();
   modelList.value = [];
   modelDropdownOpen.value = false;
-  toastr.success(t`已删除`);
+  toastr.success(t`Deleted`);
 };
 
 // 数字输入失焦钳制：v-model.number 对清空/负值不设防——retry_count 负数会让 api-client
@@ -321,14 +321,14 @@ const save = () => {
   const normalized = { ...draftForm.value, apiurl: normalizeApiUrl(draftForm.value.apiurl) };
   // 空 apiurl 会静默落到酒馆主 OpenAI 配置（主 key 被副功能消耗）、空 model 发出无模型请求
   if (!normalized.apiurl.trim() || !normalized.model.trim()) {
-    toastr.warning(t`请先填写 API 地址与模型名`);
+    toastr.warning(t`Fill in the API address and model name first`);
     return;
   }
   const dupName = normalized.name.trim();
   if (dupName) {
     const duplicate = globalStore.settings.apis.find(a => a.id !== selectedApiId.value && a.name.trim() === dupName);
     if (duplicate) {
-      toastr.warning(t`API 名称「${dupName}」已存在`);
+      toastr.warning(t`API name "${dupName}” already exists`);
       return;
     }
   }
@@ -344,7 +344,7 @@ const save = () => {
     selectedApiId.value = newApi.id;
     draftForm.value = klona(newApi);
   }
-  toastr.success(t`已保存`);
+  toastr.success(t`Saved`);
 };
 
 const reset = () => {

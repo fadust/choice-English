@@ -29,7 +29,7 @@ export async function enrichUserInput(input: string): Promise<string[]> {
   const cs = useChatSettingsStore(pinia);
   const api = resolveCustomApi(gs.settings.active_api_id, gs.settings.apis);
   if (!api) {
-    throw new Error('未配置生成 API');
+    throw new Error('Not configured to build API');
   }
 
   const sourceModules = gs.sortedEnabledModules.length > 0 ? gs.sortedEnabledModules : DEFAULT_MODULES;
@@ -56,9 +56,9 @@ export async function enrichUserInput(input: string): Promise<string[]> {
     minChars: pr.enrich_min_chars,
     maxChars: pr.enrich_max_chars,
     enrichPersonStyle:
-      pr.enrich_person_style || (pr.enrich_person ? `统一使用${pr.enrich_person} {{user}} 为主语` : ''),
-    optionPerson: pr.option_person || '第三人称',
-    enrichPerson: pr.enrich_person || '第三人称',
+      pr.enrich_person_style || (pr.enrich_person ? `Use uniformly${pr.enrich_person} {{user}} is the subject` : ''),
+    optionPerson: pr.option_person || 'third person',
+    enrichPerson: pr.enrich_person || 'third person',
     prevOptions: '',
   };
 
@@ -97,7 +97,7 @@ export async function enrichUserInput(input: string): Promise<string[]> {
     // 取消（AbortError）原样上抛、不 console.error：正常路径由调用方 triggerEnrich 的
     // AbortError 分支静默处理；此前吞掉返回 [] 会让调用方把空代落库污染润色翻页
     if ((e as Error)?.name !== 'AbortError') {
-      console.error('[Choice] 润色失败', e);
+      console.error('[Choice] Polishing failed', e);
     }
     throw e;
   } finally {

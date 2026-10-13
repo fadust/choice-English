@@ -30,7 +30,7 @@ const OPTION_TYPE_BRACKET_RE = /^[[【]([^\]】]+)[\]】]\s*/;
 // 需求值段受控形态：可选「成功率」前缀 + 1-3 位整数 + 可选 %（容忍 AI 沿旧习惯输出
 // 「成功率 70%」「70」等变体，v56 起含义为需求值）。取数值后 clamp [0,100]——AI 输出
 // 150% 视为 100。
-const RATE_SEGMENT_RE = /^(?:成功率)?\s*(\d{1,3})\s*%?$/i;
+const RATE_SEGMENT_RE = /^(?:成功率|success rate|difficulty|target|dc)?\s*(\d{1,3})\s*%?$/i;
 
 const findOptionSep = (text: string): { idx: number; len: number } | null => {
   const m = text.match(OPTION_SEP_RE);
@@ -44,6 +44,9 @@ export type OptionStyleGrade = 'conservative' | 'balanced' | 'bold';
 /** 受控档位词表 → 枚举。与 choice-prompts-optimized.json core_rules 输出格式里的
  *  三档（保守/平衡/大胆）字面一致，两处同步改；词表外一律不算档位 */
 const STYLE_GRADE_WORDS: Readonly<Record<string, OptionStyleGrade>> = {
+  conservative: 'conservative',
+  balanced: 'balanced',
+  bold: 'bold',
   保守: 'conservative',
   平衡: 'balanced',
   大胆: 'bold',
@@ -80,7 +83,7 @@ const splitBracketParts = (
       unrecognized = true;
       break;
     }
-    const grade = STYLE_GRADE_WORDS[seg];
+    const grade = STYLE_GRADE_WORDS[seg.toLowerCase()];
     if (grade) {
       // 已在档位段之后再出现档位词 → 双重标注，视为未识别整体回退
       if (style !== null) {

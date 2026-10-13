@@ -19,10 +19,10 @@
 export type DiceOutcome = 'crit_success' | 'success' | 'fail' | 'crit_fail';
 /** 判定结局 → 中文名（注释头部「结局」键的单一来源；cards-meta 的 CARD_OUTCOME_LABEL 从此展开） */
 export const DICE_OUTCOME_LABEL: Readonly<Record<DiceOutcome, string>> = {
-  crit_success: '大成功',
-  success: '成功',
-  fail: '失败',
-  crit_fail: '大失败',
+  crit_success: 'Critical success',
+  success: 'Success',
+  fail: 'Failed',
+  crit_fail: 'Critical failure',
 };
 /** 判定方向：high = 点数 ≥ 目标=成功（默认，点数越大越好）；low = 点数 ≤ 目标成功（COC 百分位） */
 export type DiceRollMode = 'high' | 'low';
@@ -131,16 +131,16 @@ export function degreeBucket(
   margin: number,
   ctx: DegreeContext,
 ): { tier: DiceDegreeTier | null; word: string } {
-  if (outcome === 'crit_success') return { tier: null, word: '惊艳无比' };
-  if (outcome === 'crit_fail') return { tier: null, word: '灾难性失败' };
+  if (outcome === 'crit_success') return { tier: null, word: 'Amazing' };
+  if (outcome === 'crit_fail') return { tier: null, word: 'catastrophic failure' };
   const { success, fail } = degreeSpace(ctx.mode, ctx.rate, ctx.bounds);
   const pass = outcome === 'success';
   const p = pass ? degreeRatio(margin, success) : degreeRatio(margin, fail);
-  if (p >= DEGREE_P_HIGH) return pass ? { tier: 'high', word: '势如破竹' } : { tier: 'high', word: '彻底落败' };
-  if (p >= DEGREE_P_MID_HIGH) return pass ? { tier: 'mid_high', word: '漂亮完胜' } : { tier: 'mid_high', word: '溃败' };
-  if (p >= DEGREE_P_MID) return pass ? { tier: 'mid', word: '顺利达成' } : { tier: 'mid', word: '事与愿违' };
-  if (p >= DEGREE_P_LOW) return pass ? { tier: 'mid_low', word: '险胜' } : { tier: 'mid_low', word: '功亏一篑' };
-  return pass ? { tier: 'low', word: '勉强得手' } : { tier: 'low', word: '差点成功' };
+  if (p >= DEGREE_P_HIGH) return pass ? { tier: 'high', word: 'Sweeping victory' } : { tier: 'high', word: 'Total defeat' };
+  if (p >= DEGREE_P_MID_HIGH) return pass ? { tier: 'mid_high', word: 'Clean win' } : { tier: 'mid_high', word: 'Rout' };
+  if (p >= DEGREE_P_MID) return pass ? { tier: 'mid', word: 'Smoothly done' } : { tier: 'mid', word: 'Backfired' };
+  if (p >= DEGREE_P_LOW) return pass ? { tier: 'mid_low', word: 'Narrow win' } : { tier: 'mid_low', word: 'Fell short at the finish' };
+  return pass ? { tier: 'low', word: 'Barely made it' } : { tier: 'low', word: 'Just missed' };
 }
 
 /** 程度词（注释头部/摘要共用）：按结局 + margin + 判定上下文给出。
@@ -167,7 +167,7 @@ export type DiceTemplates = {
  *  写进正文破坏沉浸、防从历史 few-shot 学会模仿注释格式后在叙述里输出自己的注释。
  *  buildDiceMarker 与 option-action 的 wrapCardNarratives 共用。 */
 export const DICE_MARKER_TAIL =
-  '纪律：本回合正文中不得提及骰子、点数、需求值或「判定」字样；不得模仿或输出任何 HTML 注释。';
+  'Discipline: No mention of dice, points, requirements, or the word "judgment" in the text of this round; no imitation or output of any HTML comments.';
 
 /** 渲染隐形演绎注释：HTML 注释包住模板文本，AI 读得到、酒馆聊天渲染不可见。
  *  模板优先取 send 版，为空回退 fallback 版；fallback 也为空则整体返回空串
@@ -210,8 +210,8 @@ export function buildDiceMarker(
   }
   if (!tpl.trim()) return '';
   const degree = marginDegree(outcome, margin, degreeCtx);
-  const titleSeg = optionTitle ? `｜裁定对象 ${optionTitle}` : '';
-  const header = `【骰子裁定·系统注入，玩家不可见】结局 ${DICE_OUTCOME_LABEL[outcome]}${titleSeg}｜点数 ${roll}｜需求 ${rate}｜差值 ${margin > 0 ? '+' : ''}${margin}｜程度 ${degree}`;
+  const titleSeg = optionTitle ? `｜Action ${optionTitle}` : '';
+  const header = `【Dice ruling · system context, hidden from the player】 Outcome ${DICE_OUTCOME_LABEL[outcome]}${titleSeg}｜Roll ${roll}｜Target ${rate}｜Margin ${margin > 0 ? '+' : ''}${margin}｜Result ${degree}`;
   const body = tpl
     .replace(/\{rate\}/g, String(rate))
     .replace(/\{roll\}/g, String(roll))

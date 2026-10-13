@@ -14,7 +14,7 @@
     <div class="choice-panel-header" @click="panelStore.setCollapsed(!collapsed)">
       <span class="choice-panel-title" :class="{ 'choice-title--toggleable': hasEnrichHistory }" @click="onTitleClick">
         <i :class="activeView === 'enrich' ? 'fa-solid fa-pen-to-square' : 'fa-solid fa-chess'"></i>
-        {{ activeView === 'enrich' ? t`输入润色` : t`行动选项` }}
+        {{ activeView === 'enrich' ? t`Input Enrich` : t`Action Options` }}
         <i v-if="hasEnrichHistory" class="fa-solid fa-arrow-right-arrow-left choice-view-swap-icon"></i>
         <span v-if="hasEnrichHistory && activeView === 'options'" class="choice-view-badge">{{
           enrichGenerations.length
@@ -25,7 +25,7 @@
         <button
           v-if="!adjusting && activeView === 'enrich' && enrichLoading"
           class="choice-tool-btn choice-tool-btn--main"
-          :title="t`取消润色`"
+          :title="t`Cancel enrich`"
           @click="onCancelEnrich"
         >
           <i class="fa-solid fa-stop"></i>
@@ -34,7 +34,7 @@
         <button
           v-if="!adjusting && activeView === 'enrich' && !enrichLoading"
           class="choice-tool-btn choice-tool-btn--main"
-          :title="t`生成润色`"
+          :title="t`Generate Enrich`"
           @click="onTriggerEnrich"
         >
           <i class="fa-solid fa-wand-magic-sparkles"></i>
@@ -43,7 +43,7 @@
         <button
           v-if="!adjusting && activeView === 'options'"
           class="choice-tool-btn choice-tool-btn--main"
-          :title="isGenerating ? t`取消生成` : t`生成选项`"
+          :title="isGenerating ? t`Cancel generation` : t`Generate options`"
           @click="onToggle"
         >
           <i :class="isGenerating ? 'fa-solid fa-stop' : 'fa-solid fa-wand-magic-sparkles'"></i>
@@ -54,7 +54,7 @@
           v-if="!adjusting"
           class="choice-tool-btn"
           :class="{ 'choice-tool-btn--active': locked }"
-          :title="locked ? t`解锁面板状态` : t`锁定面板状态（不再自动展开/收起）`"
+          :title="locked ? t`Unlock panel state` : t`Lock panel state (no auto expand/collapse)`"
           @click="onToggleLock"
         >
           <i :class="locked ? 'fa-solid fa-lock' : 'fa-solid fa-lock-open'"></i>
@@ -70,7 +70,7 @@
           v-if="!compact"
           class="choice-tool-btn choice-tool-btn--adjust"
           :class="{ 'choice-tool-btn--active': adjusting }"
-          :title="adjusting ? t`完成调整` : t`调整面板大小与字号`"
+          :title="adjusting ? t`Done adjusting` : t`Adjust panel size & font`"
           @click="onToggleAdjust"
         >
           <i class="fa-solid fa-sliders"></i>
@@ -78,7 +78,7 @@
         <!-- 设置入口：恒在工具区最右（与生成/锁定/主题并列），点开插件设置面板。
              与悬浮球/魔棒菜单共用 openSettings 同一开关；tools 容器已 @click.stop，
              不会误触标题栏折叠 -->
-        <button v-if="!adjusting" class="choice-tool-btn" :title="t`打开设置`" @click="onOpenSettings">
+        <button v-if="!adjusting" class="choice-tool-btn" :title="t`Open Settings`" @click="onOpenSettings">
           <i class="fa-solid fa-gear"></i>
         </button>
       </div>
@@ -92,11 +92,11 @@
     <div v-if="adjusting && !compact" class="choice-panel-adjust-bar">
       <div
         class="choice-panel-adjust-grip"
-        :title="t`向上拖面板往上变高，向下拖变矮（底部固定）`"
+        :title="t`Drag up to grow the panel upward, down to shrink (bottom anchored)`"
         @pointerdown.stop.prevent="onResizeStart"
       >
         <i class="fa-solid fa-arrows-up-down"></i>
-        <span class="choice-panel-adjust-hint">{{ t`面板高度` }}：{{ heightHint }}</span>
+        <span class="choice-panel-adjust-hint">{{ t`Panel height` }}：{{ heightHint }}</span>
       </div>
       <div class="choice-panel-adjust-font choice-seg">
         <button
@@ -122,61 +122,61 @@
           <button
             class="choice-seg-btn"
             :class="{ active: behavior === 'send' }"
-            :title="t`点击选项后发送消息`"
+            :title="t`Send message after clicking an option`"
             @click="behavior = 'send'"
           >
-            {{ t`发送` }}
+            {{ t`Send` }}
           </button>
           <button
             class="choice-seg-btn"
             :class="{ active: behavior === 'fill' }"
-            :title="t`点击选项后填入输入框`"
+            :title="t`Fill input box after clicking an option`"
             @click="behavior = 'fill'"
           >
-            {{ t`覆盖` }}
+            {{ t`Overwrite` }}
           </button>
           <button
             class="choice-seg-btn"
             :class="{ active: behavior === 'append' }"
-            :title="t`点击选项后追加到输入框末尾`"
+            :title="t`Append to input box after clicking an option`"
             @click="behavior = 'append'"
           >
-            {{ t`尾附` }}
+            {{ t`Append` }}
           </button>
           <button
             class="choice-seg-btn"
             :class="{ active: behavior === 'insert' }"
-            :title="t`点击选项后插入到输入框光标处`"
+            :title="t`Insert at the input box cursor after clicking an option`"
             @click="behavior = 'insert'"
           >
-            {{ t`插入` }}
+            {{ t`Insert` }}
           </button>
           <!-- 分页器移出头部，贴行为栏最右：仅多组结果时显示（1/1 纯噪音）。
                enrich 视图无独立分页行——行为栏在两视图共用，按视图切换右侧分页组，
                头部两视图统一只剩 [生成][锁][调色板] -->
           <span v-if="activeView === 'options' && generations.length > 1" class="choice-bar-pager">
-            <button class="choice-tool-btn" :disabled="currentIndex <= 0" title="上一组" @click="onPrev">
+            <button class="choice-tool-btn" :disabled="currentIndex <= 0" title="Previous" @click="onPrev">
               <i class="fa-solid fa-chevron-left"></i>
             </button>
             <span class="choice-panel-pager">{{ currentIndex + 1 }}/{{ generations.length }}</span>
             <button
               class="choice-tool-btn"
               :disabled="currentIndex >= generations.length - 1"
-              title="下一组"
+              title="Next"
               @click="onNext"
             >
               <i class="fa-solid fa-chevron-right"></i>
             </button>
           </span>
           <span v-else-if="activeView === 'enrich' && enrichGenerations.length > 1" class="choice-bar-pager">
-            <button class="choice-tool-btn" :disabled="enrichCurrentIndex <= 0" title="上一组" @click="onEnrichPrev">
+            <button class="choice-tool-btn" :disabled="enrichCurrentIndex <= 0" title="Previous" @click="onEnrichPrev">
               <i class="fa-solid fa-chevron-left"></i>
             </button>
             <span class="choice-panel-pager">{{ enrichCurrentIndex + 1 }}/{{ enrichGenerations.length }}</span>
             <button
               class="choice-tool-btn"
               :disabled="enrichCurrentIndex >= enrichGenerations.length - 1"
-              title="下一组"
+              title="Next"
               @click="onEnrichNext"
             >
               <i class="fa-solid fa-chevron-right"></i>
@@ -209,7 +209,7 @@
                   :key="pc.id"
                   class="choice-card-tag choice-card-tag--preview"
                   :class="`choice-card-star--${pc.star}`"
-                  :title="`${pc.name}：${t`判定可触发`} · ${pc.effects.map(effectSummary).join('·')}`"
+                  :title="`${pc.name}：${t`Check can trigger`} · ${pc.effects.map(effectSummary).join('·')}`"
                   ><i class="fa-solid fa-bolt"></i>{{ pc.name }}</span
                 ></span
               ></template
@@ -231,27 +231,27 @@
               v-if="isPending(index)"
               class="choice-roll-reroll"
               role="button"
-              :title="t`重掷`"
+              :title="t`Reroll`"
               @click.stop="onReroll(option, index)"
               ><i class="fa-solid fa-rotate"></i></span
           ></span>
         </button>
         <div v-if="!compact && activeView === 'options' && underflow" class="choice-panel-hint">
-          {{ t`本轮选项少于设定数量` }}
+          {{ t`Fewer options than configured count` }}
         </div>
       </template>
       <!-- 空态防闪：此前由 body 内 loading 分支挡住，动效迁移到标题栏后必须自守——
            生成中不得闪现"点击生成按钮获取选项" -->
       <div v-else-if="!isGenerating && !enrichLoading" class="choice-panel-empty">
         <template v-if="activeView === 'enrich'">
-          {{ t`点击"生成润色"按钮或在输入框中输入文字后点击润色图标` }}
+          {{ t`Click "Generate Enrich" or type text and click the enrich icon` }}
         </template>
         <template v-else>
-          <div>{{ t`点击生成按钮获取选项` }}</div>
+          <div>{{ t`Click the "Generate" button to have the AI create action options based on the current config.` }}</div>
           <!-- API 未解析到时把空状态升级成解决入口：直达设置面板的 API 配置步 -->
           <button v-if="!apiReady" class="menu_button choice-panel-empty-action" @click="openApiOnboarding">
             <i class="fa-solid fa-plug"></i>
-            {{ t`去配置 API` }}
+            {{ t`Go configure the API` }}
           </button>
         </template>
       </div>
@@ -259,7 +259,7 @@
         v-if="!compact && activeView === 'options' && !isGenerating && visibleOptions.length === 0"
         class="choice-panel-hint"
       >
-        {{ t`生成前请确保已在设置中配置条目池和 API` }}
+        {{ t`Before generating, make sure you have configured the entry pool and API in Settings.` }}
       </div>
     </div>
   </div>
@@ -363,10 +363,10 @@ const panelAdjustStyle = computed(() => {
 });
 
 const adjustFontOptions = [
-  { value: 'auto' as const, label: t`自动`, tip: t`跟随全局字体档（不额外缩放）` },
-  { value: 'small' as const, label: t`小`, tip: t`选项面板内小号文字，手机端更紧凑` },
-  { value: 'medium' as const, label: t`中`, tip: t`选项面板内默认文字大小` },
-  { value: 'large' as const, label: t`大`, tip: t`选项面板内大号文字，阅读更舒适` },
+  { value: 'auto' as const, label: t`Auto`, tip: t`Follow the global font size (no extra scaling)` },
+  { value: 'small' as const, label: t`Small`, tip: t`Smaller text in the option panel, more compact on phones` },
+  { value: 'medium' as const, label: t`Medium`, tip: t`Default text size in the option panel` },
+  { value: 'large' as const, label: t`Large`, tip: t`Larger text in the option panel, easier to read` },
 ];
 const isAdjustFontActive = (v: (typeof adjustFontOptions)[number]['value']) =>
   v === 'auto'
@@ -383,7 +383,7 @@ const applyAdjustFont = (v: (typeof adjustFontOptions)[number]['value']) => {
 // 当前面板高度提示：0 = 自动（45/40dvh 上限），>0 = 已固化的 px
 const heightHint = computed(() => {
   const h = gs.settings.ui.option_panel_height;
-  return h > 0 ? `${h}px` : t`自动`;
+  return h > 0 ? `${h}px` : t`Auto`;
 });
 
 // ── 选项面板正文独立字号档（ui.option_font_size / option_font_size_auto）─────────
@@ -466,9 +466,9 @@ const formulaOf = (option: ChoiceOption): string | null =>
 // v67 徽标 tooltip：骰式标骰式+难度代理；普通徽标按判定方向说明成功条件（COC 与 DND 语义相反）
 const rateTitle = (option: ChoiceOption): string => {
   const formula = formulaOf(option);
-  if (formula) return `${t`骰式`} ${formula}（${t`难度`} ${rateOf(option)}）`;
-  if (gs.settings.dice.low_roll) return t`COC：掷出 ≤ 该值才算成功`;
-  return t`DND：掷出 ≥ 该值才算成功`;
+  if (formula) return `${t`Dice expr`} ${formula}（${t`Difficulty`} ${rateOf(option)}）`;
+  if (gs.settings.dice.low_roll) return t`COC: roll ≤ this value to succeed`;
+  return t`DND: roll ≥ this value to succeed`;
 };
 // 徽标语义色按需求值分档：high 难度制（≥70 难=橙 / 40-69 蓝 / <40 易=绿，v56）；
 // low（COC）需求值 = 能力值（值越大越易），色档随方向镜像（<40 难 / ≥70 易）——
@@ -520,7 +520,7 @@ const keyOf = (index: number): string => `${generationId.value}:${index}`;
 const rollOf = (index: number): RollResult | null => rollResults.value.get(keyOf(index)) ?? null;
 const isPending = (index: number): boolean => pendingApply.value.has(keyOf(index));
 const rollLabel = (o: DiceOutcome): string =>
-  o === 'crit_success' ? t`大成功` : o === 'crit_fail' ? t`大失败` : o === 'success' ? t`成功` : t`失败`;
+  o === 'crit_success' ? t`Critical success` : o === 'crit_fail' ? t`Critical failure` : o === 'success' ? t`Success` : t`Failed`;
 // 带符号差值：正数加 +、0 显示 0（恰好达标），负数为 −
 const fmtMargin = (m: number): string => (m > 0 ? `+${m}` : String(m));
 const rollChipText = (r: RollResult): string => `${rollLabel(r.outcome)} ${fmtMargin(r.margin)}`;
@@ -529,7 +529,7 @@ const rollChipText = (r: RollResult): string => `${rollLabel(r.outcome)} ${fmtMa
 const brokenText = (r: RollResult): string => {
   const broken = r.cards?.brokenCards ?? [];
   if (broken.length === 0) return '';
-  return ` · ${broken.map(b => b.card.name).join('、')}耐久耗尽`;
+  return ` · ${broken.map(b => b.card.name).join('、')}durability exhausted`;
 };
 
 // 与 generateOptions 内部同一套 API 校验：口径一致（空状态按钮的显隐、生成的
@@ -562,7 +562,7 @@ const behavior = computed({
 const themeMode = computed(() => gs.settings.ui.theme_mode);
 const cycleTitle = computed(() => {
   const next = nextThemeMode(themeMode.value);
-  return t`切换主题（下一个：${themeLabel(next)}）`;
+  return t`Switch themes (next:${themeLabel(next)}）`;
 });
 const onCycleTheme = () => {
   gs.settings.ui.theme_mode = nextThemeMode(themeMode.value);
@@ -750,7 +750,7 @@ const onToggle = async () => {
   // 与其让用户看一条孤零零的 toastr，不如直接把设置面板+向导送到配置路径
   // （autoOpenApiOnboarding 每会话只自动弹一次，之后仅报错不再抢焦点）
   if (!apiReady.value) {
-    toastr.error(t`请先在设置中配置 API（API 地址 + 模型）`);
+    toastr.error(t`Configure the API in settings first (API address + model)`);
     autoOpenApiOnboarding();
     return;
   }
@@ -846,8 +846,8 @@ const onSelect = async (option: ChoiceOption, index: number) => {
     // send 路径发送失败（共享层按聊天快照判定是否兜底恢复后重抛）：吞掉会变 unhandled rejection 且
     // 跳过选中收尾。保留重掷 stage 态——再次点击即用同一判定结果重试应用。
     // 文案按行为分流：send 才涉及「是否已发出」，其余行为失败与发送无关
-    console.warn('[Choice] 选项应用失败', err);
-    toastr.error(behavior.value === 'send' ? t`发送失败，请查看聊天记录确认是否已发出` : t`选项应用失败，请重试`);
+    console.warn('[Choice] Option application failed', err);
+    toastr.error(behavior.value === 'send' ? t`Send failed — check the chat log to confirm whether it was sent` : t`Failed to apply option — please try again`);
     return;
   }
   // 行内判定 chip（v57 骰子结果：结局+差值；润色视图恒返回 null，不标记）

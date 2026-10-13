@@ -825,7 +825,7 @@ function entryMetrics(
     'rounds_included' | 'rounds_with_selection' | 'expected_sum' | 'recent' | 'last_weight_changed_at'
   >,
   avgPicks?: number | null,
-): { samples: number; rate: number; expected: number; excess: number; basis: '窗口' | '全量' } | null {
+): { samples: number; rate: number; expected: number; excess: number; basis: 'Window' | 'All-time' } | null {
   if (!row || row.rounds_included <= 0 || !row.recent) return null;
   const changedAt = row.last_weight_changed_at ?? 0;
   // 自动化调整后的条目：只统计调整之后的窗口数据
@@ -838,23 +838,23 @@ function entryMetrics(
     // 是 number|null，这里用 hits/expected 除 samples 得到确定值，避免 null 运算）
     const rate = w.hits / w.samples;
     const expectedRate = w.expected / w.samples;
-    return { samples: w.samples, rate, expected: expectedRate, excess: rate - expectedRate, basis: '窗口' };
+    return { samples: w.samples, rate, expected: expectedRate, excess: rate - expectedRate, basis: 'Window' };
   }
   const w = windowMetrics(row.recent, avgPicks);
   let samples: number;
   let hits: number;
   let expected: number;
-  let basis: '窗口' | '全量';
+  let basis: 'Window' | 'All-time';
   if (w && w.samples >= SUGGEST_MIN_SAMPLES) {
     samples = w.samples;
     hits = w.hits;
     expected = w.expected;
-    basis = '窗口';
+    basis = 'Window';
   } else if (row.rounds_included >= SUGGEST_MIN_SAMPLES) {
     samples = row.rounds_included;
     hits = row.rounds_with_selection;
     expected = row.expected_sum;
-    basis = '全量';
+    basis = 'All-time';
   } else {
     return null;
   }
@@ -890,7 +890,7 @@ export type Suggestion = {
    *  设置。纯展示字段（suggestionTitle 提示「回捞会覆盖手动值」），不纳入 suggestionKey */
   manualLow?: boolean;
   /** 依据口径：'窗口' | '全量' */
-  basis: '窗口' | '全量';
+  basis: 'Window' | 'All-time';
 };
 
 /** 建议稳定指纹（纯函数）：AI 建议理由缓存与当前建议绑定用的展示校验键。
@@ -1298,11 +1298,11 @@ export function applyHistorySummary(
     const pool = poolMap.get(id);
     const name = pool ? pool.type || pool.content || id : `${id.slice(0, 8)}…`;
     if (!b && a) {
-      out.push({ entryId: id, name, change: '加入' });
+      out.push({ entryId: id, name, change: 'Join' });
     } else if (b && a && b.enabled !== a.enabled) {
-      out.push({ entryId: id, name, change: b.enabled ? '启用 → 停用' : '停用 → 启用' });
+      out.push({ entryId: id, name, change: b.enabled ? 'enable → disable' : 'Disable → Enable' });
     } else if (b && a && b.weight !== a.weight) {
-      out.push({ entryId: id, name, change: `权重 ${b.weight} → ${a.weight}` });
+      out.push({ entryId: id, name, change: `Weight ${b.weight} → ${a.weight}` });
     }
   }
   return out;

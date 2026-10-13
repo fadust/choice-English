@@ -1,31 +1,31 @@
 <template>
   <div class="choice-wi-editor">
     <div class="choice-section" data-tour="wi-checks">
-      <h4 class="choice-section-title"><i class="fa-solid fa-sliders"></i>{{ t`设置` }}</h4>
+      <h4 class="choice-section-title"><i class="fa-solid fa-sliders"></i>{{ t`Settings` }}</h4>
       <div class="choice-wi-checks">
         <label class="choice-check">
           <input v-model="globalStore.settings.world_info.enabled" type="checkbox" />
-          {{ t`启用世界书` }}
+          {{ t`Enable World Info` }}
         </label>
         <label
           class="choice-check"
           :title="
-            t`开启后世界书条目先展开 {{宏}}；若装了『提示词模板』插件且条目含 <% %>，会执行其中 JS，让按好感度切换人设等动态条目拿到成品而非原文。未装插件时仅展宏。含写变量（setvar）的 EJS 每次生成会执行并可能改变变量状态，遇到这类世界书可关闭。`
+            t`When on, world info entries first have {{macros}} expanded; if the 'Prompt Template' plugin is installed and an entry contains <% %>, the embedded JS is executed so dynamic entries (e.g. persona switching by affection) get the final output instead of raw text. Without the plugin, only macro expansion is done. EJS that writes variables (setvar) runs on every generation and may change variable state; you can turn this off for such World Infos.`
           "
         >
           <input v-model="globalStore.settings.world_info.render_world_info_ejs" type="checkbox" />
-          {{ t`EJS 渲染` }}
+          {{ t`EJS Rendering` }}
         </label>
       </div>
     </div>
 
     <div class="choice-section" data-tour="wi-books">
       <h4 class="choice-section-title">
-        <i class="fa-solid fa-book-bookmark"></i>{{ t`已启用的世界书` }}
+        <i class="fa-solid fa-book-bookmark"></i>{{ t`Active World Info Books` }}
         <span class="choice-wi-count">（{{ activeBooks.length }}）</span>
       </h4>
       <div v-if="activeBooks.length === 0" class="choice-empty-hint">
-        {{ t`暂无已启用的世界书` }}
+        {{ t`No enabled World Info books` }}
       </div>
       <div class="choice-wi-list">
         <template v-for="book in activeBooks" :key="book.name">
@@ -37,11 +37,11 @@
             <i class="fa-solid" :class="bookExpanded.has(book.name) ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
             <span class="choice-wi-light" :class="bookLightClass(book)"></span>
             <span class="choice-wi-name">{{ book.name }}</span>
-            <span v-if="book.source === 'global'" class="choice-wi-badge badge-global">{{ t`全局` }}</span>
-            <span v-if="book.source === 'character'" class="choice-wi-badge badge-character">{{ t`角色` }}</span>
-            <span v-if="book.source === 'chat'" class="choice-wi-badge badge-chat">{{ t`聊天` }}</span>
-            <span v-if="book.isShujuku" class="choice-wi-badge badge-shujuku">{{ t`数据库` }}</span>
-            <span v-if="getBookMode(book.name) === 'custom'" class="choice-wi-badge badge-custom">{{ t`自定义` }}</span>
+            <span v-if="book.source === 'global'" class="choice-wi-badge badge-global">{{ t`Global` }}</span>
+            <span v-if="book.source === 'character'" class="choice-wi-badge badge-character">{{ t`Character` }}</span>
+            <span v-if="book.source === 'chat'" class="choice-wi-badge badge-chat">{{ t`Chat` }}</span>
+            <span v-if="book.isShujuku" class="choice-wi-badge badge-shujuku">{{ t`Database` }}</span>
+            <span v-if="getBookMode(book.name) === 'custom'" class="choice-wi-badge badge-custom">{{ t`Custom` }}</span>
             <!-- 三态钩 + 自定义：循环 条目全关 → 条目启用（默认）→ 条目全启用；勾选条目进入自定义 -->
             <span
               class="choice-wi-mode"
@@ -53,15 +53,15 @@
               <span v-else-if="getBookMode(book.name) !== 'off'" class="choice-wi-mode-block"></span>
             </span>
             <span v-if="isBookGloballyExcluded(book.name)" class="choice-wi-badge badge-global-excl">{{
-              t`全局排除`
+              t`Global Exclusions`
             }}</span>
             <button
               v-if="enabledBooksSet.has(book.name)"
               class="choice-wi-enable-btn"
-              :title="t`从本扩展启用列表中移除，该书回到未启用区`"
+              :title="t`Removed from this extension's enabled list; the book returns to the disabled area`"
               @click.stop="disableBook(book.name)"
             >
-              {{ t`移除` }}
+              {{ t`Remove` }}
             </button>
           </div>
           <div v-if="bookExpanded.has(book.name) && bookEntries[book.name]" class="choice-wi-entries">
@@ -77,7 +77,7 @@
               <input
                 type="checkbox"
                 :checked="isEntryOn(book.name, entry)"
-                :title="t`点击开启/关闭该条目（进入自定义模式）`"
+                :title="t`Toggle this entry (enters custom mode)`"
                 @change="toggleEntry(book.name, entry.uid)"
               />
             </div>
@@ -86,22 +86,22 @@
       </div>
     </div>
 
-    <ChoiceSectionCard title="全局排除" icon="fa-solid fa-ban" data-tour="wi-excl">
+    <ChoiceSectionCard title="Global Exclusions" icon="fa-solid fa-ban" data-tour="wi-excl">
       <div class="choice-wi-global-excl">
         <div class="choice-wi-global-excl-body">
           <div v-if="globalExcludedBooks.length === 0" class="choice-empty-hint">
-            {{ t`未设置全局排除。全局排除的世界书在所有聊天中永久不被选项生成参考。` }}
+            {{ t`No global exclusions set. Globally excluded world info is never used for options generation in any chat.` }}
           </div>
           <div class="choice-wi-list">
             <div v-for="name in globalExcludedBooks" :key="name" class="choice-wi-row excluded-global">
               <span class="choice-wi-name">{{ name }}</span>
-              <button class="choice-wi-enable-btn" @click.stop="removeGlobalExcl(name)">{{ t`移除` }}</button>
+              <button class="choice-wi-enable-btn" @click.stop="removeGlobalExcl(name)">{{ t`Remove` }}</button>
             </div>
           </div>
-          <input v-model="globalExclSearch" class="choice-input choice-wi-search" :placeholder="t`搜索世界书名`" />
+          <input v-model="globalExclSearch" class="choice-input choice-wi-search" :placeholder="t`Search World Info name`" />
           <div class="choice-wi-list choice-wi-available">
             <div v-if="availableGlobalExclBooks.length === 0" class="choice-empty-hint">
-              {{ t`无可添加的世界书` }}
+              {{ t`No World Infos available to add` }}
             </div>
             <div
               v-for="name in availableGlobalExclBooks"
@@ -110,34 +110,34 @@
               @click.stop="addGlobalExcl(name)"
             >
               <span class="choice-wi-name">{{ name }}</span>
-              <button class="choice-wi-enable-btn" @click.stop="addGlobalExcl(name)">{{ t`添加` }}</button>
+              <button class="choice-wi-enable-btn" @click.stop="addGlobalExcl(name)">{{ t`Add` }}</button>
             </div>
           </div>
         </div>
       </div>
     </ChoiceSectionCard>
 
-    <ChoiceSectionCard title="未启用的世界书" icon="fa-solid fa-book">
+    <ChoiceSectionCard title="Unenabled World Info" icon="fa-solid fa-book">
       <div class="choice-wi-global-excl-body">
         <div v-if="inactiveBooks.length === 0" class="choice-empty-hint">
-          {{ t`暂无未启用的世界书` }}
+          {{ t`No disabled World Info books` }}
         </div>
-        <input v-model="inactiveSearch" class="choice-input choice-wi-search" :placeholder="t`搜索世界书名`" />
+        <input v-model="inactiveSearch" class="choice-input choice-wi-search" :placeholder="t`Search World Info name`" />
         <div class="choice-wi-list choice-wi-available">
           <div v-for="book in filteredInactiveBooks" :key="book.name" class="choice-wi-row inactive">
             <span class="choice-wi-light"></span>
             <span class="choice-wi-name">{{ book.name }}</span>
-            <button class="choice-wi-enable-btn" @click.stop="enableBook(book.name)">{{ t`启用` }}</button>
+            <button class="choice-wi-enable-btn" @click.stop="enableBook(book.name)">{{ t`Enable` }}</button>
           </div>
           <div v-if="filteredInactiveBooks.length === 0 && inactiveBooks.length > 0" class="choice-empty-hint">
-            {{ t`无匹配的世界书` }}
+            {{ t`No matching World Info` }}
           </div>
         </div>
       </div>
     </ChoiceSectionCard>
 
     <div class="choice-hint">
-      {{ t`钩子点击循环条目模式：全关 → 启用（默认）→ 全启用（☑️）；直接勾选条目进入自定义模式，逐条开关` }}
+      {{ t`Hook cycles entry modes: all-off → follow (default) → force-all (☑️); toggling an entry enters custom mode for per-entry control` }}
     </div>
   </div>
 </template>
@@ -256,10 +256,10 @@ const cycleBookMode = (name: string) => {
 
 const bookModeTitle = (name: string) => {
   const mode = getBookMode(name);
-  if (mode === 'off') return t`条目全部关闭（点击：条目启用）`;
-  if (mode === 'force') return t`条目全启用——无视酒馆关闭条目（点击：条目全部关闭）`;
-  if (mode === 'custom') return t`自定义条目开关（点击：条目全部关闭）`;
-  return t`条目启用——酒馆里关闭的条目也关闭（默认；点击：条目全启用）`;
+  if (mode === 'off') return t`All entries disabled (click: entries follow tavern)`;
+  if (mode === 'force') return t`All entries force-enabled regardless of tavern state (click: all disabled)`;
+  if (mode === 'custom') return t`Custom per-entry toggles (click: all disabled)`;
+  return t`Entries follow tavern (tavern-disabled entries stay disabled; default; click: force-enable all)`;
 };
 
 // 条目勾选框状态跟随书模式联动：全关=全空；条目启用=酒馆原生 disable（纯酒馆态）；
@@ -327,7 +327,7 @@ const toggleEntry = (bookName: string, uid: string | number) => {
     }
     wi.book_entry_overrides[bookName] = snap;
     wi.book_entry_modes[bookName] = 'custom';
-    toastr.info(t`已进入自定义模式：「${bookName}」条目按手动开关逐条生效`);
+    toastr.info(t`Entered custom mode: "${bookName}"Items will take effect one by one by pressing the manual switch.`);
   }
   const bookOverrides = wi.book_entry_overrides[bookName] ?? {};
   const cur = bookOverrides[uidKey] ?? (isEntryOn(bookName, { uid: uid } as EntryInfo) as boolean);

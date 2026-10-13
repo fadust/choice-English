@@ -4,11 +4,11 @@
       <div class="choice-slotpicker-dialog">
         <div class="choice-slotpicker-header">
           <span class="choice-slotpicker-title">
-            <i :class="CARD_TYPE_ICON[type]"></i>{{ t`装备 ${CARD_TYPE_LABEL[type]}卡` }}
+            <i :class="CARD_TYPE_ICON[type]"></i>{{ t`Equip ${CARD_TYPE_LABEL[type]}card` }}
           </span>
-          <button class="choice-slotpicker-close" :title="t`关闭`" @click="emit('close')">&times;</button>
+          <button class="choice-slotpicker-close" :title="t`Close`" @click="emit('close')">&times;</button>
         </div>
-        <p class="choice-slotpicker-tip">{{ t`仅列出该类型已拥有的卡；星级预算超限项置灰；破损卡需先修复。` }}</p>
+        <p class="choice-slotpicker-tip">{{ t`Lists only owned cards of this type; over-budget items are greyed out; broken cards must be repaired first.` }}</p>
 
         <div v-if="candidates.length" class="choice-slotpicker-cards">
           <div v-for="c in candidates" :key="c.id" class="choice-slotpicker-card">
@@ -18,7 +18,7 @@
               :state="isCurrent(c) ? 'disabled' : canEquip(c) ? 'normal' : 'disabled'"
             >
               <template #footer>
-                <span v-if="isCurrent(c)" class="choice-slotpicker-current">{{ t`已装备` }}</span>
+                <span v-if="isCurrent(c)" class="choice-slotpicker-current">{{ t`Equipped` }}</span>
                 <button
                   v-else
                   class="choice-btn-sm"
@@ -26,7 +26,7 @@
                   :title="canEquip(c) ? '' : equipReason(c)"
                   @click="onEquip(c)"
                 >
-                  {{ t`装备` }}
+                  {{ t`Equip` }}
                 </button>
               </template>
             </CardFace>
@@ -34,11 +34,11 @@
         </div>
         <div v-else class="choice-empty">
           <i class="fa-solid fa-layer-group"></i>
-          <span>{{ t`该类型暂无可用卡——通过开卡包/幸运数掉落获得后即可装备。` }}</span>
+          <span>{{ t`No card available for this type yet — obtain one via pack opening / lucky drops, then equip it.` }}</span>
         </div>
 
         <div class="choice-slotpicker-footer">
-          <button class="menu_button" @click="() => emit('close')">{{ t`取消` }}</button>
+          <button class="menu_button" @click="() => emit('close')">{{ t`Cancel` }}</button>
         </div>
       </div>
     </div>

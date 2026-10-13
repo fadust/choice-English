@@ -89,20 +89,20 @@ describe('validateCard（AI 生成卡硬校验）', () => {
   it('字段缺失/枚举非法逐项报错', () => {
     const r = validateCard(mkCard({ id: '', name: '', type: 'sword' as Card['type'] }));
     expect(r.ok).toBe(false);
-    expect(r.errors).toContain('缺少 id 或 id 非字符串');
-    expect(r.errors).toContain('缺少名称或名称非字符串');
-    expect(r.errors.some(e => e.includes('类型非法'))).toBe(true);
+    expect(r.errors).toContain("Missing id or id non-string");
+    expect(r.errors).toContain("Name is missing or name is not a string");
+    expect(r.errors.some(e => e.includes('Illegal type'))).toBe(true);
   });
 
   it('id/name 非字符串（弱模型幻觉数字形态）拒绝：防 z.string() 解析崩档', () => {
     const r = validateCard(mkCard({ id: 123 as unknown as string, name: 456 as unknown as string }));
     expect(r.ok).toBe(false);
-    expect(r.errors).toContain('缺少 id 或 id 非字符串');
-    expect(r.errors).toContain('缺少名称或名称非字符串');
+    expect(r.errors).toContain("Missing id or id non-string");
+    expect(r.errors).toContain("Name is missing or name is not a string");
   });
 
   it('效果集为空 / 超过 3 个拒绝', () => {
-    expect(validateCard(mkCard({ effects: [] })).errors).toContain('缺少效果');
+    expect(validateCard(mkCard({ effects: [] })).errors).toContain("Missing effects");
     expect(
       validateCard(
         mkCard({
@@ -114,12 +114,12 @@ describe('validateCard（AI 生成卡硬校验）', () => {
           ],
         }),
       ).errors,
-    ).toContain('效果数量超过 3 个');
+    ).toContain("The number of effects exceeds 3");
   });
 
   it('数值超限拒绝', () => {
     expect(validateCard(mkCard({ effects: [{ kind: 'roll_bonus', amount: 31 }] })).errors).toContain(
-      '骰值修正超过 ±30',
+      'Dice value correction exceeds ±30',
     );
   });
 
@@ -128,7 +128,7 @@ describe('validateCard（AI 生成卡硬校验）', () => {
     expect(
       validateCard(
         mkCard({ effects: [{ kind: 'outcome_convert', from: 'crit_success', to: 'crit_success' }] }),
-      ).errors.some(e => e.includes('无意义')),
+      ).errors.some(e => e.includes('meaningless')),
     ).toBe(true);
     expect(
       validateCard(mkCard({ effects: [{ kind: 'outcome_convert', from: 'crit_fail', to: 'crit_success' }] })).ok,
@@ -143,12 +143,12 @@ describe('validateCard（AI 生成卡硬校验）', () => {
         effects,
       });
     expect(validateCard(wide('3', [{ kind: 'roll_bonus', amount: 10 }])).errors).toContain(
-      '宽触发区间的高星卡必须带代价或负向效果',
+      "High-star cards with a wide trigger range must have costs or negative effects.",
     );
     // 极性约定：demand_mod 正值 = 升需求 = 代价（放行），负值 = 降需求 = 纯利好（拒）
     expect(validateCard(wide('3', [{ kind: 'demand_mod', amount: 10 }])).ok).toBe(true);
     expect(validateCard(wide('3', [{ kind: 'demand_mod', amount: -10 }])).errors).toContain(
-      '宽触发区间的高星卡必须带代价或负向效果',
+      "High-star cards with a wide trigger range must have costs or negative effects.",
     );
     // fail_delta 正值 = 扩大失败彩蛋窗 = 代价向，不算纯利好
     expect(
@@ -162,11 +162,11 @@ describe('validateCard（AI 生成卡硬校验）', () => {
     const r = validateCard(
       mkCard({ trigger: { kind: 'demand', typeValue: '', grade: null, min: 0, max: 0, outcome: null } }),
     );
-    expect(r.errors.some(e => e.includes('需求区间非法'))).toBe(true);
+    expect(r.errors.some(e => e.includes('Illegal interval'))).toBe(true);
   });
 
   it('叙事超长拒绝', () => {
-    expect(validateCard(mkCard({ narrative: '长'.repeat(41) })).errors.some(e => e.includes('叙事超过'))).toBe(true);
+    expect(validateCard(mkCard({ narrative: '长'.repeat(41) })).errors.some(e => e.includes('Narrative exceeds'))).toBe(true);
   });
 });
 
@@ -212,7 +212,7 @@ describe('normalizeTrigger（AI 卡 trigger 交叉字段归一）', () => {
 describe('checkDeckBudget（星级预算）', () => {
   it('3★≤2 / 4★≤1 / 5★≤1；1/2 星不限', () => {
     expect(checkDeckBudget([{ star: '3' }, { star: '3' }]).ok).toBe(true);
-    expect(checkDeckBudget([{ star: '3' }, { star: '3' }, { star: '3' }]).errors).toContain('3星卡最多 2 张');
+    expect(checkDeckBudget([{ star: '3' }, { star: '3' }, { star: '3' }]).errors).toContain('At most 2 3-star cards can be equipped');
     expect(checkDeckBudget([{ star: '4' }, { star: '4' }]).ok).toBe(false);
     expect(checkDeckBudget([{ star: '5' }, { star: '4' }, { star: '3' }, { star: '3' }]).ok).toBe(true);
     expect(checkDeckBudget(Array.from({ length: 6 }, () => ({ star: '1' as const }))).ok).toBe(true);

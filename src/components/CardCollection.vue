@@ -2,10 +2,10 @@
   <div class="choice-card-library">
     <!-- 收藏进度概览 + 行动币/开卡包入口（原商店收编） -->
     <div class="choice-section">
-      <h4 class="choice-section-title"><i class="fa-solid fa-box-open"></i> {{ t`收藏进度` }}</h4>
+      <h4 class="choice-section-title"><i class="fa-solid fa-box-open"></i> {{ t`Collection progress` }}</h4>
       <div class="choice-lib-progress">
         <span class="choice-lib-stat"
-          >{{ t`已收集` }} <b>{{ ownedCount }}/{{ ownableCount }}</b></span
+          >{{ t`Collected` }} <b>{{ ownedCount }}/{{ ownableCount }}</b></span
         >
         <span v-for="r in CARD_STAR_ORDER" :key="r" class="choice-lib-stat" :title="CARD_STAR_LABEL[r]">
           <i class="fa-solid fa-sort-down" :style="{ color: CARD_STAR_COLOR[r] }"></i>{{ starCounts[r] }}
@@ -18,24 +18,24 @@
           :disabled="gs.settings.card_currency < CARD_PACK_PRICE || cardPack !== null"
           @click="onBuyPack"
         >
-          <i class="fa-solid fa-box"></i>{{ t`开卡包（${CARD_PACK_PRICE} 币）` }}
+          <i class="fa-solid fa-box"></i>{{ t`Open card package (${CARD_PACK_PRICE} currency)` }}
         </button>
         <button
           v-if="parked"
           class="choice-btn-sm choice-pack-parked"
-          :title="t`稍后再选的卡包已保留，点击重新打开`"
+          :title="t`Packs you deferred are kept — click to reopen`"
           @click="onReopenParked"
         >
-          <i class="fa-solid fa-envelope-open-text"></i>{{ t`待开启卡包` }}
+          <i class="fa-solid fa-envelope-open-text"></i>{{ t`Pending card packs` }}
         </button>
       </div>
     </div>
 
     <!-- 收藏成就（趣味彩蛋，零操作） -->
     <!-- 内置卡库（不可编辑，只可收集/装备；未获得卡模糊遮盖） -->
-    <ChoiceSectionCard title="内置卡库" icon="fa-solid fa-database">
+    <ChoiceSectionCard title="Built-in card library" icon="fa-solid fa-database">
       <p class="choice-lib-hint">
-        {{ t`内置卡全球通用、可反复掉落；未获得的卡模糊遮盖，靠开卡包/幸运掉落随机获得（重复获得自动折算行动币）。` }}
+        {{ t`Built-in cards are universal and drop repeatedly; unowned ones are shown blurred and obtained randomly via pack opening / lucky drops (duplicates auto-convert to Action Coins).` }}
       </p>
       <div class="choice-lib-cards">
         <CardFace
@@ -48,31 +48,31 @@
           :previously-owned="isDismantled(c)"
         >
           <template v-if="ownedMap[c.id]" #footer>
-            <span class="choice-lib-triggers" :title="t`触发次数`">
+            <span class="choice-lib-triggers" :title="t`Trigger count`">
               <i class="fa-solid fa-hand-pointer"></i>{{ ownedMap[c.id].trigger_count }}
             </span>
             <button
               v-if="isBroken(ownedMap[c.id])"
               class="choice-btn-sm choice-lib-repair"
-              :title="t`耐久归零，消耗行动币修复回满`"
+              :title="t`Durability depleted — spend Action Coins to repair to full`"
               :disabled="repairing.has(c.id)"
               @click="onRepair(c)"
             >
-              <i class="fa-solid fa-hammer"></i>{{ t`修复（${repairCostOf(c)} 币）` }}
+              <i class="fa-solid fa-hammer"></i>{{ t`repair(${repairCostOf(c)} currency)` }}
             </button>
           </template>
         </CardFace>
       </div>
-      <div v-if="builtinCards.length === 0" class="choice-empty">{{ t`暂无内置卡` }}</div>
+      <div v-if="builtinCards.length === 0" class="choice-empty">{{ t`No built-in cards` }}</div>
     </ChoiceSectionCard>
 
     <!-- 当前角色主题池 -->
-    <ChoiceSectionCard title="当前角色主题池" icon="fa-solid fa-user">
+    <ChoiceSectionCard title="Current character theme pool" icon="fa-solid fa-user">
       <template v-if="currentPoolDefs.length">
         <div class="choice-lib-pool-actions">
           <p class="choice-lib-hint">
             {{
-              t`主题卡池随游玩分批生长（${currentPoolDefs.length}/${CARD_POOL_MAX_CARDS}）：幸运数命中/购买开卡包时自动补充一批，每批吃到当时剧情上下文；池内卡随开卡包反复掉落。`
+              t`The theme card pool grows in batches as you play (${currentPoolDefs.length}/${CARD_POOL_MAX_CARDS}): A batch will be automatically replenished when the lucky number hits/purchasing the card opening pack, and each batch will have the plot context at that time; the cards in the pool will be dropped repeatedly with the card opening pack.`
             }}
           </p>
           <button
@@ -81,10 +81,10 @@
             :disabled="generating"
             @click="onGeneratePool"
           >
-            <i class="fa-solid fa-wand-magic-sparkles"></i>{{ generating ? t`生成中…` : t`补充一批` }}
+            <i class="fa-solid fa-wand-magic-sparkles"></i>{{ generating ? t`Generating...` : t`Add a batch` }}
           </button>
           <button class="menu_button choice-lib-gen-btn" :disabled="generating" @click="onRegeneratePool">
-            <i class="fa-solid fa-rotate"></i>{{ generating ? t`生成中…` : t`重新生成` }}
+            <i class="fa-solid fa-rotate"></i>{{ generating ? t`Generating...` : t`Regenerate` }}
           </button>
         </div>
         <div class="choice-lib-cards">
@@ -101,11 +101,11 @@
               <button
                 v-if="isBroken(ownedMap[c.id])"
                 class="choice-btn-sm choice-lib-repair"
-                :title="t`耐久归零，消耗行动币修复回满`"
+                :title="t`Durability depleted — spend Action Coins to repair to full`"
                 :disabled="repairing.has(c.id)"
                 @click="onRepair(c)"
               >
-                <i class="fa-solid fa-hammer"></i>{{ t`修复（${repairCostOf(c)} 币）` }}
+                <i class="fa-solid fa-hammer"></i>{{ t`repair(${repairCostOf(c)} currency)` }}
               </button>
             </template>
           </CardFace>
@@ -115,19 +115,19 @@
         <i class="fa-solid fa-wand-magic-sparkles"></i>
         <div>
           {{
-            t`当前角色主题池尚未生成。可手动立即生成首批，或游玩中幸运数命中/购买开卡包时按当时剧情上下文自动分批生成。`
+            t`This character's theme pool hasn't been generated yet. Generate the first batch now, or let it grow automatically in batches — each batch uses the story context at that moment — when a lucky number hits or you open a purchased pack.`
           }}
         </div>
         <button class="menu_button choice-lib-gen-btn" :disabled="generating" @click="onGeneratePool">
-          <i class="fa-solid fa-wand-magic-sparkles"></i>{{ generating ? t`生成中…` : t`立即生成主题卡` }}
+          <i class="fa-solid fa-wand-magic-sparkles"></i>{{ generating ? t`Generating...` : t`Generate theme cards now` }}
         </button>
       </div>
     </ChoiceSectionCard>
 
     <!-- 其余角色主题池（浏览） -->
-    <ChoiceSectionCard v-if="otherPools.length" title="其他角色主题池" icon="fa-solid fa-users">
+    <ChoiceSectionCard v-if="otherPools.length" title="Other character theme pools" icon="fa-solid fa-users">
       <div v-for="pool in otherPools" :key="pool.character_id" class="choice-lib-pool-group">
-        <h5 class="choice-lib-pool-title">{{ t`角色主题池 · ${charName(pool.character_id)}` }}</h5>
+        <h5 class="choice-lib-pool-title">{{ t`Character theme pool · ${charName(pool.character_id)}` }}</h5>
         <div class="choice-lib-cards">
           <CardFace
             v-for="c in poolDefs(pool)"
@@ -190,7 +190,7 @@ const onRepair = (c: Card) => {
 const onGeneratePool = async () => {
   const cid = gs.currentCharacterId;
   if (cid == null) {
-    toastr.warning(t`请先打开一个角色的聊天再生成主题卡。`);
+    toastr.warning(t`Open a character's chat before generating theme cards.`);
     return;
   }
   if (generating.value) return;
@@ -199,9 +199,9 @@ const onGeneratePool = async () => {
     const cards = await generateCharacterPool(String(cid));
     if (cards.length > 0) {
       const name = getStCharacter(String(cid))?.name ?? '';
-      toastr.success(t`已生成 ${cards.length} 张「${name}」主题卡，已直接入收藏（卡面已标注角色归属）。`);
+      toastr.success(t`Generated ${cards.length} Zhang "${name}"The theme card has been directly added to the collection (the character's ownership is marked on the card).`);
     } else {
-      toastr.warning(t`未生成主题卡——请确认已在「API 设置」配置副 API，且池未达上限，本次生成结果有效。`);
+      toastr.warning(t`No theme cards generated — make sure a side API is configured in "API Settings" and the pool isn't at its cap; this pack opening remains valid.`);
     }
   } finally {
     generating.value = false;
@@ -214,7 +214,7 @@ const onRegeneratePool = async () => {
   if (cid == null || generating.value) return;
   if (
     !confirm(
-      `将清空当前角色主题池并重新生成（已收集的 ${currentPoolDefs.value.length} 张该角色主题卡会被删除），确定继续？`,
+      `The current character theme pool will be cleared and regenerated (collected ${currentPoolDefs.value.length} The theme cards for this character will be deleted), are you sure to continue?`,
     )
   )
     return;

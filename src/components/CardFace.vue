@@ -27,8 +27,8 @@
       <div class="choice-card-face__illu" :title="CARD_STAR_LABEL[card.star]">
         <i class="choice-card-face__illu-icon" :class="CARD_TYPE_ICON[card.type]"></i>
         <div class="choice-card-face__name">{{ card.name }}</div>
-        <span v-if="broken" class="choice-card-face__broken-badge" :title="t`耐久耗尽，修复后才能装备`">
-          <i class="fa-solid fa-hammer"></i>{{ t`耐久 0 · 需修复` }}
+        <span v-if="broken" class="choice-card-face__broken-badge" :title="t`Durability depleted — repair before equipping`">
+          <i class="fa-solid fa-hammer"></i>{{ t`Durability 0 · needs repair` }}
         </span>
         <span
           v-else-if="!owned"
@@ -36,17 +36,17 @@
           :class="{ 'choice-card-face__unowned-badge--dismantled': previouslyOwned }"
         >
           <i :class="previouslyOwned ? 'fa-solid fa-scissors' : 'fa-solid fa-lock'"></i
-          >{{ previouslyOwned ? t`曾获得` : t`未拥有` }}
+          >{{ previouslyOwned ? t`Owned before` : t`Not owned` }}
         </span>
       </div>
 
       <!-- 效果区：归属徽标 + 触发行 + 效果行 + 卡面叙事行 -->
       <div class="choice-card-face__meta">
-        <div v-if="characterName" class="choice-card-face__character" :title="t`${characterName} 主题池`">
+        <div v-if="characterName" class="choice-card-face__character" :title="t`${characterName} theme pool`">
           <i class="fa-solid fa-user"></i>{{ characterName }}
         </div>
-        <div class="choice-card-face__line">触发：{{ triggerLabel(card.trigger) }}</div>
-        <div class="choice-card-face__line">效果：{{ effectsLabel(card.effects) }}</div>
+        <div class="choice-card-face__line">Trigger:{{ triggerLabel(card.trigger) }}</div>
+        <div class="choice-card-face__line">Effect:{{ effectsLabel(card.effects) }}</div>
         <div v-if="card.narrative" class="choice-card-face__narrative">{{ card.narrative }}</div>
       </div>
 
@@ -56,18 +56,18 @@
           <template v-if="owned">
             <span class="choice-card-face__owned" :class="{ 'choice-card-face__owned--broken': broken }"
               ><i :class="broken ? 'fa-solid fa-hammer' : 'fa-solid fa-circle-check'"></i
-              >{{ broken ? t`已破损` : t`已拥有` }}</span
+              >{{ broken ? t`Broken` : t`Owned` }}</span
             >
             <span
               v-if="owned.max_durability > 1"
               class="choice-card-face__durability"
               :class="{ 'choice-card-face__durability--broken': broken }"
-              :title="t`耐久：触发一次消耗 1 点，归零破损需修复`"
+              :title="t`Durability: costs 1 per trigger; at zero the card breaks and needs repair`"
             >
               <i class="fa-solid fa-shield-halved"></i>{{ broken ? 0 : owned.durability }}/{{ owned.max_durability }}
             </span>
           </template>
-          <span v-else class="choice-card-face__unowned">{{ previouslyOwned ? t`曾获得` : t`未拥有` }}</span>
+          <span v-else class="choice-card-face__unowned">{{ previouslyOwned ? t`Owned before` : t`Not owned` }}</span>
         </div>
         <div v-if="$slots.footer" class="choice-card-face__actions" @click.stop>
           <slot name="footer" />

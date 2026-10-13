@@ -27,7 +27,7 @@ export const parkedCardPack = ref<{ offer: CardOffer; via: PackVia } | null>(nul
  *  已扣币的 offer 不再凭空蒸发（module 头注释「丢弃必须可见」承诺同样适用此路径）。 */
 export function openCardPack(offer: CardOffer, via: PackVia = 'lucky'): void {
   if (cardPack.value && parkCardPack() === 'discarded') {
-    toastr.warning(t`已有挂起中的卡包，先到的卡包被丢弃（若为购买所得即已扣币损失）`);
+    toastr.warning(t`A pack is already parked; the earlier pack was discarded (if purchased, its cost is lost)`);
   }
   cardPack.value = { offer, via };
 }
@@ -58,7 +58,7 @@ export function parkCardPack(): 'parked' | 'discarded' | 'none' {
 export function reopenParkedPack(): boolean {
   if (!parkedCardPack.value) return false;
   if (cardPack.value && parkCardPack() === 'discarded') {
-    toastr.warning(t`已有挂起中的卡包，先到的卡包被丢弃（若为购买所得即已扣币损失）`);
+    toastr.warning(t`A pack is already parked; the earlier pack was discarded (if purchased, its cost is lost)`);
   }
   cardPack.value = parkedCardPack.value;
   parkedCardPack.value = null;

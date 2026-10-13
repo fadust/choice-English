@@ -1,31 +1,31 @@
 <template>
   <div class="choice-card-deck">
     <div class="choice-section">
-      <h4 class="choice-section-title"><i class="fa-solid fa-table-cells"></i> {{ t`当前卡组` }}</h4>
+      <h4 class="choice-section-title"><i class="fa-solid fa-table-cells"></i> {{ t`Current deck` }}</h4>
       <p class="choice-deck-config">
-        <span class="choice-cfg-chip" :title="t`装备位随生效条目池配置切换`">
-          <i class="fa-solid fa-tag"></i>{{ t`当前配置` }}：{{ configId }}
+        <span class="choice-cfg-chip" :title="t`Equipment slots follow the active pool config`">
+          <i class="fa-solid fa-tag"></i>{{ t`Current config` }}：{{ configId }}
         </span>
-        <span v-if="autoDeck" class="choice-deck-auto" :title="t`自动从已拥有卡填满 4 槽，省去手动编组`">
-          <i class="fa-solid fa-wand-magic-sparkles"></i>{{ t`自动编组中` }}
+        <span v-if="autoDeck" class="choice-deck-auto" :title="t`Auto-fills all 4 slots from owned cards — no manual deck building`">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>{{ t`Auto-decking` }}
         </span>
         <span class="choice-deck-count">
-          {{ t`已装备` }} {{ filledCount }}/{{ fixedSlots.length
+          {{ t`Equipped` }} {{ filledCount }}/{{ fixedSlots.length
           }}<template v-if="budgetText"> · {{ budgetText }}</template>
         </span>
       </p>
       <p class="choice-deck-hint">
-        {{ t`角色装备区：4 个类型槽位环绕，各装对应类型 1 张；整组受星级预算（${budgetHint}）约束。` }}
+        {{ t`Character equipment area: Surrounded by 4 type slots, each equipment corresponds to 1 pieces of type; the entire set is subject to the star budget (${budgetHint}) constraints.` }}
       </p>
       <label class="choice-toggle">
         <input type="checkbox" :checked="autoDeck" @change="onAutoToggle" />
         <span class="choice-toggle-custom"></span>
         <span class="choice-toggle-label">
-          <strong>{{ t`自动编组` }}</strong>
+          <strong>{{ t`Auto-deck` }}</strong>
           <small>{{
             autoDeck
-              ? t`已自动填满 4 槽（全局开关）——卸下卡或成功装备卡后切换为手动调整`
-              : t`手动编辑卡组（自动编组已关）`
+              ? t`All 4 slots auto-filled (global toggle) — unequipping or equipping a card switches to manual`
+              : t`Edit deck manually (auto-deck is off)`
           }}</small>
         </span>
       </label>
@@ -43,7 +43,7 @@
           class="choice-doll-slot"
           :class="[`choice-doll-slot--${slotPos[slot.type]}`, { 'choice-doll-slot--empty': !slot.card }]"
           :style="slot.card ? { borderColor: CARD_STAR_COLOR[slot.card.star] } : undefined"
-          :title="slot.card ? t`${slot.card.name}：点击更换` : t`点击装备 ${CARD_TYPE_LABEL[slot.type]}卡`"
+          :title="slot.card ? t`${slot.card.name}:Click to replace` : t`Click to equip ${CARD_TYPE_LABEL[slot.type]}card`"
         >
           <button class="choice-doll-slot__btn" @click="openPicker(slot.type)">
             <template v-if="slot.card">
@@ -59,8 +59,8 @@
                 </span>
               </span>
               <span class="choice-doll-slot__name">{{ slot.card.name }}</span>
-              <span class="choice-doll-slot__line">{{ t`触发：${triggerLabel(slot.card.trigger)}` }}</span>
-              <span class="choice-doll-slot__line">{{ t`效果：${effectsLabel(slot.card.effects)}` }}</span>
+              <span class="choice-doll-slot__line">{{ t`Trigger:${triggerLabel(slot.card.trigger)}` }}</span>
+              <span class="choice-doll-slot__line">{{ t`Effect:${effectsLabel(slot.card.effects)}` }}</span>
               <span v-if="slot.card.narrative" class="choice-doll-slot__narrative">{{ slot.card.narrative }}</span>
               <span class="choice-doll-slot__meta">
                 <span v-if="slot.card.character_name" class="choice-doll-slot__character">
@@ -70,7 +70,7 @@
                   v-if="slot.owned"
                   class="choice-doll-slot__durability"
                   :class="{ 'choice-doll-slot__durability--broken': isBroken(slot.owned) }"
-                  :title="t`耐久：触发一次消耗 1 点，归零破损需修复`"
+                  :title="t`Durability: costs 1 per trigger; at zero the card breaks and needs repair`"
                 >
                   <i class="fa-solid fa-shield-halved"></i>{{ slot.owned.durability }}/{{ slot.owned.max_durability }}
                 </span>
@@ -79,7 +79,7 @@
             <template v-else>
               <i class="choice-doll-slot__icon" :class="CARD_TYPE_ICON[slot.type]"></i>
               <span class="choice-doll-slot__label">{{ CARD_TYPE_LABEL[slot.type] }}</span>
-              <small class="choice-doll-slot__add">{{ t`点击装备` }}</small>
+              <small class="choice-doll-slot__add">{{ t`Click to equip` }}</small>
             </template>
           </button>
 
@@ -87,7 +87,7 @@
           <button
             v-if="slot.card"
             class="choice-doll-slot__unequip"
-            :title="t`卸下`"
+            :title="t`Unequip`"
             @click.stop="onUnequip(slot.card_id)"
           >
             <i class="fa-solid fa-xmark"></i>

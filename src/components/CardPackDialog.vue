@@ -3,12 +3,12 @@
     <div v-if="cardPack" class="choice-cardpack-overlay" @click.self="onPark()">
       <div class="choice-cardpack-dialog">
         <div class="choice-cardpack-header">
-          <span class="choice-cardpack-title"> <i class="fa-solid fa-gift"></i> {{ t`开卡包` }} </span>
-          <button class="choice-cardpack-close" :title="t`稍后再选`" @click="onPark()">&times;</button>
+          <span class="choice-cardpack-title"> <i class="fa-solid fa-gift"></i> {{ t`Open card pack` }} </span>
+          <button class="choice-cardpack-close" :title="t`Decide later`" @click="onPark()">&times;</button>
         </div>
         <p class="choice-cardpack-tip">
-          <template v-if="hasRare"><i class="fa-solid fa-star"></i> {{ t`稀有卡出没——抓住它！` }}</template>
-          <template v-else>{{ t`选 1 张纳入收藏；选到已拥有的卡会自动折算行动币。` }}</template>
+          <template v-if="hasRare"><i class="fa-solid fa-star"></i> {{ t`A rare card appeared — grab it!` }}</template>
+          <template v-else>{{ t`Pick 1 card for your collection; picking an owned card auto-converts to Action Coins.` }}</template>
         </p>
         <div class="choice-cardpack-cards">
           <div
@@ -27,8 +27,8 @@
           </div>
         </div>
         <div class="choice-cardpack-footer">
-          <button class="menu_button" :title="t`本次卡包会保留在收藏页，稍后可重新打开`" @click="onPark()">
-            {{ t`稍后再选` }}
+          <button class="menu_button" :title="t`This pack will be kept on the Collection page and can be reopened later`" @click="onPark()">
+            {{ t`Decide later` }}
           </button>
         </div>
       </div>
@@ -57,7 +57,7 @@ const onPick = (idx: number) => {
 /** 关闭不选：已有挂起时先挂起的保留、本次关闭的被丢弃——购买已扣币的白扣损失必须明示 */
 const onPark = () => {
   if (parkCardPack() === 'discarded') {
-    toastr.warning(t`已有待开启卡包，本次关闭的卡包未保留（若为购买已扣的行动币不予退还）`);
+    toastr.warning(t`A pending pack already exists — the pack you just closed wasn't kept (purchased coins are not refunded)`);
   }
 };
 </script>

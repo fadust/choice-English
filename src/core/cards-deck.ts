@@ -162,9 +162,9 @@ export function equippedCardsPromptLine(): string | null {
       `「${eq.card.name}」（${CARD_TYPE_LABEL[eq.card.type]}｜${triggerLabel(eq.card.trigger)}｜${effectsLabel(eq.card.effects)}）`,
   );
   return [
-    `玩家当前装备卡牌：${items.join('、')}。与卡牌的配合手法（仅贴合场景时使用，不必每条选项都用，也不必提及卡名）：`,
-    '1. 若某张卡以需求值区间触发，可让贴合场景的选项把标题第三段的需求值标注在该区间内，给卡一个发动机会；',
-    '2. 若某张卡按选项类型关键词或风险档位（保守/平衡/大胆）触发，可在相应选项的题材与风险上自然呼应；',
-    '3. 卡的效果方向（加骰/改需求/扩彩蛋窗/转结局）可作为选项文案张力的可演绎来源。',
+    `The player's current equipment cards:${items.join('、')}. How to cooperate with cards (only used when it fits the scene, you don’t have to use every option, and you don’t have to mention the card name):`,
+    '1. If a card is triggered in a demand value range, you can use the option that fits the scenario to mark the demand value in the third paragraph of the title within that range to give the card a chance;',
+    '2. If a card is triggered based on the option type keyword or risk level (conservative/balanced/bold), it can naturally respond to the theme and risk of the corresponding option;',
+    '3. The effect direction of the card (adding dice/changing requirements/expanding the easter egg window/changing the ending) can be used as a deducible source of tension in the option copywriting.',
   ].join('\n');
 }

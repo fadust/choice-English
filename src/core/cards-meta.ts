@@ -9,11 +9,11 @@ import { DICE_OUTCOME_LABEL } from '@/core/dice';
 
 /** 星级 → 中文名 + 语义色 class（scoped 样式按此上色，见 global.css .choice-card-star--*） */
 export const CARD_STAR_LABEL: Readonly<Record<CardStar, string>> = {
-  '1': '1星',
-  '2': '2星',
-  '3': '3星',
-  '4': '4星',
-  '5': '5星',
+  '1': '1 star',
+  '2': '2 star',
+  '3': '3 star',
+  '4': '4 star',
+  '5': '5 star',
 };
 
 export const CARD_STAR_ORDER: CardStar[] = ['1', '2', '3', '4', '5'];
@@ -30,10 +30,10 @@ export const CARD_STAR_COLOR: Readonly<Record<CardStar, string>> = {
 
 /** 类型 → 中文名（效果定位见 cards-builtin.ts：武器=骰值/重掷、法术=需求/转化、祝福=彩蛋/叙事、试炼=综合强卡） */
 export const CARD_TYPE_LABEL: Readonly<Record<CardType, string>> = {
-  weapon: '武器',
-  spell: '法术',
-  blessing: '祝福',
-  trial: '试炼',
+  weapon: 'weapons',
+  spell: 'spell',
+  blessing: 'Blessings',
+  trial: 'Trial',
 };
 
 /** 类型 → FontAwesome 图标（CardFace 装饰插画区水印用）。只允许选用酒馆捆绑 FontAwesome
@@ -54,17 +54,17 @@ export const CARD_OUTCOME_LABEL: Readonly<Record<string, string>> = { ...DICE_OU
 export function triggerLabel(tr: CardTrigger): string {
   switch (tr.kind) {
     case 'type':
-      return t`类型·${tr.typeValue}`;
+      return t`Type·${tr.typeValue}`;
     case 'grade': {
-      const g = tr.grade === 'conservative' ? t`保守` : tr.grade === 'balanced' ? t`平衡` : t`大胆`;
-      return t`档位·${g}`;
+      const g = tr.grade === 'conservative' ? t`Conservative` : tr.grade === 'balanced' ? t`Balanced` : t`Bold`;
+      return t`gear·${g}`;
     }
     case 'demand':
-      return t`需求 ${tr.min}–${tr.max}`;
+      return t`demand ${tr.min}–${tr.max}`;
     case 'roll':
-      return t`骰值 ${tr.min}–${tr.max}`;
+      return t`die value ${tr.min}–${tr.max}`;
     case 'outcome':
-      return t`结局·${CARD_OUTCOME_LABEL[tr.outcome ?? ''] ?? tr.outcome}`;
+      return t`Ending ·${CARD_OUTCOME_LABEL[tr.outcome ?? ''] ?? tr.outcome}`;
   }
 }
 
@@ -78,17 +78,17 @@ export function effectsLabel(effects: CardEffect[]): string {
 export function effectSummary(e: CardEffect): string {
   switch (e.kind) {
     case 'roll_bonus':
-      return t`骰值${e.amount >= 0 ? '+' : ''}${e.amount}`;
+      return t`die value${e.amount >= 0 ? '+' : ''}${e.amount}`;
     case 'demand_mod':
-      return t`需求${e.amount >= 0 ? '+' : ''}${e.amount}`;
+      return t`demand${e.amount >= 0 ? '+' : ''}${e.amount}`;
     case 'crit_window':
-      return t`彩蛋 ±${e.success_delta}/${e.fail_delta}`;
+      return t`Critical results ±${e.success_delta}/${e.fail_delta}`;
     case 'outcome_convert':
       return t`${CARD_OUTCOME_LABEL[e.from] ?? e.from}→${CARD_OUTCOME_LABEL[e.to] ?? e.to}`;
     case 'reroll':
-      return t`${CARD_OUTCOME_LABEL[e.on] ?? e.on}重掷`;
+      return t`${CARD_OUTCOME_LABEL[e.on] ?? e.on}Reroll`;
     case 'narrative':
-      return t`叙事`;
+      return t`Narrative`;
   }
 }
 

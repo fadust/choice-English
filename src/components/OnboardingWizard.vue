@@ -5,11 +5,11 @@
       <div class="choice-tour-card choice-tour-menu">
         <div class="choice-tour-menu-header">
           <i class="fa-solid fa-graduation-cap"></i>
-          <span>{{ t`功能课堂` }}</span>
+          <span>{{ t`Feature guide` }}</span>
           <button class="choice-tour-menu-close" @click="closeOnboarding">&times;</button>
         </div>
         <p class="choice-tour-menu-desc">
-          {{ t`「快速上手」带你跑通 配置 API → 生成选项 的核心链路；其余章节按需深入了解各功能。` }}
+          {{ t`"Quick Start" walks you through the core flow: configure API → generate options. Other chapters cover each feature in depth as needed.` }}
         </p>
         <div class="choice-tour-menu-list choice-scrollbar">
           <button v-for="ch in visibleChapters" :key="ch.id" class="choice-tour-chapter" @click="openOnboarding(ch.id)">
@@ -24,9 +24,9 @@
                 class="choice-tour-chapter-badge"
                 :class="quickStartDone ? 'is-ok' : 'is-miss'"
               >
-                {{ quickStartDone ? t`已完成` : t`未完成` }}
+                {{ quickStartDone ? t`Done` : t`Incomplete` }}
               </span>
-              <span class="choice-tour-chapter-steps">{{ ch.steps.length }} {{ t`步` }}</span>
+              <span class="choice-tour-chapter-steps">{{ ch.steps.length }} {{ t`steps` }}</span>
             </span>
           </button>
         </div>
@@ -63,7 +63,7 @@
             :class="apiReady ? 'is-ok' : 'is-miss'"
           >
             <i :class="apiReady ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-xmark'"></i>
-            <span>{{ apiReady ? t`API 已配置，可以正常生成` : t`尚未配置——完成本步前无法生成选项` }}</span>
+            <span>{{ apiReady ? t`API configured — generation ready` : t`Not configured — options can't be generated until this step is done` }}</span>
           </div>
           <div
             v-else-if="step.id === 'pool-select' || step.id === 'pool-ready'"
@@ -71,7 +71,7 @@
             :class="poolReady ? 'is-ok' : 'is-miss'"
           >
             <i :class="poolReady ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-xmark'"></i>
-            <span>{{ poolReady ? t`条目池就绪，可正常生成` : t`条目池为空——添加条目后才能生成选项` }}</span>
+            <span>{{ poolReady ? t`Pool ready — generation works normally` : t`Pool is empty — add entries before generating options` }}</span>
           </div>
 
           <!-- 向导步骤富文本的唯一 v-html：内容 100% 来自 guide-content.ts 编译期静态脚本
@@ -84,17 +84,17 @@
         <!-- 完成反馈：本步内达成 → 即将自动前进；进入时已达成（重放）→ 提示手动下一步 -->
         <div v-if="doneHint" class="choice-tour-autoadvance">
           <i class="fa-solid fa-circle-check"></i>
-          <span>{{ doneHint === 'auto' ? t`已完成，正在进入下一步…` : t`已完成，可直接点「下一步」` }}</span>
+          <span>{{ doneHint === 'auto' ? t`Complete — moving to the next step…` : t`Complete — you can click "Next" directly` }}</span>
         </div>
 
         <div class="choice-tour-footer">
-          <button class="menu_button choice-tour-skip" @click="closeOnboarding">{{ t`跳过引导` }}</button>
+          <button class="menu_button choice-tour-skip" @click="closeOnboarding">{{ t`Skip guide` }}</button>
           <div class="choice-tour-footer-main">
             <button class="menu_button" :disabled="onboardingStepIndex === 0" @click="onboardingStepIndex--">
-              {{ t`上一步` }}
+              {{ t`Previous` }}
             </button>
             <button class="menu_button menu_button_default" @click="onNext">
-              {{ onboardingStepIndex === onboardingChapter.steps.length - 1 ? t`完成` : t`下一步` }}
+              {{ onboardingStepIndex === onboardingChapter.steps.length - 1 ? t`Done` : t`Next` }}
             </button>
           </div>
         </div>

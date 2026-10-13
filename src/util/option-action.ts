@@ -100,7 +100,7 @@ const mergeCardNarratives = (marker: string, lines: string[]): string => {
  *  头部用「卡牌系统」避免窄化成纯演出。 */
 const wrapCardNarratives = (lines: string[]): string =>
   lines.length
-    ? `<!--【卡牌系统·系统注入，玩家不可见】\n${lines.map(sanitizeNarrative).join('\n')}\n${DICE_MARKER_TAIL}-->\n`
+    ? `<!--【 card system·system injection, invisible to players】\n${lines.map(sanitizeNarrative).join('\n')}\n${DICE_MARKER_TAIL}-->\n`
     : '';
 
 /** 按设置掷一次骰并判出结果（D100 或骰式）。无需求值/骰子关闭返回 null。纯判定、不应用、不记账。
@@ -311,7 +311,7 @@ async function applyOptionBehaviorInner(
   // getter 语义不生效、insert 分支的 [0] 为 undefined 访问 selectionStart 会抛错。
   // 统一在此拦截，行为不执行、统计也不计（选项并未真正应用）
   if (!$textarea.length) {
-    toastr.error(t`发送框不可用，无法应用选项`);
+    toastr.error(t`Send box unavailable; cannot apply the option`);
     return diceResult;
   }
   if (behavior === 'insert') {

@@ -14,7 +14,7 @@
           </span>
           <div class="choice-dialog-header-actions">
             <slot name="header-actions"></slot>
-            <button class="choice-dialog-close" title="关闭" @click="$emit('close')">&times;</button>
+            <button class="choice-dialog-close" title="Close" @click="$emit('close')">&times;</button>
           </div>
         </div>
 

@@ -4,59 +4,59 @@
          减少顶部标题噪音）；运行状态读数随开关显隐 -->
     <div class="choice-section">
       <div class="choice-stats-card-head">
-        <h4 class="choice-section-title"><i class="fa-solid fa-sliders"></i>{{ t`统计与自动化` }}</h4>
+        <h4 class="choice-section-title"><i class="fa-solid fa-sliders"></i>{{ t`Stats & automation` }}</h4>
         <span class="choice-stats-info" :title="controlHelp"><i class="fa-solid fa-circle-info"></i></span>
       </div>
       <div class="choice-stats-ai-row">
         <label class="choice-stats-toggle">
           <ChoiceSwitch
             v-model="statsEnabled"
-            :title="t`统计采集：开启后记录生成/选择数据（驱动下方报表与建议引擎）；关闭期间零记录，既有历史保留`"
+            :title="t`Stat collection: when on, records generation/selection data (drives the reports below and the suggestion engine); while off, nothing is recorded and existing history is kept`"
           />
-          <span>{{ t`统计采集` }}</span>
+          <span>{{ t`Stat collection` }}</span>
         </label>
         <label class="choice-stats-toggle">
           <ChoiceSwitch
             v-model="automationEnabled"
             :disabled="!statsEnabled"
-            :title="t`自动化：建议引擎/阵容计划/AI 增强（需先开启统计采集）；只想看统计报表可保持关闭`"
+            :title="t`Automation: suggestion engine / roster planning / AI enhancements (requires stat collection first); leave off if you only want reports`"
           />
-          <span>{{ t`自动化建议` }}</span>
+          <span>{{ t`Automated suggestions` }}</span>
         </label>
         <template v-if="statsEnabled && automationEnabled">
           <label class="choice-stats-toggle">
             <ChoiceSwitch
               v-model="aiAttributionEnabled"
-              :title="t`归因开关：每轮生成后后台 AI 修正选项→条目归因（成本提示见问号帮助）`"
+              :title="t`Attribution toggle: after each generation, a background AI call refines option→entry attribution (cost notes in the ? help)`"
             />
-            <span>{{ t`AI 归因` }}</span>
+            <span>{{ t`AI attribution` }}</span>
           </label>
           <label class="choice-stats-toggle">
             <ChoiceSwitch
               v-model="aiAnalysisEnabled"
-              :title="t`建议理由开关：为有统计建议的条目生成 AI 解释（仅展示）`"
+              :title="t`Reason toggle: generate AI explanations for entries with suggestions (display only)`"
             />
-            <span>{{ t`AI 建议理由` }}</span>
+            <span>{{ t`AI suggestion reasons` }}</span>
           </label>
         </template>
       </div>
       <p v-if="statsEnabled && automationEnabled && aiAttributionEnabled" class="choice-stats-sub choice-stats-ai-l1">
         {{
-          t`归因队列 ${aiAttributionState.queued} · 已修正 ${aiAttributionState.corrected} 条次 · 迁移命中 ${aiAttributionState.migrated} 条次`
+          t`attribution queue ${aiAttributionState.queued} · Corrected ${aiAttributionState.corrected} Item · Migration hits ${aiAttributionState.migrated} Articles`
         }}
       </p>
       <p v-if="statsEnabled && automationEnabled && aiCacheEntryCount > 0" class="choice-stats-sub">
-        {{ t`已为 ${aiCacheEntryCount} 条建议生成理由（${aiCacheTimeText}）· 数据更新后自动重算` }}
+        {{ t`Already for ${aiCacheEntryCount} Reasons for generating suggestions (${aiCacheTimeText})· Automatically recalculate after data update` }}
       </p>
     </div>
 
     <!-- 统计关闭提示（仅提示；开关在上方控制簇，常驻可开可关） -->
     <div v-if="!statsEnabled" class="choice-stats-guide">
       <div>
-        <b>{{ t`统计未开启` }}</b>
+        <b>{{ t`Stats off` }}</b>
         <p>
           {{
-            t`关闭期间不记录任何生成/选择数据，既有历史保留。开启「统计采集」后开始积累；仅需查看报表时保持「自动化建议」关闭即可。`
+            t`While off, no generation/selection data is recorded; existing history is kept. Turn on "Stat collection" to start accumulating; if you only want reports, leave "Automated suggestions" off.`
           }}
         </p>
       </div>
@@ -66,23 +66,23 @@
     <div class="choice-stats-sticky-head">
       <!-- 维度切换：全局（聚合所有 config） / 未绑定档 / 各条目池配置 -->
       <div class="choice-stats-dim-bar">
-        <select v-model="scopeId" class="text_pole choice-stats-scope-select" :title="t`统计维度`">
+        <select v-model="scopeId" class="text_pole choice-stats-scope-select" :title="t`Stat dimension`">
           <option v-for="o in scopeOptions" :key="o.id" :value="o.id">{{ o.name }}</option>
         </select>
         <button
           v-if="undoCount > 0"
           class="menu_button choice-stats-undo"
-          :title="t`撤销最近一次应用到条目池配置的修改（可连续撤销）`"
+          :title="t`Undo the most recent change applied to the pool config (can undo repeatedly)`"
           @click="onUndo"
         >
           <i class="fa-solid fa-rotate-left"></i>
-          {{ t`撤销 (${undoCount})` }}
+          {{ t`Undo (${undoCount})` }}
         </button>
-        <span v-if="view.isGlobal" class="choice-stats-dim-note">{{ t`全局 = 全部配置的混合统计` }}</span>
+        <span v-if="view.isGlobal" class="choice-stats-dim-note">{{ t`Global = mixed stats across all configs` }}</span>
         <span v-else-if="scopeId === NONE_SCOPE" class="choice-stats-dim-note">{{
-          t`未绑定配置档（无 config 会话）`
+          t`Unbound config profile (sessions without a config)`
         }}</span>
-        <span v-else class="choice-stats-dim-note">{{ t`仅该条目池配置生效会话计入` }}</span>
+        <span v-else class="choice-stats-dim-note">{{ t`Only sessions where this pool config is active are counted` }}</span>
       </div>
     </div>
 
@@ -92,37 +92,37 @@
       class="choice-stats-guide"
     >
       <div>
-        <b>{{ t`尚未创建任何条目池配置` }}</b>
+        <b>{{ t`No pool configs created yet` }}</b>
         <p>
           {{
-            t`统计优选建议会写入条目池配置的权重覆盖。创建默认配置后，未绑定档的历史统计会自动并入新配置，即可在统计页应用建议。`
+            t`Stat suggestions write into the pool config's weight overrides. After you create a default config, history recorded under the unbound profile merges into it automatically, and suggestions become applicable on the Stats page.`
           }}
         </p>
       </div>
       <button class="menu_button" @click="onCreateDefaultConfig">
         <i class="fa-solid fa-folder-plus"></i>
-        {{ t`创建默认配置` }}
+        {{ t`Create default config` }}
       </button>
     </div>
     <div v-else-if="statsEnabled && automationEnabled && scopeId === NONE_SCOPE" class="choice-stats-guide">
       <div>
-        <b>{{ t`当前会话未绑定条目池配置` }}</b>
+        <b>{{ t`Current session has no pool config bound` }}</b>
         <p>
           {{
-            t`本会话的统计记入「未绑定配置」档，可查看但无法应用建议。到条目池页绑定角色/聊天，或将某配置设为默认后回来。`
+            t`This session's stats are recorded under "Unbound Config" — viewable, but suggestions can't be applied. Bind a character/chat on the Pool page, or set a config as default, then come back.`
           }}
         </p>
       </div>
       <button class="menu_button" @click="requestTab('pool')">
         <i class="fa-solid fa-arrow-right-to-bracket"></i>
-        {{ t`前往条目池页` }}
+        {{ t`Go to the Pool page` }}
       </button>
     </div>
 
     <!-- 概览（恒展开）：汇总卡片 + 样本分布 + 趋势三合一，减少标题噪音 -->
     <div id="choice-stats-anchor-overview" class="choice-section" data-anchor="overview">
       <div class="choice-stats-card-head">
-        <h4 class="choice-section-title"><i class="fa-solid fa-chart-pie"></i>{{ t`概览` }}</h4>
+        <h4 class="choice-section-title"><i class="fa-solid fa-chart-pie"></i>{{ t`Overview` }}</h4>
         <span class="choice-stats-info" :title="overviewHelp"><i class="fa-solid fa-circle-info"></i></span>
       </div>
       <div class="choice-stats-overview-body">
@@ -133,7 +133,7 @@
               ><i class="fa-solid fa-wand-magic-sparkles"></i
             ></span>
             <div class="choice-stats-card-body">
-              <div class="choice-stats-card-label">{{ t`累计生成` }}</div>
+              <div class="choice-stats-card-label">{{ t`Total generated` }}</div>
               <div class="choice-stats-card-value">{{ view.total_generated }}</div>
             </div>
           </div>
@@ -142,7 +142,7 @@
               ><i class="fa-solid fa-hand-pointer"></i
             ></span>
             <div class="choice-stats-card-body">
-              <div class="choice-stats-card-label">{{ t`累计选择` }}</div>
+              <div class="choice-stats-card-label">{{ t`Total selected` }}</div>
               <div class="choice-stats-card-value">{{ view.total_selected }}</div>
             </div>
           </div>
@@ -151,7 +151,7 @@
               ><i class="fa-solid fa-arrow-trend-up"></i
             ></span>
             <div class="choice-stats-card-body">
-              <div class="choice-stats-card-label">{{ t`选择率` }}</div>
+              <div class="choice-stats-card-label">{{ t`Select rate` }}</div>
               <div class="choice-stats-card-value">{{ selectRateText }}</div>
             </div>
           </div>
@@ -160,21 +160,21 @@
               ><i class="fa-solid fa-calendar"></i
             ></span>
             <div class="choice-stats-card-body">
-              <div class="choice-stats-card-label">{{ t`活跃天数` }}</div>
+              <div class="choice-stats-card-label">{{ t`Active days` }}</div>
               <div class="choice-stats-card-value">{{ activeDays }}</div>
             </div>
           </div>
           <div
             class="choice-stats-card"
             :title="
-              t`池内参与率 = 有效池中至少进入过一轮生成候选的条目数 ÷ 有效池条目数。候选被抽中即计参与（轮次共现归因）；AI 输出为自由文本、选项与条目无法精确一一对应，被 AI 舍弃的候选也会计入`
+              t`Pool participation rate = entries drawn into generation candidates at least once ÷ entries in the effective pool. Being drawn counts as participation (co-occurrence attribution); since AI output is free-form, discarded candidates count too`
             "
           >
             <span class="choice-stats-card-icon choice-stats-card-icon--info"
               ><i class="fa-solid fa-layer-group"></i
             ></span>
             <div class="choice-stats-card-body">
-              <div class="choice-stats-card-label">{{ t`池内参与率` }}</div>
+              <div class="choice-stats-card-label">{{ t`Pool participation rate` }}</div>
               <div class="choice-stats-card-value">{{ poolParticipationText }}</div>
             </div>
           </div>
@@ -183,7 +183,7 @@
               ><i class="fa-solid fa-clock"></i
             ></span>
             <div class="choice-stats-card-body">
-              <div class="choice-stats-card-label">{{ t`最近统计` }}</div>
+              <div class="choice-stats-card-label">{{ t`Recent stats` }}</div>
               <div class="choice-stats-card-value choice-stats-card-value--sm">{{ updatedAtText }}</div>
             </div>
           </div>
@@ -192,16 +192,16 @@
         <!-- 样本量分布诊断 -->
         <div class="choice-stats-sub-block">
           <div class="choice-stats-sub-block-head">
-            <span class="choice-stats-mini-title"><i class="fa-solid fa-vial"></i>{{ t`样本分布` }}</span>
+            <span class="choice-stats-mini-title"><i class="fa-solid fa-vial"></i>{{ t`Sample coverage` }}</span>
             <p class="choice-stats-sub">
               {{
-                t`有效池 ${effectivePoolSize} 条 · 充足 ${distribution.sufficient} · 不足 ${distribution.insufficient} · 未参与 ${distribution.never}`
+                t`effective pool ${effectivePoolSize} strips · sufficient ${distribution.sufficient} · Insufficient ${distribution.insufficient} · Not participating ${distribution.never}`
               }}
             </p>
           </div>
           <div class="choice-stats-sample">
             <div class="choice-stats-sample-row">
-              <span class="choice-stats-sample-label">{{ t`样本充足` }}</span>
+              <span class="choice-stats-sample-label">{{ t`Sufficient sample` }}</span>
               <div class="choice-stats-sample-track">
                 <div
                   class="choice-stats-sample-fill choice-stats-sample-fill--good"
@@ -211,7 +211,7 @@
               <b>{{ distribution.sufficient }}</b>
             </div>
             <div class="choice-stats-sample-row">
-              <span class="choice-stats-sample-label">{{ t`样本不足` }}</span>
+              <span class="choice-stats-sample-label">{{ t`Low sample` }}</span>
               <div class="choice-stats-sample-track">
                 <div
                   class="choice-stats-sample-fill choice-stats-sample-fill--mid"
@@ -221,7 +221,7 @@
               <b>{{ distribution.insufficient }}</b>
             </div>
             <div class="choice-stats-sample-row">
-              <span class="choice-stats-sample-label">{{ t`从未参与` }}</span>
+              <span class="choice-stats-sample-label">{{ t`Never participated` }}</span>
               <div class="choice-stats-sample-track">
                 <div
                   class="choice-stats-sample-fill choice-stats-sample-fill--none"
@@ -236,7 +236,7 @@
         <!-- 趋势 -->
         <div class="choice-stats-sub-block">
           <div class="choice-stats-sub-block-head">
-            <span class="choice-stats-mini-title"><i class="fa-solid fa-chart-column"></i>{{ t`趋势` }}</span>
+            <span class="choice-stats-mini-title"><i class="fa-solid fa-chart-column"></i>{{ t`Trend` }}</span>
             <div class="choice-seg">
               <button
                 v-for="d in trendRangeOptions"
@@ -245,31 +245,31 @@
                 :class="{ active: trendDays === d }"
                 @click="trendDays = d"
               >
-                {{ d }} {{ t`天` }}
+                {{ d }} {{ t`days` }}
               </button>
             </div>
           </div>
-          <p class="choice-stats-sub">{{ t`近 ${trendDays} 天生成 / 选择活动` }}</p>
+          <p class="choice-stats-sub">{{ t`near ${trendDays} Generate / select activities` }}</p>
           <div class="choice-chart">
             <div v-for="(p, i) in trend" :key="p.key" class="choice-chart-day">
               <div class="choice-chart-bars">
                 <div
                   class="choice-chart-col choice-chart-col--generated"
                   :style="{ height: barHeight(p.generated) }"
-                  :title="`${p.label} ${t`生成`} ${p.generated}`"
+                  :title="`${p.label} ${t`Generate`} ${p.generated}`"
                 ></div>
                 <div
                   class="choice-chart-col choice-chart-col--selected"
                   :style="{ height: barHeight(p.selected) }"
-                  :title="`${p.label} ${t`选择`} ${p.selected}`"
+                  :title="`${p.label} ${t`Selected`} ${p.selected}`"
                 ></div>
               </div>
               <span v-if="showChartLabel(i)" class="choice-chart-label">{{ p.label }}</span>
             </div>
           </div>
           <div class="choice-chart-legend">
-            <span><i class="choice-chart-legend-dot choice-chart-legend-dot--generated"></i>{{ t`生成` }}</span>
-            <span><i class="choice-chart-legend-dot choice-chart-legend-dot--selected"></i>{{ t`选择` }}</span>
+            <span><i class="choice-chart-legend-dot choice-chart-legend-dot--generated"></i>{{ t`Generate` }}</span>
+            <span><i class="choice-chart-legend-dot choice-chart-legend-dot--selected"></i>{{ t`Selected` }}</span>
           </div>
         </div>
       </div>
@@ -278,7 +278,7 @@
     <!-- 条目榜（主内容；分组默认折叠，展开后限高滚动，避免无限撑长页面） -->
     <ChoiceSectionCard
       id="choice-stats-anchor-leaderboard"
-      title="条目榜"
+      title="Entry list"
       icon="fa-solid fa-ranking-star"
       data-anchor="leaderboard"
     >
@@ -288,18 +288,18 @@
           <button
             v-if="applyableCount > 0"
             class="menu_button choice-stats-apply-all"
-            :title="t`批量应用当前筛选结果中的全部建议`"
+            :title="t`Apply all suggestions in the current filter result at once`"
             @click="applyAll()"
           >
             <i class="fa-solid fa-wand-magic-sparkles"></i>
-            {{ t`应用全部建议 (${applyableCount})` }}
+            {{ t`Apply all suggestions (${applyableCount})` }}
           </button>
           <button
             v-if="statsEnabled && automationEnabled && aiAnalysisEnabled"
             class="menu_button choice-stats-ai-btn"
             :class="{ 'choice-stats-ai-btn--running': aiAnalysisState.running }"
             :disabled="aiAnalysisState.running"
-            :title="t`为当前维度有统计建议的条目生成/刷新 AI 理由（仅展示，不改动作）`"
+            :title="t`Generate/refresh AI reasons for suggested entries in this dimension (display only, doesn't change actions)`"
             @click="onRunAiAnalysis()"
           >
             <i class="fa-solid fa-brain"></i>
@@ -308,29 +308,29 @@
           <button
             v-if="statsEnabled && automationEnabled && aiAnalysisEnabled && aiAnalysisState.running"
             class="menu_button"
-            :title="t`取消当前 AI 理由分析（已完成的批次不写入）`"
+            :title="t`Cancel the current AI reason analysis (completed batches are discarded)`"
             @click="onCancelAiAnalysis()"
           >
             <i class="fa-solid fa-xmark"></i>
-            {{ t`取消` }}
+            {{ t`Cancel` }}
           </button>
           <button
             v-if="filteredGroups.length > 0"
             class="choice-icon-btn"
-            :title="allExpanded ? t`全部收起` : t`全部展开`"
+            :title="allExpanded ? t`Collapse All` : t`Expand All`"
             @click="allExpanded ? collapseAll() : expandAll()"
           >
             <i :class="allExpanded ? 'fa-solid fa-compress' : 'fa-solid fa-expand'"></i>
           </button>
         </div>
       </template>
-      <p class="choice-stats-sub">{{ t`分组 ${filteredGroups.length} 个 · 条目 ${leaderboardRowCount} 条` }}</p>
+      <p class="choice-stats-sub">{{ t`Group ${filteredGroups.length} items · items ${leaderboardRowCount} entries` }}</p>
       <div class="choice-stats-toolbar">
         <input
           v-model="query"
           class="text_pole choice-stats-search"
           type="search"
-          :placeholder="t`搜索内容 / 类型 / 分类`"
+          :placeholder="t`Search text / type / category`"
         />
         <div class="choice-seg">
           <button
@@ -344,17 +344,17 @@
           </button>
         </div>
         <label class="choice-stats-toggle">
-          <ChoiceSwitch v-model="onlyWithData" :title="t`只看有数据的条目`" />
-          <span>{{ t`只看有数据` }}</span>
+          <ChoiceSwitch v-model="onlyWithData" :title="t`Show only entries with data`" />
+          <span>{{ t`With data only` }}</span>
         </label>
       </div>
       <div v-if="groups.length === 0" class="choice-empty">
         <div class="choice-empty-icon"><i class="fa-solid fa-ranking-star"></i></div>
-        <p>{{ t`条目库为空——先在条目池页添加条目并生成一组选项` }}</p>
+        <p>{{ t`Entry pool is empty — add entries on the Pool page and generate a set of options first` }}</p>
       </div>
       <div v-else-if="filteredGroups.length === 0" class="choice-empty">
         <div class="choice-empty-icon"><i class="fa-solid fa-ranking-star"></i></div>
-        <p>{{ t`没有匹配的条目，试试调整搜索或筛选条件` }}</p>
+        <p>{{ t`No matching entries — try adjusting the search or filters` }}</p>
       </div>
       <div v-else class="choice-stats-groups">
         <div v-for="g in filteredGroups" :key="g.key" class="choice-stats-group">
@@ -362,7 +362,7 @@
             <i class="fa-solid" :class="isExpanded(g) ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
             <span class="choice-stats-group-name">{{ g.category }}</span>
             <span v-if="canApply && groupSuggestCount(g) > 0" class="choice-stats-suggest-badge">{{
-              t`${groupSuggestCount(g)} 条建议`
+              t`${groupSuggestCount(g)} suggestions`
             }}</span>
             <span class="choice-stats-group-summary">{{ groupSummary(g) }}</span>
           </button>
@@ -383,7 +383,7 @@
                   <button
                     v-if="canApplyRow(row)"
                     class="choice-icon-btn choice-stats-apply"
-                    :title="t`应用这条建议到当前配置`"
+                    :title="t`Apply this suggestion to the current config`"
                     @click="applySuggestion(row)"
                   >
                     <i class="fa-solid fa-check"></i>
@@ -391,7 +391,7 @@
                   <button
                     v-if="insightOf(row) === 'disabled' && canApply && !row.deleted"
                     class="choice-icon-btn choice-stats-reenable"
-                    :title="t`重新启用该条目（恢复参与生成；不记应用历史）`"
+                    :title="t`Re-enable this entry (resumes participation; not recorded in apply history)`"
                     @click="reEnable(row)"
                   >
                     <i class="fa-solid fa-power-off"></i>
@@ -399,7 +399,7 @@
                   <button
                     v-if="!row.deleted"
                     class="choice-icon-btn choice-stats-locate"
-                    :title="t`在条目库中定位`"
+                    :title="t`Locate in entry pool`"
                     @click="locateEntry(row.entryId)"
                   >
                     <i class="fa-solid fa-location-crosshairs"></i>
@@ -409,7 +409,7 @@
               <div
                 v-if="row.rate !== null"
                 class="choice-stats-rate-track"
-                :title="`${t`命中率`} ${rateText(row.rate)} / ${t`期望`} ${expectedRateText(row)}`"
+                :title="`${t`Hit rate`} ${rateText(row.rate)} / ${t`Expected`} ${expectedRateText(row)}`"
               >
                 <div class="choice-stats-rate-fill" :style="{ width: rateWidth(row.rate) }"></div>
               </div>
@@ -422,23 +422,23 @@
                   :title="badgeOf(row)?.title"
                   >{{ badgeOf(row)?.text }}</span
                 >
-                <span v-if="row.rate !== null" class="choice-stats-rank-rate" :title="t`命中率 = 命中轮次 ÷ 参与轮次`"
-                  >{{ t`命中率` }} <b>{{ rateText(row.rate) }}</b></span
+                <span v-if="row.rate !== null" class="choice-stats-rank-rate" :title="t`Hit rate = hit rounds ÷ participation rounds`"
+                  >{{ t`Hit rate` }} <b>{{ rateText(row.rate) }}</b></span
                 >
                 <span class="choice-stats-rank-expected"
-                  >{{ t`期望` }} <b>{{ expectedRateText(row) }}</b></span
+                  >{{ t`Expected` }} <b>{{ expectedRateText(row) }}</b></span
                 >
                 <span v-if="windowMeta(row)" class="choice-stats-rank-window" :title="windowTitle(row)">{{
                   windowMeta(row)
                 }}</span>
                 <span :title="participationTitle(row)"
-                  >{{ t`参与` }} <b>{{ row.rounds_included }}</b></span
+                  >{{ t`Participated` }} <b>{{ row.rounds_included }}</b></span
                 >
                 <span
-                  >{{ t`命中` }} <b>{{ row.rounds_with_selection }}</b></span
+                  >{{ t`Hits` }} <b>{{ row.rounds_with_selection }}</b></span
                 >
                 <span
-                  >{{ t`未命中` }}
+                  >{{ t`No hit` }}
                   <b class="choice-stats-meta-miss">{{ row.rounds_included - row.rounds_with_selection }}</b></span
                 >
               </div>
@@ -446,7 +446,7 @@
                 v-if="statsEnabled && automationEnabled && aiReasonOf(row)"
                 class="choice-stats-ai-reason"
                 :class="{ 'choice-stats-ai-reason--low': (aiReasonOf(row)?.confidence ?? 0) < 0.4 }"
-                :title="t`AI 生成的理由（置信度 ${aiReasonOf(row)?.confidence ?? 0}）；仅解释统计建议，不改变动作`"
+                :title="t`AI generated reason (confidence ${aiReasonOf(row)?.confidence ?? 0}); only interprets statistical suggestions, does not change actions`"
               >
                 <i class="fa-solid fa-brain"></i>
                 <span>{{ aiReasonOf(row)?.reason ?? '' }}</span>
@@ -458,20 +458,20 @@
     </ChoiceSectionCard>
 
     <!-- 骰子战绩（全局维度，不随 config 切换；默认折叠） -->
-    <ChoiceSectionCard id="choice-stats-anchor-dice" title="骰子战绩" icon="fa-solid fa-dice" data-anchor="dice">
+    <ChoiceSectionCard id="choice-stats-anchor-dice" title="Dice record" icon="fa-solid fa-dice" data-anchor="dice">
       <template #extra>
         <span class="choice-stats-info" :title="diceHelp"><i class="fa-solid fa-circle-info"></i></span>
       </template>
       <p class="choice-stats-sub">
-        {{ t`共 ${diceStats.total_rolls} 次判定 · 胜率 ${diceRateText}（大成功 + 成功 ÷ 总掷数）` }}
+        {{ t`total ${diceStats.total_rolls} Judgments · Winning rate ${diceRateText}(Big success + successes ÷ total number of throws)` }}
       </p>
-      <div v-if="diceStats.total_rolls === 0" class="choice-empty-hint">{{ t`尚未进行过骰子判定` }}</div>
+      <div v-if="diceStats.total_rolls === 0" class="choice-empty-hint">{{ t`No dice checks yet` }}</div>
       <template v-else>
         <div class="choice-stats-cards">
           <div class="choice-stats-card">
             <span class="choice-stats-card-icon choice-stats-card-icon--neutral"><i class="fa-solid fa-dice"></i></span>
             <div class="choice-stats-card-body">
-              <div class="choice-stats-card-label">{{ t`总掷数` }}</div>
+              <div class="choice-stats-card-label">{{ t`Total rolls` }}</div>
               <div class="choice-stats-card-value">{{ diceStats.total_rolls }}</div>
             </div>
           </div>
@@ -480,7 +480,7 @@
               ><i class="fa-solid fa-star"></i
             ></span>
             <div class="choice-stats-card-body">
-              <div class="choice-stats-card-label">{{ t`大成功` }}</div>
+              <div class="choice-stats-card-label">{{ t`Critical success` }}</div>
               <div class="choice-stats-card-value">{{ diceStats.by_outcome.crit_success }}</div>
             </div>
           </div>
@@ -489,14 +489,14 @@
               ><i class="fa-solid fa-check"></i
             ></span>
             <div class="choice-stats-card-body">
-              <div class="choice-stats-card-label">{{ t`成功` }}</div>
+              <div class="choice-stats-card-label">{{ t`Success` }}</div>
               <div class="choice-stats-card-value">{{ diceStats.by_outcome.success }}</div>
             </div>
           </div>
           <div class="choice-stats-card">
             <span class="choice-stats-card-icon choice-stats-card-icon--danger"><i class="fa-solid fa-xmark"></i></span>
             <div class="choice-stats-card-body">
-              <div class="choice-stats-card-label">{{ t`失败` }}</div>
+              <div class="choice-stats-card-label">{{ t`Failed` }}</div>
               <div class="choice-stats-card-value">{{ diceStats.by_outcome.fail }}</div>
             </div>
           </div>
@@ -505,23 +505,23 @@
               ><i class="fa-solid fa-bolt"></i
             ></span>
             <div class="choice-stats-card-body">
-              <div class="choice-stats-card-label">{{ t`大失败` }}</div>
+              <div class="choice-stats-card-label">{{ t`Critical failure` }}</div>
               <div class="choice-stats-card-value">{{ diceStats.by_outcome.crit_fail }}</div>
             </div>
           </div>
         </div>
         <div class="choice-stats-sub-block">
           <div class="choice-stats-sub-block-head">
-            <span class="choice-stats-mini-title"><i class="fa-solid fa-chart-column"></i>{{ t`近 7 天判定` }}</span>
+            <span class="choice-stats-mini-title"><i class="fa-solid fa-chart-column"></i>{{ t`Checks in the last 7 days` }}</span>
           </div>
-          <p class="choice-stats-sub">{{ t`每日判定次数（含大成功/大失败）` }}</p>
+          <p class="choice-stats-sub">{{ t`Daily check counts (incl. crit success/failure)` }}</p>
           <div class="choice-chart">
             <div v-for="p in diceTrend" :key="p.key" class="choice-chart-day">
               <div class="choice-chart-bars">
                 <div
                   class="choice-chart-col choice-chart-col--dice"
                   :style="{ height: diceBarHeight(p.total) }"
-                  :title="`${p.label} ${t`判定`} ${p.total}`"
+                  :title="`${p.label} ${t`Check`} ${p.total}`"
                 ></div>
               </div>
               <!-- 骰子图固定 7 天，标签全显示（不复用受 trendDays 影响的 showChartLabel） -->
@@ -532,10 +532,10 @@
         <!-- 最近判定历史（v61）：FIFO 上限 DICE_HISTORY_LIMIT，随 stats_enabled 采集 -->
         <div class="choice-stats-sub-block">
           <div class="choice-stats-sub-block-head">
-            <span class="choice-stats-mini-title"><i class="fa-solid fa-clock-rotate-left"></i>{{ t`最近判定` }}</span>
+            <span class="choice-stats-mini-title"><i class="fa-solid fa-clock-rotate-left"></i>{{ t`Recent checks` }}</span>
           </div>
-          <p class="choice-stats-sub">{{ t`最近 ${diceHistoryLimit} 次判定（点数 / 需求 / 结局）` }}</p>
-          <div v-if="diceHistory.length === 0" class="choice-empty-hint">{{ t`暂无判定历史` }}</div>
+          <p class="choice-stats-sub">{{ t`Recently ${diceHistoryLimit} Judgment (points/requirements/outcome)` }}</p>
+          <div v-if="diceHistory.length === 0" class="choice-empty-hint">{{ t`No check history yet` }}</div>
           <ol v-else class="choice-dice-history-list">
             <li v-for="(h, i) in diceHistory" :key="i" class="choice-dice-history-item">
               <span class="choice-dice-history-text" :title="h.text">{{ h.text }}</span>
@@ -553,29 +553,29 @@
     </ChoiceSectionCard>
 
     <!-- 卡牌（统计层，全局维度；默认折叠：卡库/触发/幸运数/货币收支读数） -->
-    <ChoiceSectionCard id="choice-stats-anchor-card" title="卡牌" icon="fa-solid fa-chess-knight" data-anchor="card">
+    <ChoiceSectionCard id="choice-stats-anchor-card" title="cards" icon="fa-solid fa-chess-knight" data-anchor="card">
       <template #extra>
         <span class="choice-stats-info" :title="cardHelp"><i class="fa-solid fa-circle-info"></i></span>
       </template>
       <p class="choice-stats-sub">
-        {{ t`幸运命中 ${cardStats.lucky_hits} · 开包 ${cardStats.packs_opened} · 获得卡 ${cardStats.cards_obtained}` }}
+        {{ t`Lucky hits ${cardStats.lucky_hits} · Unpacking ${cardStats.packs_opened} · Get a card ${cardStats.cards_obtained}` }}
       </p>
       <div v-if="cardStats.lucky_hits === 0 && cardStats.cards_obtained === 0" class="choice-empty-hint">
-        {{ t`尚未触卡。开卡牌总开关后，判定击中幸运数可开卡包；卡触发继续下面的明细。` }}
+        {{ t`No card triggers yet. With the card system enabled, hitting the lucky number on a check opens a card pack; card triggers fill the details below.` }}
       </div>
       <template v-else>
         <div class="choice-stats-cards">
           <div class="choice-stats-card">
             <span class="choice-stats-card-icon choice-stats-card-icon--warning"><i class="fa-solid fa-star"></i></span>
             <div class="choice-stats-card-body">
-              <div class="choice-stats-card-label">{{ t`幸运命中` }}</div>
+              <div class="choice-stats-card-label">{{ t`Lucky hits` }}</div>
               <div class="choice-stats-card-value">{{ cardStats.lucky_hits }}</div>
             </div>
           </div>
           <div class="choice-stats-card">
             <span class="choice-stats-card-icon choice-stats-card-icon--info"><i class="fa-solid fa-gift"></i></span>
             <div class="choice-stats-card-body">
-              <div class="choice-stats-card-label">{{ t`开包次数` }}</div>
+              <div class="choice-stats-card-label">{{ t`Packs opened` }}</div>
               <div class="choice-stats-card-value">{{ cardStats.packs_opened }}</div>
             </div>
           </div>
@@ -584,7 +584,7 @@
               ><i class="fa-solid fa-layer-group"></i
             ></span>
             <div class="choice-stats-card-body">
-              <div class="choice-stats-card-label">{{ t`获得卡` }}</div>
+              <div class="choice-stats-card-label">{{ t`Cards obtained` }}</div>
               <div class="choice-stats-card-value">{{ cardStats.cards_obtained }}</div>
             </div>
           </div>
@@ -593,28 +593,28 @@
               ><i class="fa-solid fa-coins"></i
             ></span>
             <div class="choice-stats-card-body">
-              <div class="choice-stats-card-label">{{ t`行动币获得` }}</div>
+              <div class="choice-stats-card-label">{{ t`Action Coins earned` }}</div>
               <div class="choice-stats-card-value">{{ cardStats.currency_earned }}</div>
             </div>
           </div>
           <div class="choice-stats-card">
             <span class="choice-stats-card-icon choice-stats-card-icon--danger"><i class="fa-solid fa-minus"></i></span>
             <div class="choice-stats-card-body">
-              <div class="choice-stats-card-label">{{ t`行动币支出` }}</div>
+              <div class="choice-stats-card-label">{{ t`Action Coins spent` }}</div>
               <div class="choice-stats-card-value">{{ cardStats.currency_spent }}</div>
             </div>
           </div>
         </div>
         <p v-if="earnedByOutcome" class="choice-stats-sub">
-          {{ t`收支构成` }}：{{ earnedByOutcome }}{{ t`（失败/大失败通常只扣余额，叠加套装加成时可为正收入）` }}
+          {{ t`Income & spending` }}：{{ earnedByOutcome }}{{ t`(Failures/critical failures usually only deduct balance; income may be positive with bonuses)` }}
         </p>
         <!-- 每卡触发次数（join 卡定义，按触发次数降序） -->
         <div class="choice-stats-sub-block">
           <div class="choice-stats-sub-block-head">
-            <span class="choice-stats-mini-title"><i class="fa-solid fa-id-badge"></i>{{ t`每卡触发` }}</span>
+            <span class="choice-stats-mini-title"><i class="fa-solid fa-id-badge"></i>{{ t`Per-card triggers` }}</span>
           </div>
-          <p class="choice-stats-sub">{{ t`卡效果实际触发的次数（累计）` }}</p>
-          <div v-if="cardTopTriggers.length === 0" class="choice-empty-hint">{{ t`暂无卡触发` }}</div>
+          <p class="choice-stats-sub">{{ t`Times this card's effects actually triggered (cumulative)` }}</p>
+          <div v-if="cardTopTriggers.length === 0" class="choice-empty-hint">{{ t`No card triggers yet` }}</div>
           <ol v-else class="choice-dice-history-list">
             <li v-for="t in cardTopTriggers" :key="t.card_id" class="choice-dice-history-item">
               <span class="choice-dice-history-text" :title="t.name">{{ t.name }}</span>
@@ -634,7 +634,7 @@
     <ChoiceSectionCard
       v-if="canApply"
       id="choice-stats-anchor-roster"
-      title="阵容计划"
+      title="Lineup plan"
       icon="fa-solid fa-users-gear"
       data-anchor="roster"
     >
@@ -643,41 +643,41 @@
         <button
           v-if="rosterPlan && (rosterPlan.drops.length > 0 || rosterPlan.promotes.length > 0)"
           class="menu_button choice-stats-apply-all"
-          :title="t`把落出/补入清单应用到当前配置`"
+          :title="t`Apply the drop-out / fill-in list to the current config`"
           @click="applyRoster()"
         >
           <i class="fa-solid fa-users-gear"></i>
-          {{ t`应用阵容计划` }}
+          {{ t`Apply roster plan` }}
           <b>{{ rosterPlan.drops.length + rosterPlan.promotes.length }}</b>
         </button>
       </template>
-      <p class="choice-stats-sub">{{ t`按目标在役条数生成落出 / 补入清单` }}</p>
+      <p class="choice-stats-sub">{{ t`Generate a drop-out / fill-in list for a target active count` }}</p>
       <div class="choice-stats-roster-bar">
         <label class="choice-stats-toggle">
-          <ChoiceSwitch v-model="rosterEnabled" :title="t`启用阵容计划`" />
-          <span>{{ t`启用` }}</span>
+          <ChoiceSwitch v-model="rosterEnabled" :title="t`Enable roster planning`" />
+          <span>{{ t`Enable` }}</span>
         </label>
         <label class="choice-stats-roster-size" :class="{ 'choice-stats-roster-size--off': !rosterEnabled }">
-          {{ t`目标在役条数` }}
+          {{ t`Target active count` }}
           <input
             v-model="rosterSizeText"
             class="text_pole choice-stats-roster-input"
             type="number"
             min="1"
             step="1"
-            :placeholder="t`如 12`"
+            :placeholder="t`e.g. 12`"
             @blur="syncRosterDisplay"
           />
         </label>
       </div>
       <div v-if="rosterPlan" class="choice-stats-roster-readout">
-        {{ t`在役 ${rosterPlan.activeCount} 条` }}
-        <template v-if="rosterPlan.exempt > 0"> · {{ t`${rosterPlan.exempt} 条被豁免` }}</template>
-        · {{ t`替补席 ${benchCount} 条` }} · {{ t`未入池 ${unreferencedCount} 条` }}
+        {{ t`In service ${rosterPlan.activeCount} entries` }}
+        <template v-if="rosterPlan.exempt > 0"> · {{ t`${rosterPlan.exempt} Article is exempted` }}</template>
+        · {{ t`bench ${benchCount} entries` }} · {{ t`Not in the pool ${unreferencedCount} entries` }}
         <template v-if="rosterPostApplyShortfall > 0">
           ·
-          <span :title="t`探索补入每次至多填一半空位，应用本计划后再次应用可继续从未入池条目补入（直至无可补）`">{{
-            t`应用后仍缺 ${rosterPostApplyShortfall} 条`
+          <span :title="t`Explore fill-in occupies at most half the open slots per apply; apply again to keep filling from unpooled entries (until none are left)`">{{
+            t`Still missing after application ${rosterPostApplyShortfall} entries`
           }}</span>
         </template>
       </div>
@@ -685,7 +685,7 @@
         <div v-if="rosterPlan.drops.length > 0" class="choice-stats-roster-col">
           <div class="choice-stats-roster-col-head choice-stats-roster-col-head--drop">
             <i class="fa-solid fa-arrow-down"></i>
-            {{ t`落出 (${rosterPlan.drops.length})` }}
+            {{ t`fall out (${rosterPlan.drops.length})` }}
           </div>
           <div v-for="a in rosterPlan.drops" :key="a.entryId" class="choice-stats-roster-item">
             <span class="choice-stats-type-badge">{{ rosterTypeLabel(a) }}</span>
@@ -695,7 +695,7 @@
         <div v-if="rosterPlan.promotes.length > 0" class="choice-stats-roster-col">
           <div class="choice-stats-roster-col-head choice-stats-roster-col-head--promote">
             <i class="fa-solid fa-arrow-up"></i>
-            {{ t`补入 (${rosterPlan.promotes.length})` }}
+            {{ t`fill in (${rosterPlan.promotes.length})` }}
           </div>
           <div v-for="a in rosterPlan.promotes" :key="a.entryId" class="choice-stats-roster-item">
             <span class="choice-stats-type-badge">{{ rosterTypeLabel(a) }}</span>
@@ -713,32 +713,32 @@
     <ChoiceSectionCard
       v-if="statsEnabled && automationEnabled && historyEntries.length > 0"
       id="choice-stats-anchor-history"
-      title="应用历史"
+      title="Application history"
       icon="fa-solid fa-clock-rotate-left"
       data-anchor="history"
     >
       <template #extra>
         <span class="choice-stats-info" :title="historyHelp"><i class="fa-solid fa-circle-info"></i></span>
         <span v-if="undoCount > 1" class="choice-stats-dim-note">{{
-          t`共 ${historyEntries.length} 批，可逐条撤销`
+          t`total ${historyEntries.length} Approved, can be revoked item by item`
         }}</span>
       </template>
-      <p class="choice-stats-sub">{{ t`最近应用批次，可逐条撤销` }}</p>
+      <p class="choice-stats-sub">{{ t`Recent applied batches; undo one by one` }}</p>
       <div class="choice-stats-history">
         <div v-for="h in historyEntries" :key="h.entry.id" class="choice-stats-history-item">
           <div class="choice-stats-history-head">
             <span
               class="choice-stats-kind"
               :class="h.entry.kind === 'roster' ? 'choice-stats-kind--roster' : 'choice-stats-kind--suggestions'"
-              >{{ h.entry.kind === 'roster' ? t`阵容` : t`建议` }}</span
+              >{{ h.entry.kind === 'roster' ? t`Roster` : t`Suggestions` }}</span
             >
             <span class="choice-stats-history-time" :title="h.entry.ts ? historyTimeTitle(h.entry.ts) : undefined">{{
               h.entry.ts ? timeAgo(h.entry.ts) : EMPTY_DISPLAY
             }}</span>
-            <span class="choice-stats-history-count">{{ t`${h.changes.length} 条变更` }}</span>
+            <span class="choice-stats-history-count">{{ t`${h.changes.length} article changes` }}</span>
             <button
               class="choice-icon-btn choice-stats-history-undo"
-              :title="t`撤销这一批应用`"
+              :title="t`Undo this applied batch`"
               @click="undoHistoryEntry(h.entry.id)"
             >
               <i class="fa-solid fa-rotate-left"></i>
@@ -755,14 +755,14 @@
     </ChoiceSectionCard>
 
     <!-- 命中榜（用户选择条目的排行；默认折叠） -->
-    <ChoiceSectionCard id="choice-stats-anchor-hitrank" title="命中榜" icon="fa-solid fa-crown" data-anchor="hitrank">
+    <ChoiceSectionCard id="choice-stats-anchor-hitrank" title="hit list" icon="fa-solid fa-crown" data-anchor="hitrank">
       <template #extra>
         <span class="choice-stats-info" :title="hitRankHelp"><i class="fa-solid fa-circle-info"></i></span>
       </template>
-      <p class="choice-stats-sub">{{ t`被选择过的条目，按命中次数排序` }}</p>
+      <p class="choice-stats-sub">{{ t`Entries that were selected, sorted by hit count` }}</p>
       <div v-if="hitRank.length === 0" class="choice-empty">
         <div class="choice-empty-icon"><i class="fa-solid fa-crown"></i></div>
-        <p>{{ t`尚未选择过任何条目` }}</p>
+        <p>{{ t`No entries selected yet` }}</p>
       </div>
       <div v-else class="choice-stats-rank">
         <div v-for="(row, i) in hitRank" :key="row.entryId" class="choice-stats-rank-row">
@@ -780,7 +780,7 @@
             <button
               v-if="!row.deleted"
               class="choice-icon-btn choice-stats-locate"
-              :title="t`在条目库中定位`"
+              :title="t`Locate in entry pool`"
               @click="locateEntry(row.entryId)"
             >
               <i class="fa-solid fa-location-crosshairs"></i>
@@ -788,13 +788,13 @@
           </div>
           <div class="choice-stats-rank-meta">
             <span
-              >{{ t`命中次数` }} <b>{{ row.count }}</b></span
+              >{{ t`Hit count` }} <b>{{ row.count }}</b></span
             >
             <span v-if="row.last_selected_text" class="choice-stats-meta-expected"
-              >{{ t`最近选中` }} <b class="choice-stats-meta-hit-text">{{ row.last_selected_text }}</b></span
+              >{{ t`Last selected` }} <b class="choice-stats-meta-hit-text">{{ row.last_selected_text }}</b></span
             >
             <span
-              >{{ t`最近选中时间` }} <b>{{ timeAgo(row.last_selected_at) }}</b></span
+              >{{ t`Last selected at` }} <b>{{ timeAgo(row.last_selected_at) }}</b></span
             >
           </div>
         </div>
@@ -802,19 +802,19 @@
     </ChoiceSectionCard>
 
     <!-- 管理（默认折叠） -->
-    <ChoiceSectionCard id="choice-stats-anchor-manage" title="管理" icon="fa-solid fa-sliders" data-anchor="manage">
+    <ChoiceSectionCard id="choice-stats-anchor-manage" title="management" icon="fa-solid fa-sliders" data-anchor="manage">
       <template #extra>
         <span class="choice-stats-info" :title="manageHelp"><i class="fa-solid fa-circle-info"></i></span>
       </template>
-      <p class="choice-stats-sub">{{ t`导出 JSON 备份 / 清空后重新统计` }}</p>
+      <p class="choice-stats-sub">{{ t`Export JSON backup / clear and restart stats` }}</p>
       <div class="choice-stats-actions">
-        <button class="menu_button" :title="t`导出统计为 JSON`" @click="exportStats()">
+        <button class="menu_button" :title="t`Export stats as JSON`" @click="exportStats()">
           <i class="fa-solid fa-download"></i>
-          {{ t`导出 JSON` }}
+          {{ t`Export JSON` }}
         </button>
-        <button class="menu_button" :title="t`清空全部统计计数与排行榜`" @click="onClearStats">
+        <button class="menu_button" :title="t`Clear all stat counters and leaderboards`" @click="onClearStats">
           <i class="fa-solid fa-broom"></i>
-          {{ t`清空统计` }}
+          {{ t`Clear stats` }}
         </button>
       </div>
     </ChoiceSectionCard>
@@ -926,19 +926,19 @@ const sampleMin = SUGGEST_MIN_SAMPLES;
 /** 概览（汇总卡片 / 样本分布 / 趋势 三合一）说明 */
 const overviewHelp = computed(
   () =>
-    t`汇总卡片：当前维度（全局 = 所有配置聚合）的累计生成/选择/选择率/活跃天数/池内参与率/最近活动。样本分布：当前维度有效池 ${effectivePoolSize.value} 条目的样本覆盖——参与 ≥${sampleMin} 轮命中率才可信（可出建议），不足的只标「样本不足」，充足占比越高优化建议越可信；「参与」指条目进入过生成轮候选菜单（轮次共现），不代表选项一定出现在输出中。趋势：按天统计的生成/选择活动（仅行动选项视图计入，随选中维度），自 v51 起累积，历史不回填。`,
+    t`Summary card: Cumulative generation/selection/selection rate/active days/pool participation rate/recent activity for the current dimension (global = all configuration aggregates). Sample distribution: current dimension effective pool ${effectivePoolSize.value} Sample coverage of entry – Participation ≥${sampleMin} Only the round hit rate is credible (recommendations can be made), and the insufficient ones are marked with "Insufficient Samples". The higher the sufficient percentage, the more credible the optimization suggestions are; "Participation" means that the entry has entered the generation round candidate menu (round co-occurrence), which does not mean that the option must appear in the output. Trends: Generation/selection activity by day (only action options view counts, as dimensions are selected), accumulated since v51, history is not backfilled.`,
 );
 const leaderboardHelp = computed(() =>
   [
-    t`命中轮次 = 选项被选中且文本匹配到该条目的轮次（精确归因：输出选项与候选 type+内容 做相似度匹配，被 AI 舍弃的候选不产生命中）；命中率与「期望」对比：期望 = 该条目方向被 AI 采纳输出时的随机点选基准（仅在输出匹配到该条目的轮次按「该条目被匹配到的输出数 ÷ 该轮输出条数」累计；AI 完全自由发挥的轮次不累计期望也不产生命中；统计满 ${sampleMin} 轮后按平均每轮点选数校正，多选时基线随之抬高），高于期望越多越值得提权，低于越多越值得降权。单个 config 维度额外显示近 ${sampleMin} 轮窗口命中率。参与轮次 = 该条目被抽入候选菜单的轮次（共现归因）：AI 输出为自由文本，被 AI 舍弃的候选也计参与；生成条数按 AI 输出条数计，池子小于请求条数或 AI 自由发挥时，参与条目数可能少于或多于生成条数。`,
-    view.value.isGlobal ? t` 全局 = 所有配置混合累计，不代表任何单一场景；建议功能需切换到具体配置维度。` : '',
+    t`Hit round = the round in which the option is selected and the text matches the entry (accurate attribution: similarity matching between the output option and the candidate type+content, the candidate discarded by AI does not generate a hit); hit rate compared with "expectation": Expectation = the random click basis when the entry direction is adopted by AI for output (only in the rounds where the output matches the entry, press "The number of outputs matched by the entry ÷ The number of outputs in this round is accumulated; AI is a completely free round that does not accumulate expectations and does not produce hits; the statistics are full ${sampleMin} After the round, the average number of clicks per round is corrected, and the baseline is raised when there are multiple choices). The more the number is higher than the expectation, the more worthy of a power increase. The more it is lower than the expectation, the more worthy of a power reduction. Single config Dimension Extra Display Near ${sampleMin} Round window hit rate. Participation round = the round in which the entry is drawn into the candidate menu (co-occurrence attribution): AI outputs as free text, and candidates discarded by AI are also counted as participating; the number of generated entries is calculated based on the number of AI output entries. When the pool is smaller than the number of requested entries or AI plays freely, the number of participating entries may be less than or more than the number of generated entries.`,
+    view.value.isGlobal ? t` Global = all configurations are mixed and accumulated, and do not represent any single scenario; it is recommended that the function needs to be switched to the specific configuration dimension.` : '',
   ].join(''),
 );
-const hitRankHelp = t`仅列出被选择过的条目（精确归因：输出选项文本匹配到该条目才算命中，被 AI 舍弃的候选不产生命中），按命中次数排序。`;
-const diceHelp = t`骰子判定战绩（全局维度，不随条目池配置切换）：记录点击选项时的判定结局计数（D100 或骰式）与每日判定次数。随「统计采集」开关积累；不参与条目建议/权重。清空统计时一并清除。`;
-const rosterHelp = t`为目标在役条数 N 生成落出/补入清单：超过 N 的条目按表现（超额命中率，窗口优先/全量兜底）从末尾落出（软停用、保留统计），空位由替补席（曾停用条目）优先补入，再按探索预算（每次至多一半空位）从未入池条目补入，空缺可再次应用继续填。pinned 与样本不足（参与 <${sampleMin} 轮）豁免；点「应用」确认后写入，可撤销。`;
-const historyHelp = t`最近应用到当前配置的自动化批次（建议/阵容），刷新不丢。撤销恢复应用前的权重/启闭状态并重置对应条目的冷却观察期。`;
-const manageHelp = t`导出统计为 JSON 便于备份与分析（含全部维度）；清空后所有维度与计数归零，用于重新统计。统计不与角色/聊天绑定，按条目池配置分维度累计。`;
+const hitRankHelp = t`Lists only entries that were selected (exact attribution: an output option counts as a hit only when its text matches the entry; discarded candidates produce no hits), sorted by hit count.`;
+const diceHelp = t`Dice check record (global dimension, doesn't switch with pool configs): outcome counts for checks rolled on option clicks (D100 or expression) and daily check counts. Accumulates while "Stat collection" is on; not used by entry suggestions/weights; cleared together with stats.`;
+const rosterHelp = t`Generate a drop-out/fill-in list for the target number of active items N: Entries exceeding N will drop out from the end (soft deactivation, retained statistics) based on performance (excess hit rate, window priority/full bottom), and the vacancies will be filled by the bench (previously deactivated items) first, and then filled in by unentered entries according to the exploration budget (up to half of the vacancies each time). The vacancies can be applied again to continue filling. pinned with insufficient sample (participation <${sampleMin} Round) exemption; click "Apply" to confirm and then write, which can be revoked.`;
+const historyHelp = t`Recent automated batches applied to the current config (suggestions / roster); survives refresh. Undo restores pre-apply weights/enablement and resets the cooldown watch for the affected entries.`;
+const manageHelp = t`Export stats as JSON for backup and analysis (all dimensions); clearing resets every dimension and counter for a fresh start. Stats are not bound to character/chat — they accumulate per pool config dimension.`;
 
 // ── 维度 ──
 // 默认选中当前生效维度（有 config → 该 config；无 → NONE_SCOPE 并显示引导），
@@ -951,9 +951,9 @@ const hasNoneScopeData = computed(() => {
 });
 
 const scopeOptions = computed(() => {
-  const opts: Array<{ id: string; name: string }> = [{ id: GLOBAL_SCOPE, name: t`全局` }];
+  const opts: Array<{ id: string; name: string }> = [{ id: GLOBAL_SCOPE, name: t`Global` }];
   if (hasNoneScopeData.value || configs.value.length === 0) {
-    opts.push({ id: NONE_SCOPE, name: t`未绑定配置` });
+    opts.push({ id: NONE_SCOPE, name: t`Unbound config` });
   }
   for (const c of configs.value) {
     opts.push({ id: c.id, name: c.name });
@@ -1017,7 +1017,7 @@ const automationEnabled = computed({
   },
 });
 /** 控制簇四开关说明（统计采集 / 自动化建议 / AI 归因 / AI 建议理由；常驻可见） */
-const controlHelp = t`统计采集：开启后记录行动选项的生成/选择数据（仅行动选项视图），驱动下方报表与建议引擎；关闭期间零记录，既有历史保留。自动化建议：在统计数据基础上启用建议引擎（提权/降权/回捞，只调权重、永不自动停用条目）、阵容计划与 AI 增强；只想看统计报表的用户保持关闭即可。自动化依赖统计采集，统计关闭时自动化不可用。AI 归因：每轮行动选项生成后，后台异步调 AI 把选项语义匹配到候选条目，结果与本地 Dice 归因 diff 后对称修正统计（默认关：每次生成会多一次 API 请求，且将条目内容送往模型）。AI 建议理由：为当前维度有统计建议的条目生成自然语言解释（打开统计页/切维度按需触发，默认开；仅展示，不改变建议动作与写入链路）。两个 AI 功能均需已配置 API，未配置时静默降级为纯统计。`;
+const controlHelp = t`Stat collection: when on, records action-option generation/selection data (option views only), driving the reports below and the suggestion engine; while off, nothing is recorded and existing history is kept. Automated suggestions: enables the suggestion engine on top of the stats (upweight / downweight / recovery — adjusts weights only, never auto-disables entries), roster planning and AI enhancements; leave off if you only want the reports. Automation depends on stat collection and is unavailable while stats are off. AI attribution: after each option generation, a background AI call matches options semantically to candidate entries, then symmetrically reconciles stats against the local Dice attribution (off by default: one extra API request per generation, and entry content is sent to the model). AI suggestion reasons: natural-language explanations for entries with suggestions in this dimension (triggered on opening the Stats page / switching dimensions, on by default; display only — doesn't change suggestion actions or the write path). Both AI features need a configured API; without one they silently degrade to pure stats.`;
 const canApply = computed(() => {
   if (!statsEnabled.value || !automationEnabled.value) return false;
   const scoped = scopeId.value;
@@ -1071,11 +1071,11 @@ const aiCacheTimeText = computed(() => timeAgo(aiCache.value?.updated_at ?? 0));
 /** AI 分析按钮文案：运行中显示分批进度；空闲显示缓存条数/时间 */
 const aiAnalyzeLabel = computed(() => {
   if (aiAnalysisState.running) {
-    return aiAnalysisState.total > 0 ? t`AI 分析中 (${aiAnalysisState.done}/${aiAnalysisState.total})` : t`AI 分析中…`;
+    return aiAnalysisState.total > 0 ? t`AI Analyzing (${aiAnalysisState.done}/${aiAnalysisState.total})` : t`AI analyzing…`;
   }
   const n = aiCacheEntryCount.value;
-  if (n > 0) return t`刷新 AI 理由 (${n})`;
-  return t`AI 分析`;
+  if (n > 0) return t`Refresh AI Reason (${n})`;
+  return t`AI analysis`;
 });
 
 /** 自动分析:打开/切维度/本维度统计有新数据时防抖触发一次；单飞与失效判定由
@@ -1132,7 +1132,7 @@ const onCreateDefaultConfig = () => {
   }));
   const cfg = {
     id: uuidv4(),
-    name: t`默认配置`,
+    name: t`Default config`,
     entries,
     is_default: true,
     rules: '',
@@ -1151,7 +1151,7 @@ const onCreateDefaultConfig = () => {
     delete stats.entries[NONE_SCOPE];
   }
   scopeId.value = cfg.id;
-  toastr.success(t`已创建默认配置（未绑定档历史统计已并入），可在统计页应用优化建议`);
+  toastr.success(t`Default config created (unbound-profile history merged in) — you can now apply suggestions on the Stats page`);
 };
 
 // ── 汇总卡片 ──
@@ -1238,11 +1238,11 @@ const diceBarHeight = (v: number) => (v > 0 ? Math.max(4, Math.round((v / diceTr
 const diceHistory = computed(() => [...(diceStats.value.history ?? [])].reverse());
 const diceHistoryLimit = DICE_HISTORY_LIMIT;
 const rollLabelHist = (o: DiceOutcome): string =>
-  o === 'crit_success' ? t`大成功` : o === 'crit_fail' ? t`大失败` : o === 'success' ? t`成功` : t`失败`;
+  o === 'crit_success' ? t`Critical success` : o === 'crit_fail' ? t`Critical failure` : o === 'success' ? t`Success` : t`Failed`;
 
 // ── 卡牌（统计层，全局维度，不随 config 切换） ──
 const cardStats = computed<CardStats>(() => stats.value.card ?? createEmptyCardStats());
-const cardHelp = t`卡牌系统统计（全局维度，不随条目池配置切换）：幸运数命中/开包/得卡/行动币收支，以及每卡触发次数。随「统计采集」开关积累；清空统计时一并清除（行动币余额/收藏属游戏进度层，不清除）。注意：收入只记正向、失败扣币不入账，故获得−消费与当前余额不对应；支出一律来自开卡包。`;
+const cardHelp = t`Card system stats (global dimension, doesn't switch with pool configs): lucky number hits / pack openings / cards obtained / Action Coin flow, plus per-card trigger counts. Accumulates while "Stat collection" is on; cleared together with stats (coin balance & collection are game-progress state and are not cleared). Note: only positive income is recorded — failures deduct nothing on paper — so obtained − spent won't match the current balance; all spending comes from pack openings.`;
 /** 每卡触发次数（join 卡定义，按触发次数降序取前 20） */
 const cardTopTriggers = computed(() => {
   const per = cardStats.value.per_card ?? {};
@@ -1290,10 +1290,10 @@ const filteredGroups = computed(() =>
 const leaderboardRowCount = computed(() => filteredGroups.value.reduce((n, g) => n + g.rows.length, 0));
 
 const sortOptions: Array<{ key: EntrySortBy; label: string }> = [
-  { key: 'rounds', label: t`参与` },
-  { key: 'selection', label: t`命中` },
-  { key: 'rate', label: t`命中率` },
-  { key: 'content', label: t`内容` },
+  { key: 'rounds', label: t`Participated` },
+  { key: 'selection', label: t`Hits` },
+  { key: 'rate', label: t`Hit rate` },
+  { key: 'content', label: t`Content` },
 ];
 
 // 分组折叠状态（组件内存活，不持久化）：默认全部折叠——去掉旧的「有数据自动展开」，
@@ -1338,12 +1338,12 @@ const collapseAll = () => {
 const allExpanded = computed(() => filteredGroups.value.length > 0 && filteredGroups.value.every(g => isExpanded(g)));
 
 const groupSummary = (g: EntryGroup): string => {
-  if (g.deletedGroup) return t`${g.rows.length} 条已删除`;
+  if (g.deletedGroup) return t`${g.rows.length} Article deleted`;
   if (g.rounds_included > 0) {
     const participated = g.rows.filter(r => r.rounds_included > 0).length;
-    return t`参与 ${participated} 条 · ${g.rounds_included} 轮 · 命中率 ${rateText(g.rate)}`;
+    return t`Participated ${participated} Article · ${g.rounds_included} Round · Hit Rate ${rateText(g.rate)}`;
   }
-  return t`未参与（${g.rows.length} 条）`;
+  return t`Not participating (${g.rows.length} Article)`;
 };
 
 /** 组头「N 条建议」徽标：该组当前可应用建议的条数（仅具体 config 维度 + 被引用的条目） */
@@ -1357,52 +1357,52 @@ const expectedRateText = (row: EntryRankRow): string => rateText(metaOf(row).exp
 const windowMeta = (row: EntryRankRow): string | null => {
   const w = metaOf(row).window;
   if (!w) return null;
-  return t`近 ${w.samples} 轮 ${rateText(w.rate)}`;
+  return t`near ${w.samples} wheel ${rateText(w.rate)}`;
 };
 
 const windowTitle = (row: EntryRankRow): string | undefined => {
   const w = metaOf(row).window;
   if (!w) return undefined;
-  return t`近 ${w.samples} 轮命中 ${w.hits} 次，期望 ${rateText(w.expectedRate)}`;
+  return t`near ${w.samples} Hit the wheel ${w.hits} times, expectations ${rateText(w.expectedRate)}`;
 };
 
 /** 类型徽标：已删除条目标「已删除」，否则 type（可空标「未标注」）。
  *  参数取最小结构：条目榜与命中榜共用，避免两处内联复刻后函数更新不同步 */
 const typeLabel = (row: { deleted: boolean; type: string }): string => {
-  if (row.deleted) return t`已删除`;
-  return row.type || t`未标注`;
+  if (row.deleted) return t`Deleted`;
+  return row.type || t`Unmarked`;
 };
 
 const entryText = (row: EntryRankRow): string => {
-  if (row.deleted) return t`已删除条目 ${row.entryId.slice(0, 8)}…（${row.rounds_included} 轮）`;
-  return row.content || row.type || t`（空内容）`;
+  if (row.deleted) return t`Entry deleted ${row.entryId.slice(0, 8)}…（${row.rounds_included} wheel)`;
+  return row.content || row.type || t`(empty text)`;
 };
 
 /** 相对时间（最近参与/命中），用于 tooltip */
 const timeAgo = (ts: number): string => {
-  if (ts <= 0) return t`从未`;
+  if (ts <= 0) return t`Never`;
   const diff = Date.now() - ts;
   const min = Math.floor(diff / 60000);
-  if (min < 1) return t`刚刚`;
-  if (min < 60) return t`${min} 分钟前`;
+  if (min < 1) return t`Just now`;
+  if (min < 60) return t`${min} minutes ago`;
   const hr = Math.floor(min / 60);
-  if (hr < 24) return t`${hr} 小时前`;
+  if (hr < 24) return t`${hr} hours ago`;
   const day = Math.floor(hr / 24);
-  if (day < 30) return t`${day} 天前`;
+  if (day < 30) return t`${day} days ago`;
   const mo = Math.floor(day / 30);
-  if (mo < 12) return t`${mo} 个月前`;
-  return t`${Math.floor(mo / 12)} 年前`;
+  if (mo < 12) return t`${mo} months ago`;
+  return t`${Math.floor(mo / 12)} years ago`;
 };
 
-const includedTimeTitle = (row: EntryRankRow): string => t`最近参与：${timeAgo(row.last_included_at)}`;
+const includedTimeTitle = (row: EntryRankRow): string => t`Recently participated in:${timeAgo(row.last_included_at)}`;
 
 /** 参与轮次的语义说明 + 最近参与时间（共现归因：被 AI 舍弃的候选也算参与） */
 const participationTitle = (row: EntryRankRow): string =>
-  t`参与轮次 = 该条目被抽入候选菜单的轮次（轮次共现归因）；AI 输出为自由文本，被 AI 舍弃的候选也计参与。${includedTimeTitle(row)}`;
+  t`Participation round = the round in which the entry is drawn into the candidate menu (round co-occurrence attribution); AI outputs as free text, and candidates discarded by AI also count as participation.${includedTimeTitle(row)}`;
 
 /** 最近选中文本 tooltip（条目榜与命中榜共用；参数取最小结构，两榜行为同源） */
 const selectedTextTitle = (row: { last_selected_text: string | undefined }): string | undefined =>
-  row.last_selected_text ? t`最近选中：${row.last_selected_text.slice(0, 40)}` : undefined;
+  row.last_selected_text ? t`Recently selected:${row.last_selected_text.slice(0, 40)}` : undefined;
 
 const locateEntry = (entryId: string) => {
   requestTab('pool');
@@ -1433,34 +1433,34 @@ const buildInsightBadge = (insight: EntryInsight, suggestion: Suggestion | null)
   if (!insight) return null;
   switch (insight) {
     case 'downgrade':
-      return { text: t`候选降权`, cls: 'choice-stats-insight--bad', title: suggestionTitle(suggestion) };
+      return { text: t`Downweight`, cls: 'choice-stats-insight--bad', title: suggestionTitle(suggestion) };
     case 'recover':
-      return { text: t`权重回捞`, cls: 'choice-stats-insight--good', title: suggestionTitle(suggestion) };
+      return { text: t`Weight recovery`, cls: 'choice-stats-insight--good', title: suggestionTitle(suggestion) };
     case 'good':
-      return { text: t`表现良好`, cls: 'choice-stats-insight--good', title: suggestionTitle(suggestion) };
+      return { text: t`Performing well`, cls: 'choice-stats-insight--good', title: suggestionTitle(suggestion) };
     case 'insufficient':
       return {
-        text: t`样本不足`,
+        text: t`Low sample`,
         cls: 'choice-stats-insight--insufficient',
-        title: t`参与轮次不足 ${sampleMin} 轮，命中率噪声大，暂不判断质量`,
+        title: t`Not enough participation rounds ${sampleMin} Wheel, the hit rate is noisy, so we won’t judge the quality yet.`,
       };
     case 'disabled':
       return {
-        text: t`已停用`,
+        text: t`Disabled`,
         cls: 'choice-stats-insight--disabled',
-        title: t`该条目已停用（阵容落出），不再参与生成；可在条目池页手动重新启用`,
+        title: t`This entry is disabled (dropped by roster planning) and no longer participates in generation; re-enable it manually on the Pool page`,
       };
     case 'cooldown':
       return {
-        text: t`冷却中`,
+        text: t`Cooling down`,
         cls: 'choice-stats-insight--cooldown',
-        title: t`最近一次自动化调整后不足 ${sampleMin} 轮新数据，暂不重新评级；调整超过 7 天且已有 ≥3 轮新数据时放宽`,
+        title: t`Insufficient after the latest automated adjustment ${sampleMin} There will be no re-rating for the time being when there are rounds of new data; the adjustment will be relaxed if it exceeds 7 days and there are ≥3 rounds of new data.`,
       };
     case 'floor':
       return {
-        text: t`已到下限`,
+        text: t`At the floor`,
         cls: 'choice-stats-insight--floor',
-        title: t`权重已到自动化下限（${SUGGEST_WEIGHT_MIN}）且表现持续低于期望，建议引擎不再调整；可在阵容计划落出或手动处理`,
+        title: t`The weight has reached the automation lower limit (${SUGGEST_WEIGHT_MIN}) and the performance continues to be lower than expected, it is recommended that the engine is no longer adjusted; it can be done after the lineup plan is dropped or manually processed`,
       };
     default:
       return null;
@@ -1469,18 +1469,18 @@ const buildInsightBadge = (insight: EntryInsight, suggestion: Suggestion | null)
 
 /** 建议动作 → 文案（单一真相源，`suggestionTitle` 与 `applyConfirmMessage` 共用，防两处漂移） */
 const actionLabel = (s: Suggestion): string =>
-  s.action === 'down' ? t`降权` : s.reason === 'recover' ? t`回捞` : t`提权`;
+  s.action === 'down' ? t`Downweight` : s.reason === 'recover' ? t`Recover` : t`Upweight`;
 
 /** 洞察标签 tooltip：附建议依据（依据口径 / 命中率 / 期望 / 超额）；回捞建议若作用于
  *  手动设置的低权重（从未被自动化调整），追加覆盖提示 */
 const suggestionTitle = (s: Suggestion | null): string => {
-  if (!s) return t`基于近 ${sampleMin} 轮或全量样本的统计建议`;
+  if (!s) return t`Based on recent ${sampleMin} Statistical advice for rounds or full samples`;
   const newWeightText = s.newWeight !== undefined ? ` → ${s.newWeight}` : '';
   const act = actionLabel(s);
-  const manualNote = s.reason === 'recover' && s.manualLow ? t`（该权重为手动设置，回捞会覆盖手动值）` : '';
+  const manualNote = s.reason === 'recover' && s.manualLow ? t`(Weight was set manually; recovery may override it)` : '';
   // 基线描述先算再插值：插值里嵌反引号模板会让运行时 i18n 键与对账工具的提取口径错位
-  const basisText = s.basis === '窗口' ? t`近 ${s.samples} 轮` : t`全量 ${s.samples} 轮`;
-  return t`${basisText}命中率 ${rateText(s.rate)}，期望 ${rateText(s.expected)}：建议${act}${newWeightText}${manualNote}`;
+  const basisText = s.basis === 'Window' ? t`near ${s.samples} wheel` : t`All-time ${s.samples} wheel`;
+  return t`${basisText}Hit rate ${rateText(s.rate)}, expect ${rateText(s.expected)}: Suggestion${act}${newWeightText}${manualNote}`;
 };
 
 const rowMeta = computed<Map<string, RowMeta>>(() => {
@@ -1566,10 +1566,10 @@ const historyTimeTitle = (ts: number): string => formatDateTime(ts);
 
 const undoHistoryEntry = (entryId: string) => {
   if (undoApply(entryId)) {
-    toastr.success(t`已撤销该批应用`);
+    toastr.success(t`Batch undone`);
   } else {
     // 零回滚（该批字段已被后续应用/手动编辑全覆盖）：明示而非假成功
-    toastr.warning(t`该批没有可回滚的字段（已被后续改动覆盖）`);
+    toastr.warning(t`Nothing to roll back in this batch (already overwritten by later changes)`);
   }
 };
 
@@ -1580,18 +1580,18 @@ const applyConfirmMessage = computed(() => {
     .map(s => {
       const row = groups.value.flatMap(g => g.rows).find(r => r.entryId === s.entryId);
       const name = (row?.content || s.entryId).slice(0, 24);
-      const change = `${t`权重`} ${s.currentWeight} → ${s.newWeight}`;
-      const basis = s.basis === '窗口' ? t`近 ${s.samples} 轮` : t`全量 ${s.samples} 轮`;
-      return `· ${name}：${actionLabel(s)}（${change}；${basis}命中 ${rateText(s.rate)}，期望 ${rateText(s.expected)}）`;
+      const change = `${t`Weight`} ${s.currentWeight} → ${s.newWeight}`;
+      const basis = s.basis === 'Window' ? t`near ${s.samples} wheel` : t`All-time ${s.samples} wheel`;
+      return `· ${name}：${actionLabel(s)}（${change}；${basis}Hits ${rateText(s.rate)}, expect ${rateText(s.expected)}）`;
     })
     .join('\n');
   // 「应用全部」作用于搜索/筛选后的行：范围小于未筛选全集时明示，防「以为应用了全部」
   const applyableTotal = groups.value.flatMap(g => g.rows).filter(r => canApplyRow(r)).length;
   const scopeNote =
     pendingFiltered.value && list.length < applyableTotal
-      ? t`\n\n当前仅包含搜索/筛选结果（未筛选时共 ${applyableTotal} 条可应用）。`
+      ? t`\n\n currently only contains search/filter results (unfiltered total ${applyableTotal} Articles may be applied).`
       : '';
-  return t`将应用到当前配置：\n${lines}${scopeNote}\n\n以上均为权重调整，不影响条目启用状态；应用后可在统计页撤销。`;
+  return t`Will be applied to current configuration: \n${lines}${scopeNote}\n\n The above are all weight adjustments and do not affect the entry activation status; they can be revoked on the statistics page after application.`;
 });
 
 /** 「应用全部」标记：本次确认清单来自筛选后的行（applyConfirmMessage 据此决定是否附范围提示） */
@@ -1605,18 +1605,18 @@ const runApply = async (list: Suggestion[], filtered = false) => {
   pending.value = list;
   pendingFiltered.value = filtered;
   const ok = await showApplyConfirm({
-    title: t`应用统计建议`,
+    title: t`Apply stat suggestions`,
     message: applyConfirmMessage.value,
-    confirmText: t`应用`,
-    cancelText: t`取消`,
+    confirmText: t`Apply`,
+    cancelText: t`Cancel`,
   });
   pending.value = null;
   if (!ok || list.length === 0 || scopeId.value === GLOBAL_SCOPE || scopeId.value === NONE_SCOPE) return;
   const res = applySuggestions(scopeId.value, list);
   toastr.success(
     res.skipped > 0
-      ? t`已应用 ${res.applied} 条建议（跳过 ${res.skipped} 条，可在统计页撤销）`
-      : t`已应用 ${res.applied} 条建议（可在统计页撤销）`,
+      ? t`Applied ${res.applied} suggestions (skip ${res.skipped} (can be canceled on the statistics page)`
+      : t`Applied ${res.applied} suggestions (can be revoked on the statistics page)`,
   );
 };
 
@@ -1633,7 +1633,7 @@ const applySuggestion = (row: EntryRankRow) => {
 const reEnable = (row: EntryRankRow) => {
   if (scopeId.value === GLOBAL_SCOPE || scopeId.value === NONE_SCOPE) return;
   if (reEnableEntry(scopeId.value, row.entryId)) {
-    toastr.success(t`已重新启用该条目`);
+    toastr.success(t`Entry re-enabled`);
   }
 };
 
@@ -1649,11 +1649,11 @@ const applyAll = () => {
 const onUndo = () => {
   if (scopeId.value === GLOBAL_SCOPE || scopeId.value === NONE_SCOPE) return;
   if (undoLastApply(scopeId.value)) {
-    toastr.success(t`已撤销最近一次应用`);
+    toastr.success(t`Last application undone`);
   } else {
     // 零回滚：明示而非假成功（槽保留，撤销更近批次后仍可回滚）
     // undoLastApply 已把零回滚死记录自动跳过：走到这里 = 本 scope 无可撤销历史
-    toastr.warning(t`没有可撤销的应用记录`);
+    toastr.warning(t`No applied changes to undo`);
   }
 };
 
@@ -1724,18 +1724,18 @@ const excessText = (v: number): string => (v >= 0 ? '+' : '') + Math.round(v * 1
 
 const rosterTypeLabel = (a: RosterAction): string => typeLabel({ deleted: false, type: a.type });
 
-const rosterText = (a: RosterAction): string => a.content || a.type || t`（空内容）`;
+const rosterText = (a: RosterAction): string => a.content || a.type || t`(empty text)`;
 
 /** 落出/补入行 tooltip：附依据（口径/命中率/期望/超额） */
 const rosterReason = (a: RosterAction): string => {
   const basis =
     a.samples !== undefined && a.score !== undefined
-      ? t`近 ${a.samples} 轮超额 ${excessText(a.score)}`
+      ? t`near ${a.samples} Round excess ${excessText(a.score)}`
       : a.reason === 'explore'
-        ? t`未入池条目，探索补入`
-        : t`样本不足，替补补入`;
-  if (a.kind === 'drop') return t`落出：${basis}`;
-  return a.reason === 'bench' ? t`替补补入：${basis}` : t`探索补入：${basis}`;
+        ? t`Unpooled entries — explore fill-in`
+        : t`Low sample — bench fill-in`;
+  if (a.kind === 'drop') return t`Fall out:${basis}`;
+  return a.reason === 'bench' ? t`Substitute additions:${basis}` : t`Explore and add:${basis}`;
 };
 
 /** 计划无可执行动作时的说明 */
@@ -1743,12 +1743,12 @@ const rosterEmptyText = computed(() => {
   const p = rosterPlan.value;
   if (!p) return '';
   if (p.activeCount > p.target) {
-    return t`在役 ${p.activeCount} 条超出目标 ${p.target}，但可落出的非 pinned 且样本充足的条目不足（其余被豁免），暂无可执行动作。`;
+    return t`In service ${p.activeCount} exceed target ${p.target}, but there are not enough items that can be released that are not pinned and have sufficient samples (the rest are exempted), and no action can be taken yet.`;
   }
   if (p.activeCount < p.target) {
-    return t`在役 ${p.activeCount} 条低于目标 ${p.target}，但替补席与未入池条目已无可补入（未入池按探索预算进一步降低填充）。`;
+    return t`In service ${p.activeCount} bars below target ${p.target}, but the bench and un-pooled entries cannot be filled in (un-pooled entries will be filled according to the further reduction of the exploration budget).`;
   }
-  return t`当前在役 ${p.activeCount} 条，正符合目标，无需调整。`;
+  return t`Currently in service ${p.activeCount} It is in line with the target and no adjustment is needed.`;
 });
 
 const pendingRoster = ref<RosterPlan | null>(null);
@@ -1767,10 +1767,10 @@ const rosterConfirmMessage = computed(() => {
   const p = pendingRoster.value;
   if (!p) return '';
   const lines = [
-    ...p.drops.map(a => `· ${t`落出`} ${rosterText(a)}（${rosterReason(a)}）`),
-    ...p.promotes.map(a => `· ${t`补入`} ${rosterText(a)}（${rosterReason(a)}）`),
+    ...p.drops.map(a => `· ${t`Drop out`} ${rosterText(a)}（${rosterReason(a)}）`),
+    ...p.promotes.map(a => `· ${t`Fill in`} ${rosterText(a)}（${rosterReason(a)}）`),
   ];
-  return t`将应用到当前配置：\n${lines.join('\n')}\n\n落出为软停用（条目保留、统计不丢），可在条目池页手动重新启用。`;
+  return t`Will be applied to current configuration: \n${lines.join('\n')}\n\n is soft-disabled when it is dropped (entries are retained and statistics are not lost), and can be manually re-enabled on the entry pool page.`;
 });
 
 /** 应用阵容计划：设 pendingRoster → 弹确认 → 确认后写入。取消/守卫失败只复位 pending。
@@ -1780,18 +1780,18 @@ const applyRoster = async () => {
   if (!p || (p.drops.length === 0 && p.promotes.length === 0)) return;
   pendingRoster.value = p;
   const ok = await showRosterConfirm({
-    title: t`应用阵容计划`,
+    title: t`Apply roster plan`,
     message: rosterConfirmMessage.value,
-    confirmText: t`应用`,
-    cancelText: t`取消`,
+    confirmText: t`Apply`,
+    cancelText: t`Cancel`,
   });
   pendingRoster.value = null;
   if (!ok || scopeId.value === GLOBAL_SCOPE || scopeId.value === NONE_SCOPE) return;
   const res = applyRosterPlan(scopeId.value, p);
   toastr.success(
     res.skipped > 0
-      ? t`已应用 ${res.applied} 条阵容变更（跳过 ${res.skipped} 条，可在统计页撤销）`
-      : t`已应用 ${res.applied} 条阵容变更（可在统计页撤销）`,
+      ? t`Applied ${res.applied} lineup changes (skip ${res.skipped} (can be canceled on the statistics page)`
+      : t`Applied ${res.applied} Lineup changes (can be undone on the statistics page)`,
   );
 };
 
@@ -1800,8 +1800,8 @@ const hitRank = computed(() => hitLeaderboard(view.value, masterPool.value));
 
 /** 命中榜行文本：已删除条目显示占位，否则内容优先于 type */
 const hitText = (row: HitRankRow): string => {
-  if (row.deleted) return t`已删除条目 ${row.entryId.slice(0, 8)}…（命中 ${row.count} 次）`;
-  return row.content || row.type || t`（空内容）`;
+  if (row.deleted) return t`Entry deleted ${row.entryId.slice(0, 8)}…(hit ${row.count} times)`;
+  return row.content || row.type || t`(empty text)`;
 };
 
 // ── 导出与管理 ──
@@ -1855,7 +1855,7 @@ const exportStats = () => {
   a.download = `choice-stats-${stamp}.json`;
   a.click();
   URL.revokeObjectURL(url);
-  toastr.success(t`已导出统计 JSON`);
+  toastr.success(t`Stats exported as JSON`);
 };
 
 const {
@@ -1871,14 +1871,14 @@ const {
 /** 清空统计：弹确认 → 确认后清空。取消只关闭弹窗（无 pending 状态） */
 const onClearStats = async () => {
   const ok = await showClearConfirm({
-    title: t`清空统计`,
-    message: t`确定要清空所有统计数据和排行榜吗？此操作不可撤销。`,
-    confirmText: t`清空`,
-    cancelText: t`取消`,
+    title: t`Clear stats`,
+    message: t`Clear all stats and leaderboards? This cannot be undone.`,
+    confirmText: t`Clear`,
+    cancelText: t`Cancel`,
   });
   if (!ok) return;
   clearStats();
-  toastr.success(t`已清空统计`);
+  toastr.success(t`Stats cleared`);
 };
 </script>
 

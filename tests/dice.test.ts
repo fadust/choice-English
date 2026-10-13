@@ -101,31 +101,31 @@ describe('degreeSpace', () => {
 
 describe('degreeBucket（v73 占比制）', () => {
   it('彩蛋为单条：tier null + 固定词，不受 margin 符号影响', () => {
-    expect(degreeBucket('crit_success', -3, { mode: 'high', rate: 99 })).toEqual({ tier: null, word: '惊艳无比' });
-    expect(degreeBucket('crit_fail', 50, { mode: 'high', rate: 36 })).toEqual({ tier: null, word: '灾难性失败' });
+    expect(degreeBucket('crit_success', -3, { mode: 'high', rate: 99 })).toEqual({ tier: null, word: "Amazing" });
+    expect(degreeBucket('crit_fail', 50, { mode: 'high', rate: 36 })).toEqual({ tier: null, word: "catastrophic failure" });
   });
 
   it('同一差值按需求值分档：36 需求差 39 → 完胜档；85 需求差 39 → 近满值档', () => {
     // 39/65 = 0.6 → mid_high
-    expect(degreeBucket('success', 39, { mode: 'high', rate: 36 }).word).toBe('漂亮完胜');
+    expect(degreeBucket('success', 39, { mode: 'high', rate: 36 }).word).toBe("Clean win");
     // 39/16 > 1 → clamp 1 → high
-    expect(degreeBucket('success', 39, { mode: 'high', rate: 85 }).word).toBe('势如破竹');
+    expect(degreeBucket('success', 39, { mode: 'high', rate: 85 }).word).toBe("Sweeping victory");
   });
 
   it('占比断点：p=0.2 恰为 mid_low 下沿，p<0.2 落 low', () => {
     // 失败面 35：7/35 = 0.2 → mid_low；6/35 < 0.2 → low
-    expect(degreeBucket('fail', -7, { mode: 'high', rate: 36 })).toEqual({ tier: 'mid_low', word: '功亏一篑' });
-    expect(degreeBucket('fail', -6, { mode: 'high', rate: 36 })).toEqual({ tier: 'low', word: '差点成功' });
+    expect(degreeBucket('fail', -7, { mode: 'high', rate: 36 })).toEqual({ tier: 'mid_low', word: "Fell short at the finish" });
+    expect(degreeBucket('fail', -6, { mode: 'high', rate: 36 })).toEqual({ tier: 'low', word: "Just missed" });
   });
 
   it('low 模式按成功面 [1,rate] 计占比', () => {
     // 35/65 ≈ 0.538 → mid；13/65 = 0.2 → mid_low
-    expect(degreeBucket('success', 35, { mode: 'low', rate: 65 }).word).toBe('顺利达成');
-    expect(degreeBucket('success', 13, { mode: 'low', rate: 65 }).word).toBe('险胜');
+    expect(degreeBucket('success', 35, { mode: 'low', rate: 65 }).word).toBe("Smoothly done");
+    expect(degreeBucket('success', 13, { mode: 'low', rate: 65 }).word).toBe("Narrow win");
   });
 
   it('margin 0（恰好达标）落成功侧最低档', () => {
-    expect(degreeBucket('success', 0, { mode: 'high', rate: 36 })).toEqual({ tier: 'low', word: '勉强得手' });
+    expect(degreeBucket('success', 0, { mode: 'high', rate: 36 })).toEqual({ tier: 'low', word: "Barely made it" });
   });
 
   it('marginDegree/degreeTierFor 与 degreeBucket 同源', () => {
@@ -148,15 +148,15 @@ describe('buildDiceMarker', () => {
     const out = buildDiceMarker('success', 75, 36, tpl, tpl, 39, { mode: 'high', rate: 36 }, '潜入书房');
     expect(out.startsWith('<!--')).toBe(true);
     expect(out.endsWith('-->\n')).toBe(true);
-    expect(out).toContain('结局 成功');
-    expect(out).toContain('裁定对象 潜入书房');
-    expect(out).toContain('点数 75｜需求 36｜差值 +39｜程度 漂亮完胜');
-    expect(out).toContain('掷出75对36超出39，漂亮完胜');
+    expect(out).toContain('Outcome Success');
+    expect(out).toContain('Action 潜入书房');
+    expect(out).toContain('Roll 75｜Target 36｜Margin +39｜Result Clean win');
+    expect(out).toContain('掷出75对36超出39，Clean win');
     expect(out).toContain(DICE_MARKER_TAIL);
   });
 
   it('无标题时省略裁定对象段', () => {
-    expect(buildDiceMarker('success', 75, 36, tpl, tpl, 39, { mode: 'high', rate: 36 })).not.toContain('裁定对象');
+    expect(buildDiceMarker('success', 75, 36, tpl, tpl, 39, { mode: 'high', rate: 36 })).not.toContain('Action');
   });
 
   it('按档位取对应 send 模板（rate 36 / margin 39 → mid_high）', () => {
@@ -188,7 +188,7 @@ describe('buildDiceMarker', () => {
   });
 
   it('失败侧差值负号：差值 -10（无 + 号）', () => {
-    expect(buildDiceMarker('fail', 26, 36, tpl, tpl, -10, { mode: 'high', rate: 36 })).toContain('差值 -10');
+    expect(buildDiceMarker('fail', 26, 36, tpl, tpl, -10, { mode: 'high', rate: 36 })).toContain('Margin -10');
   });
 
   it('连续连字符统一清洗，注释体内不会出现 --> 提前闭合', () => {

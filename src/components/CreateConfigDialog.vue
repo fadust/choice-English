@@ -5,37 +5,37 @@
         <div class="choice-ccdlg-header">
           <span class="choice-ccdlg-title">
             <i class="fa-solid fa-plus"></i>
-            {{ t`新建配置` }}
+            {{ t`New Config` }}
           </span>
-          <button class="choice-ccdlg-close" :title="t`取消`" @click="emit('close')">&times;</button>
+          <button class="choice-ccdlg-close" :title="t`Cancel`" @click="emit('close')">&times;</button>
         </div>
 
         <div class="choice-ccdlg-body">
           <div class="choice-ccdlg-field">
-            <label class="choice-ccdlg-label">{{ t`配置名称` }}</label>
-            <input v-model="name" class="text_pole" :placeholder="t`输入配置名称`" @keyup.enter="onCreate" />
-            <p v-if="isDup" class="choice-ccdlg-warning">{{ t`已存在同名配置，请换一个名称` }}</p>
+            <label class="choice-ccdlg-label">{{ t`Config name` }}</label>
+            <input v-model="name" class="text_pole" :placeholder="t`Enter config name`" @keyup.enter="onCreate" />
+            <p v-if="isDup" class="choice-ccdlg-warning">{{ t`A config with this name already exists. Please choose another.` }}</p>
           </div>
 
           <div class="choice-ccdlg-checks">
             <label class="choice-check">
               <input v-model="isDefault" type="checkbox" />
-              {{ t`设为默认` }}
+              {{ t`Set as Default` }}
             </label>
             <label class="choice-check">
               <input v-model="bindChat" type="checkbox" />
-              {{ t`绑定聊天` }}
+              {{ t`Bind to Chat` }}
             </label>
-            <label class="choice-check" :title="!hasChar ? t`请先在酒馆中选择一个角色卡` : ''">
+            <label class="choice-check" :title="!hasChar ? t`Select a character card in SillyTavern first` : ''">
               <input v-model="bindChar" type="checkbox" :disabled="!hasChar" />
-              {{ t`绑定角色` }}
+              {{ t`Bind to Character` }}
             </label>
           </div>
         </div>
 
         <div class="choice-ccdlg-footer">
-          <button class="menu_button" @click="emit('close')">{{ t`取消` }}</button>
-          <button class="menu_button" :disabled="!name.trim() || isDup" @click="onCreate">{{ t`创建` }}</button>
+          <button class="menu_button" @click="emit('close')">{{ t`Cancel` }}</button>
+          <button class="menu_button" :disabled="!name.trim() || isDup" @click="onCreate">{{ t`Create` }}</button>
         </div>
       </div>
     </div>

@@ -113,7 +113,7 @@ export function initPanelMount() {
       // 体验极差，只轻提示后跳过；主动召回（弹设置+聚焦 API 步）在用户手动点
       // 「生成」时由 ActionOptionsPanel.onToggle 触发
       if (!resolveCustomApi(gs.settings.active_api_id, gs.settings.apis)) {
-        toastr.warning(t`未配置 API，跳过自动生成选项`);
+        toastr.warning(t`API unconfigured — skipping auto option generation`);
         return;
       }
       const swipeId = getMessageSwipeId(messageId);
@@ -167,7 +167,7 @@ export function initPanelMount() {
 
   // 输入润色按钮：注入到输入框右侧，单按钮切换空闲/取消状态
   const $enrichBtn = $(
-    '<div id="choice_enrich_btn" class="fa-solid fa-pen-to-square interactable" title="润色输入" style="display:none; margin-right:6px; font-size:16px; cursor:pointer; opacity:0.7"></div>',
+    '<div id="choice_enrich_btn" class="fa-solid fa-pen-to-square interactable" title="Polish input" style="display:none; margin-right:6px; font-size:16px; cursor:pointer; opacity:0.7"></div>',
   );
 
   const gs = useGlobalSettingsStore(pinia);
@@ -214,18 +214,18 @@ export function initPanelMount() {
       cancelEnrich();
       store.enrichLoading = false;
       store.setActiveView('options');
-      $enrichBtn.removeClass('fa-stop').addClass('fa-pen-to-square').attr('title', '润色输入');
+      $enrichBtn.removeClass('fa-stop').addClass('fa-pen-to-square').attr('title', 'polish input');
       return;
     }
 
     const input = ($('#send_textarea').val() as string).trim();
     if (!input) return;
 
-    $enrichBtn.removeClass('fa-pen-to-square').addClass('fa-stop').attr('title', '取消润色');
+    $enrichBtn.removeClass('fa-pen-to-square').addClass('fa-stop').attr('title', 'Cancel enrich');
     try {
       await store.triggerEnrich(input);
     } finally {
-      $enrichBtn.removeClass('fa-stop').addClass('fa-pen-to-square').attr('title', '润色输入');
+      $enrichBtn.removeClass('fa-stop').addClass('fa-pen-to-square').attr('title', 'polish input');
     }
   });
 
@@ -235,7 +235,7 @@ export function initPanelMount() {
     if (!state.triggerEnrichRequested) return;
     const input = ($('#send_textarea').val() as string).trim();
     if (!input) {
-      toastr.warning(t`输入框为空，无法润色`);
+      toastr.warning(t`Input box is empty, cannot enrich`);
       state.triggerEnrichRequested = false;
       return;
     }

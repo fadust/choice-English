@@ -5,21 +5,21 @@
          切换配置不得带动这些开关（历史耦合：曾绑 selectedConfig.generation，
          切池配置分组抽取/固定溢出即跳变）。与生成设置页的冗余比例同源 -->
     <div class="choice-inline-field">
-      <label class="choice-inline-label">{{ t`抽取参数（全局）` }}</label>
+      <label class="choice-inline-label">{{ t`Generation Params (Global)` }}</label>
       <div class="choice-inline-gen">
-        <label class="choice-check" :title="t`按条目分类分组轮流抽取，避免同组扎堆`">
+        <label class="choice-check" :title="t`Sample by category in round-robin to avoid clustering`">
           <input v-model="globalStore.settings.generation.categories_enabled" type="checkbox" />
-          {{ t`分组抽取` }}
+          {{ t`Group Sampling` }}
         </label>
-        <label class="choice-check" :title="t`结果随机打乱，避免固定条目总在开头`">
+        <label class="choice-check" :title="t`Shuffle results to avoid pinned entries always appearing first`">
           <input v-model="globalStore.settings.generation.shuffle_final" type="checkbox" />
-          {{ t`打乱结果` }}
+          {{ t`Shuffle` }}
         </label>
         <label class="choice-inline-gen-item">
-          <span :title="t`固定条目超过数量上限时：全发=全部保留，截断=只取前N个`">{{ t`固定溢出` }}</span>
+          <span :title="t`When pinned entries exceed count: Send All keeps all, Trim takes first N`">{{ t`Pinned Overflow` }}</span>
           <select v-model="globalStore.settings.generation.pinned_overflow" class="choice-select">
-            <option value="send_all">{{ t`全发` }}</option>
-            <option value="trim">{{ t`截断` }}</option>
+            <option value="send_all">{{ t`Send All` }}</option>
+            <option value="trim">{{ t`Trim` }}</option>
           </select>
         </label>
       </div>
@@ -30,22 +30,22 @@
     <!-- 配置工具栏 -->
     <div class="choice-config-bar">
       <div class="choice-config-row">
-        <label class="choice-config-label">{{ t`配置` }}</label>
+        <label class="choice-config-label">{{ t`Config` }}</label>
         <select v-model="selectedConfigId" class="choice-config-select">
           <option v-for="cfg in configs" :key="cfg.id" :value="cfg.id">{{ cfg.name }}</option>
         </select>
-        <button class="choice-btn-sm" :title="t`重命名`" :disabled="!selectedConfig" @click="startRenameConfig">
+        <button class="choice-btn-sm" :title="t`Rename`" :disabled="!selectedConfig" @click="startRenameConfig">
           <i class="fa-solid fa-pen-to-square"></i>
         </button>
         <div class="choice-config-actions">
-          <button class="choice-btn-sm" :title="t`设为默认`" :disabled="selectedConfig?.is_default" @click="setDefault">
+          <button class="choice-btn-sm" :title="t`Set as Default`" :disabled="selectedConfig?.is_default" @click="setDefault">
             <i class="fa-solid fa-star"></i>
           </button>
           <button
             class="choice-btn-sm"
             :class="{ active: selectedConfigId === chatStore.settings.config_id }"
             :title="
-              selectedConfigId === chatStore.settings.config_id ? t`当前聊天已绑定（点击取消）` : t`绑定到当前聊天`
+              selectedConfigId === chatStore.settings.config_id ? t`Bound to current chat (click to unbind)` : t`Bind to current chat`
             "
             @click="bindChat"
           >
@@ -57,10 +57,10 @@
             :disabled="!currentCharAvailable"
             :title="
               !currentCharAvailable
-                ? t`请先在酒馆中选择一个角色卡`
+                ? t`Select a character card in SillyTavern first`
                 : selectedConfigId === characterStore.settings.config_id
-                  ? t`当前角色已绑定（点击取消）`
-                  : t`绑定到当前角色`
+                  ? t`Bound to current character (click to unbind)`
+                  : t`Bind to current character`
             "
             @click="bindCharacter"
           >
@@ -68,23 +68,23 @@
           </button>
           <button
             class="choice-btn-sm choice-btn-del"
-            :title="t`删除`"
+            :title="t`Delete`"
             :disabled="selectedConfig?.is_default"
             @click="removeConfig"
           >
             <i class="fa-solid fa-trash-can"></i>
           </button>
-          <button class="choice-btn-sm choice-btn-new" :title="t`新建`" @click="showCreateDialog = true">
-            <i class="fa-solid fa-plus"></i> {{ t`新建` }}
+          <button class="choice-btn-sm choice-btn-new" :title="t`New`" @click="showCreateDialog = true">
+            <i class="fa-solid fa-plus"></i> {{ t`New` }}
           </button>
         </div>
       </div>
       <div class="choice-config-status">
-        <span class="choice-config-status-label">{{ t`当前生效` }}:</span>
+        <span class="choice-config-status-label">{{ t`Active` }}:</span>
         <span class="choice-config-status-name">{{ effectiveName }}</span>
-        <span v-if="chatStore.settings.config_id" class="choice-bound-badge">{{ t`聊天` }}</span>
-        <span v-if="characterStore.settings.config_id" class="choice-bound-badge choice-bound-char">{{ t`角色` }}</span>
-        <span v-if="!effectiveConfig" class="choice-bound-badge choice-bound-fallback">{{ t`全部条目` }}</span>
+        <span v-if="chatStore.settings.config_id" class="choice-bound-badge">{{ t`Chat` }}</span>
+        <span v-if="characterStore.settings.config_id" class="choice-bound-badge choice-bound-char">{{ t`Character` }}</span>
+        <span v-if="!effectiveConfig" class="choice-bound-badge choice-bound-fallback">{{ t`All Entries` }}</span>
       </div>
 
       <!-- 已绑定当前配置的角色卡徽章（反向视角：角色卡→配置 的绑定关系列表，同过滤页角色卡区） -->
@@ -98,14 +98,14 @@
       <!-- 已选条目列表 -->
       <div class="choice-inline-field">
         <div class="choice-inline-field-head">
-          <label class="choice-inline-label">{{ t`已选条目` }} ({{ selectedCount }})</label>
+          <label class="choice-inline-label">{{ t`Selected Entries` }} ({{ selectedCount }})</label>
           <button
             class="choice-btn-sm choice-btn-new"
             data-tour="pool-add"
-            :title="t`从条目库勾选条目添加到当前配置`"
+            :title="t`Select entries from the master pool to add to the current config`"
             @click="showSelectDialog = true"
           >
-            <i class="fa-solid fa-plus"></i> {{ t`添加条目` }}
+            <i class="fa-solid fa-plus"></i> {{ t`Add Entry` }}
           </button>
         </div>
         <div v-if="selectedEntries.length > 0" ref="entriesContainer" class="choice-inline-entries">
@@ -116,12 +116,12 @@
             :class="{ 'choice-inline-entry--disabled': cfgEntry.enabled === false }"
           >
             <div class="choice-inline-entry-row">
-              <DragHandle :title="t`拖动排序`" />
+              <DragHandle :title="t`Drag to reorder`" />
               <button
                 type="button"
                 class="choice-expand-btn"
                 :class="{ expanded: expandedEntries.has(cfgEntry.entry_id) }"
-                :title="t`查看条目内容与规则`"
+                :title="t`View entry content and rule`"
                 @click="toggleExpandEntry(cfgEntry.entry_id)"
               >
                 <i class="fa-solid fa-chevron-right"></i>
@@ -130,7 +130,7 @@
                 <span
                   class="choice-inline-cat-badge"
                   :class="{ 'choice-inline-cat-badge--muted': !getEntryCategory(cfgEntry.entry_id) }"
-                  >{{ getEntryCategory(cfgEntry.entry_id) || t`未分组` }}</span
+                  >{{ getEntryCategory(cfgEntry.entry_id) || t`Ungrouped` }}</span
                 >
                 {{ entrySummary(cfgEntry.entry_id) }}
               </span>
@@ -139,26 +139,26 @@
                 <ChoiceSwitch
                   v-model="cfgEntry.enabled"
                   :title="
-                    cfgEntry.enabled === false ? t`已停用：条目保留在配置中，但不参与生成` : t`已启用：点击停用该条目`
+                    cfgEntry.enabled === false ? t`Disabled: the entry stays in the config but doesn't participate in generation` : t`Enabled: click to disable this entry`
                   "
                 />
-                <label class="choice-check" :title="t`固定：勾选后该条目固定生成`">
+                <label class="choice-check" :title="t`Pinned: checked entries are always included in generation`">
                   <input v-model="cfgEntry.pinned" type="checkbox" />
-                  <span class="choice-check-text">{{ t`固定` }}</span>
+                  <span class="choice-check-text">{{ t`Pinned` }}</span>
                 </label>
                 <label class="choice-inline-field-item">
-                  <span class="choice-inline-field-label">{{ t`权重` }}</span>
+                  <span class="choice-inline-field-label">{{ t`Weight` }}</span>
                   <input
                     v-model.number="cfgEntry.weight"
                     class="choice-input choice-small-input"
                     type="number"
                     min="0"
-                    :title="t`权重`"
+                    :title="t`Weight`"
                   />
                 </label>
                 <button
                   class="choice-icon-btn choice-delete-btn"
-                  :title="t`移除`"
+                  :title="t`Remove`"
                   @click="removeConfigEntry(cfgEntry.entry_id)"
                 >
                   <i class="fa-solid fa-xmark"></i>
@@ -178,39 +178,39 @@
                   <div class="choice-inline-detail-text">{{ field.value }}</div>
                 </div>
                 <div v-if="entryDetailFields(cfgEntry.entry_id).length === 0" class="choice-inline-detail-empty">
-                  {{ t`该条目无内容与规则` }}
+                  {{ t`This entry has no content or rule` }}
                 </div>
               </template>
-              <div v-else class="choice-inline-detail-empty">{{ t`条目已不存在` }}</div>
+              <div v-else class="choice-inline-detail-empty">{{ t`Entry no longer exists` }}</div>
             </div>
           </div>
         </div>
         <div v-else class="choice-empty">
           <div class="choice-empty-icon"><i class="fa-solid fa-layer-group"></i></div>
-          <p>{{ t`未选择条目，请点击"添加条目"选择` }}</p>
+          <p>{{ t`No entries selected. Click "Add Entry" to select.` }}</p>
         </div>
       </div>
 
       <!-- 配置级规则/示例：用户按需求或角色卡自行书写，不加任何标签；空则生成时不注入，不影响通用行为 -->
       <div class="choice-inline-field">
         <div class="choice-inline-field-head">
-          <label class="choice-inline-label">{{ t`规则（可选）` }}</label>
+          <label class="choice-inline-label">{{ t`Rules (optional)` }}</label>
           <span class="choice-inline-hint">{{
-            t`留空则不注入；无需任何标签，直接按需求或角色卡书写，AI 原样读取`
+            t`Leave empty to skip injection; no tags needed — write to the requirement or character card directly, the AI reads it verbatim`
           }}</span>
         </div>
         <textarea
           v-model="selectedConfig.rules"
           class="choice-textarea choice-inline-textarea"
           rows="4"
-          :placeholder="t`例如：选项按角色当前性格与场景书写，动词开头、不超过 15 字`"
+          :placeholder="t`E.g. options written per the character's current personality and scene, verb-first, ≤15 characters`"
         ></textarea>
       </div>
     </div>
 
     <div v-else-if="configs.length === 0" class="choice-empty">
       <div class="choice-empty-icon"><i class="fa-solid fa-database"></i></div>
-      <p>{{ t`暂无配置，请点击新建创建配置` }}</p>
+      <p>{{ t`No configs. Click New to create one.` }}</p>
     </div>
 
     <hr class="sysHR" />
@@ -219,11 +219,11 @@
     <button
       class="choice-entrypool-btn"
       data-tour="pool-library"
-      :title="t`打开条目库管理弹窗`"
+      :title="t`Open entry pool manager`"
       @click="showEntryPool = true"
     >
       <i class="fa-solid fa-database"></i>
-      {{ t`条目库` }} ({{ masterPool.length }})
+      {{ t`Entry Library` }} ({{ masterPool.length }})
     </button>
 
     <EntryPoolDialog :open="showEntryPool" @close="showEntryPool = false" />
@@ -237,7 +237,7 @@
 
     <SelectEntriesDialog
       :open="showSelectDialog"
-      :title="t`选择条目`"
+      :title="t`Select Entries`"
       :selected-ids="selectedEntryIds"
       @close="showSelectDialog = false"
       @confirm="handleSelectEntries"
@@ -331,7 +331,7 @@ watch(
 const selectedConfig = computed(() => configs.value.find(c => c.id === selectedConfigId.value) ?? null);
 
 const effectiveName = computed(() => {
-  if (!effectiveConfig.value) return t`全部条目`;
+  if (!effectiveConfig.value) return t`All Entries`;
   return effectiveConfig.value.name;
 });
 
@@ -359,7 +359,7 @@ const onCreateConfig = (payload: { name: string; isDefault: boolean; bindChat: b
     if (getStCharacter(this_chid)) {
       characterStore.setBinding('pool', id);
     } else {
-      toastr.warning(t`未选择角色卡，「绑定角色」未生效`);
+      toastr.warning(t`No character card selected — "Bind character" didn't take effect`);
     }
   }
   showCreateDialog.value = false;
@@ -367,12 +367,12 @@ const onCreateConfig = (payload: { name: string; isDefault: boolean; bindChat: b
 
 const startRenameConfig = () => {
   if (!selectedConfig.value) return;
-  const name = prompt(t`请输入新名称`, selectedConfig.value.name);
+  const name = prompt(t`Enter new name`, selectedConfig.value.name);
   const trimmed = name?.trim();
   if (!trimmed || trimmed === selectedConfig.value.name) return;
   // 重名检测：与其他配置同名会让下拉/绑定歧义，提醒后放弃修改
   if (configs.value.some(c => c.id !== selectedConfig.value!.id && c.name === trimmed)) {
-    toastr.warning(t`配置名「${trimmed}」已存在`);
+    toastr.warning(t`Configuration name "${trimmed}” already exists`);
     return;
   }
   selectedConfig.value.name = trimmed;
@@ -436,8 +436,8 @@ const getEntryCategory = (entryId: string): string => {
 // 折叠摘要只显示条目标识：完整内容/规则仅在展开详情出现，避免同一内容两处重复
 const entrySummary = (entryId: string): string => {
   const entry = masterEntryOf(entryId);
-  if (!entry) return t`<空条目>`;
-  return entrySummaryText(entry.type, entry.content, t`<空条目>`);
+  if (!entry) return t`<Empty Entry>`;
+  return entrySummaryText(entry.type, entry.content, t`<Empty Entry>`);
 };
 
 type DetailField = { label: string; value: string };
@@ -448,8 +448,8 @@ const entryDetailFields = (entryId: string): DetailField[] => {
   const entry = masterEntryOf(entryId);
   if (!entry) return [];
   const fields: DetailField[] = [];
-  if (entry.content.trim()) fields.push({ label: t`内容`, value: entry.content });
-  if (entry.rule.trim()) fields.push({ label: t`规则`, value: entry.rule });
+  if (entry.content.trim()) fields.push({ label: t`Content`, value: entry.content });
+  if (entry.rule.trim()) fields.push({ label: t`Rules`, value: entry.rule });
   return fields;
 };
 

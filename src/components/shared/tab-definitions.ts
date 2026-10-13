@@ -38,47 +38,47 @@ interface PageDefinition {
 export const PAGES: PageDefinition[] = [
   {
     id: 'content',
-    label: '内容',
+    label: 'Content',
     icon: 'fa-solid fa-layer-group',
     subAreas: [
-      { id: 'pool', label: '条目池', icon: 'fa-solid fa-layer-group' },
-      { id: 'prompt', label: '提示词', icon: 'fa-solid fa-align-left' },
-      { id: 'worldinfo', label: '世界书', icon: 'fa-solid fa-book' },
-      { id: 'filter', label: '过滤', icon: 'fa-solid fa-filter' },
+      { id: 'pool', label: 'Entry Pool', icon: 'fa-solid fa-layer-group' },
+      { id: 'prompt', label: 'Prompts', icon: 'fa-solid fa-align-left' },
+      { id: 'worldinfo', label: 'World Info', icon: 'fa-solid fa-book' },
+      { id: 'filter', label: 'Filters', icon: 'fa-solid fa-filter' },
     ],
   },
   {
     id: 'generation',
-    label: '生成',
+    label: 'Generate',
     icon: 'fa-solid fa-bolt',
     subAreas: [
-      { id: 'generation', label: '生成', icon: 'fa-solid fa-bolt' },
+      { id: 'generation', label: 'Generate', icon: 'fa-solid fa-bolt' },
       { id: 'api', label: 'API', icon: 'fa-solid fa-plug' },
     ],
   },
   {
     id: 'stats',
-    label: '统计',
+    label: 'Statistics',
     icon: 'fa-solid fa-ranking-star',
-    subAreas: [{ id: 'stats', label: '统计', icon: 'fa-solid fa-ranking-star' }],
+    subAreas: [{ id: 'stats', label: 'Statistics', icon: 'fa-solid fa-ranking-star' }],
   },
   {
     id: 'cards',
-    label: '卡牌',
+    label: 'Cards',
     icon: 'fa-solid fa-chess-knight',
     subAreas: [
-      { id: 'deck', label: '卡组', icon: 'fa-solid fa-table-cells' },
-      { id: 'library', label: '卡库', icon: 'fa-solid fa-layer-group' },
-      { id: 'collection', label: '收藏', icon: 'fa-solid fa-box-archive' },
+      { id: 'deck', label: 'Deck', icon: 'fa-solid fa-table-cells' },
+      { id: 'library', label: 'Card Library', icon: 'fa-solid fa-layer-group' },
+      { id: 'collection', label: 'Collection', icon: 'fa-solid fa-box-archive' },
     ],
   },
   {
     id: 'system',
-    label: '系统',
+    label: 'System',
     icon: 'fa-solid fa-gear',
     subAreas: [
-      { id: 'appearance', label: '外观', icon: 'fa-solid fa-palette' },
-      { id: 'debug', label: '调试', icon: 'fa-solid fa-bug' },
+      { id: 'appearance', label: 'Appearance', icon: 'fa-solid fa-palette' },
+      { id: 'debug', label: 'Debugging', icon: 'fa-solid fa-bug' },
     ],
   },
 ];

@@ -2,14 +2,14 @@
   <div class="choice-card-editor">
     <!-- 页壳顶部：总开关只在默认的「卡组」子区显示，避免每个卡牌子区重复 -->
     <div v-if="area === 'deck'" class="choice-section">
-      <h4 class="choice-section-title"><i class="fa-solid fa-chess-knight"></i> {{ t`卡牌系统` }}</h4>
+      <h4 class="choice-section-title"><i class="fa-solid fa-chess-knight"></i> {{ t`Card system` }}</h4>
       <div class="choice-behavior-grid">
         <label class="choice-toggle">
           <input v-model="gs.settings.card_enabled" type="checkbox" @change="onEnableToggle" />
           <span class="choice-toggle-custom"></span>
           <span class="choice-toggle-label">
-            <strong>{{ t`启用卡牌` }}</strong>
-            <small>{{ t`判定叠加可装备效果卡、幸运数开卡包、行动币收支；关闭则与旧版完全一致` }}</small>
+            <strong>{{ t`Enable cards` }}</strong>
+            <small>{{ t`Adds equippable effect cards, lucky-number packs and Action Coin flow on top of checks; off = exactly the old behavior` }}</small>
           </span>
         </label>
         <!-- 依赖提示：卡牌的判定叠加/触发/行动币/幸运开包全挂在骰子判定分支内，
@@ -17,7 +17,7 @@
         <p v-if="gs.settings.card_enabled && !gs.settings.dice.enabled" class="choice-card-deps-hint">
           <i class="fa-solid fa-triangle-exclamation"></i>
           <span>{{
-            t`卡牌触发、行动币与幸运开包都依赖骰子判定——当前骰子判定未启用，卡牌不会生效。请在「生成设置 → 骰子判定」开启。`
+            t`Card triggers, Action Coins and lucky packs all depend on dice checks — dice checking is currently off, so cards won't work. Enable it under Generation Settings → Dice Check.`
           }}</span>
         </p>
         <!-- 互斥提示：骰式表达式路径不走卡牌管线（三处判定/预览/生成注入同门控），
@@ -25,7 +25,7 @@
         <p v-else-if="gs.settings.dice.enabled && gs.settings.dice.allow_formula" class="choice-card-deps-hint">
           <i class="fa-solid fa-triangle-exclamation"></i>
           <span>{{
-            t`骰式表达式判定与卡牌互斥——当前骰式开启时卡触发、行动币与幸运开包不生效；如需卡牌玩法请在「生成设置 → 骰子判定」关闭骰式表达式。`
+            t`Dice-expression checks are mutually exclusive with cards — while dice expressions are on, card triggers, Action Coins and lucky packs are inactive; turn them off under Generation Settings → Dice Check for card gameplay.`
           }}</span>
         </p>
       </div>
@@ -57,7 +57,7 @@ const onEnableToggle = () => {
     ensureStarterCards();
     ensureCharacterPool();
     if (!gs.settings.dice.enabled) {
-      toastr.warning(t`卡牌效果依赖骰子判定——请在「生成设置 → 骰子判定」启用，否则卡牌不会生效`);
+      toastr.warning(t`Card effects depend on dice checks — enable them under Generation Settings → Dice Check, or cards won't work`);
     }
   }
 };

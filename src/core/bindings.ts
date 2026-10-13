@@ -38,7 +38,7 @@ export function toggleCharacterBinding(kind: BindKind, configId: string | null):
   const field = KIND_FIELD[kind];
   const ch = getStCharacter(this_chid);
   if (!ch) {
-    toastr.warning(t`请先在酒馆中选择一个角色卡`);
+    toastr.warning(t`Select a character card in SillyTavern first`);
     return;
   }
   const characterStore = useCharacterSettingsStore();

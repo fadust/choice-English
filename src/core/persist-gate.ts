@@ -34,7 +34,7 @@ export function persistGateExit(): void {
       try {
         fn();
       } catch (err) {
-        console.warn('[Choice] 排他窗口后排队的持久化失败', err);
+        console.warn('[Choice] Queued persistence fails after exclusive window', err);
       }
     }
   }

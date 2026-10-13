@@ -1,4 +1,5 @@
 import { reactive } from 'vue';
+import { truncateWords } from '@/util/words';
 import { callSecondaryApiWithRetry, type ChatMsg } from '@/core/api-client';
 import {
   buildStatsView,
@@ -47,7 +48,7 @@ type AnalysisPayload = {
   rate: number;
   expected: number;
   excess: number;
-  basis: '窗口' | '全量';
+  basis: 'Window' | 'All-time';
   effectiveWeight: number;
 };
 
@@ -108,13 +109,13 @@ export async function runAiAnalysis(scopeId: string, force = false, signal?: Abo
       entries: {},
     };
     if (force)
-      toastr.info(t`当前维度没有可生成理由的统计建议（参与 ≥${SUGGEST_MIN_SAMPLES} 轮且建议引擎出建议的条目）`);
+      toastr.info(t`There are no reasonable statistical recommendations for the current dimension (Participation ≥${SUGGEST_MIN_SAMPLES} round and the suggestion engine produces suggested items)`);
     return true;
   }
   if (!force && !aiAnalysisNeeded(scopeId, view, rows)) return false;
   const api = gs.settings.active_api_id ? gs.settings.apis.find(a => a.id === gs.settings.active_api_id) : undefined;
   if (!api) {
-    if (force) toastr.warning(t`未配置 API，无法生成 AI 建议理由（请在 API 设置中配置后重试）`);
+    if (force) toastr.warning(t`API unconfigured — can't generate AI reasons (configure it in API settings and retry)`);
     return false;
   }
 
@@ -163,7 +164,7 @@ export async function runAiAnalysis(scopeId: string, force = false, signal?: Abo
     // 全部批次失败：不写缓存（保留旧结果），下次数据更新/手动按钮仍可重试；
     // 手动点击（force）给失败反馈，自动路径静默（下次数据活动会再试）
     if (!succeeded) {
-      if (force) toastr.error(t`AI 建议理由生成失败，请检查 API 配置与网络后重试`);
+      if (force) toastr.error(t`AI reason generation failed — check your API config and network, then retry`);
       return false;
     }
     // 增量合并：未重跑的既有结果保留（仅在当前建议集中）、新结果覆盖对应条目；
@@ -261,13 +262,13 @@ function buildAnalysisPrompt(batch: AnalysisPayload[]): ChatMsg[] {
   return [
     {
       role: 'system',
-      content: `你是行动选项条目统计分析器。请根据条目内容与统计指标，为每条已有统计建议生成简洁、具体、可核验的中文理由。理由最多 ${AI_REASON_MAX_CHARS} 个字符，只解释为什么统计引擎会建议提权、降权或回捞（低位条目向默认权重回升），不得改变动作，不得编造未提供的剧情信息。confidence 为 0 到 1 的数字。`,
+      content: `You are the action option entry statistics analyzer. Please generate concise, specific, and verifiable English explanations for each existing statistical suggestion based on the item content and statistical indicators. Most reasons ${AI_REASON_MAX_CHARS} Characters, only explain why the statistics engine recommends raising, lowering, or withdrawing rights (lower entries are raised back to the default weight). Actions are not allowed to be changed, and plot information that is not provided is not allowed to be fabricated. confidence is the number from 0 to 1.`,
     },
     {
       role: 'user',
       content:
-        `请分析以下条目，严格只输出 JSON 数组，不要输出 Markdown 或其他文字：\n${JSON.stringify(batch)}` +
-        '\n格式：[{"entryId":"原 id","reason":"理由","confidence":0.8}]，必须覆盖输入中的每个 entryId。',
+        `Please analyze the following entries and strictly only output the JSON array, do not output Markdown or other text: \n${JSON.stringify(batch)}` +
+        '\n format: [{"entryId":"original id","reason":"reason","confidence":0.8}], must override every entryId in the input.',
     },
   ];
 }
@@ -312,7 +313,7 @@ function parseAnalysisResult(raw: string, entryIds: Set<string>): Record<string,
     const record = item as Record<string, unknown>;
     const id = record.entryId;
     if (typeof id !== 'string' || !entryIds.has(id)) continue;
-    const reason = typeof record.reason === 'string' ? record.reason.trim().slice(0, AI_REASON_MAX_CHARS) : '';
+    const reason = typeof record.reason === 'string' ? truncateWords(record.reason.trim(), AI_REASON_MAX_CHARS) : '';
     const rawConfidence = typeof record.confidence === 'number' ? record.confidence : 0;
     const confidence = Math.min(1, Math.max(0, Number.isFinite(rawConfidence) ? rawConfidence : 0));
     if (!reason) continue;

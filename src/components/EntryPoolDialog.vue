@@ -5,30 +5,30 @@
         <div class="choice-epool-header">
           <span class="choice-epool-title">
             <i class="fa-solid fa-database"></i>
-            {{ t`条目库` }}
+            {{ t`Entry Library` }}
             <span class="choice-epool-count">({{ masterPool.length }})</span>
           </span>
           <div class="choice-epool-header-actions" data-tour="entrypool-toolbar">
             <button
               class="choice-icon-btn"
-              :title="allGroupsExpanded ? t`全部收起` : t`全部展开`"
+              :title="allGroupsExpanded ? t`Collapse All` : t`Expand All`"
               @click="toggleExpandAllGroups"
             >
               <i :class="allGroupsExpanded ? 'fa-solid fa-compress' : 'fa-solid fa-expand'"></i>
             </button>
-            <button class="choice-icon-btn" :title="t`新建分组`" @click="createGroup">
+            <button class="choice-icon-btn" :title="t`New Group`" @click="createGroup">
               <i class="fa-solid fa-folder-plus"></i>
             </button>
-            <button class="choice-icon-btn" :title="t`导入文件`" @click="showImportSource = true">
+            <button class="choice-icon-btn" :title="t`Import File`" @click="showImportSource = true">
               <i class="fa-solid fa-file-import"></i>
             </button>
             <button class="choice-icon-btn" :title="exportBtnTitle" @click="onExportPool">
               <i class="fa-solid fa-file-export"></i>
             </button>
-            <button ref="guideBtn" class="choice-icon-btn" :title="t`页面指引`" @click="showGuide = !showGuide">
+            <button ref="guideBtn" class="choice-icon-btn" :title="t`Page Guide`" @click="showGuide = !showGuide">
               <i class="fa-solid fa-circle-question"></i>
             </button>
-            <button class="choice-epool-close" :title="t`关闭`" @click="emit('close')">&times;</button>
+            <button class="choice-epool-close" :title="t`Close`" @click="emit('close')">&times;</button>
           </div>
         </div>
 
@@ -41,13 +41,13 @@
               :data-group-key="group.key"
             >
               <div class="choice-epool-group-head" @click="toggleGroup(group.key)">
-                <DragHandle :title="t`拖动排序`" @click.stop />
+                <DragHandle :title="t`Drag to reorder`" @click.stop />
                 <label class="choice-check" @click.stop>
                   <input type="checkbox" :checked="isGroupAllSelected(group)" @change="toggleSelectGroup(group)" />
                 </label>
                 <i class="fa-solid" :class="expandedGroups.has(group.key) ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
                 <span v-if="groupRenameId !== group.key" class="choice-epool-group-name">{{
-                  group.key || t`未分组`
+                  group.key || t`Ungrouped`
                 }}</span>
                 <input
                   v-else
@@ -62,7 +62,7 @@
                 <span class="choice-epool-group-count">({{ group.entries.length }})</span>
                 <button
                   class="choice-icon-btn"
-                  :title="groupRenameId === group.key ? t`保存` : t`重命名`"
+                  :title="groupRenameId === group.key ? t`Save` : t`Rename`"
                   @click.stop="groupRenameId === group.key ? finishGroupRename(group.key) : startGroupRename(group.key)"
                 >
                   <i :class="groupRenameId === group.key ? 'fa-solid fa-check' : 'fa-solid fa-pen-to-square'"></i>
@@ -70,20 +70,20 @@
                 <button
                   v-if="groupRenameId === group.key"
                   class="choice-icon-btn"
-                  :title="t`取消`"
+                  :title="t`Cancel`"
                   @click.stop="cancelGroupRename"
                 >
                   <i class="fa-solid fa-xmark"></i>
                 </button>
-                <button class="choice-icon-btn" :title="t`添加条目`" @click.stop="addEntryToGroup(group.key)">
+                <button class="choice-icon-btn" :title="t`Add Entry`" @click.stop="addEntryToGroup(group.key)">
                   <i class="fa-solid fa-plus"></i>
                 </button>
-                <button class="choice-icon-btn" :title="t`复制全部`" @click.stop="copyGroup(group)">
+                <button class="choice-icon-btn" :title="t`Copy All`" @click.stop="copyGroup(group)">
                   <i class="fa-solid fa-copy"></i>
                 </button>
                 <button
                   class="choice-icon-btn choice-delete-btn"
-                  :title="t`删除分组`"
+                  :title="t`Delete Group`"
                   @click.stop="deleteTarget = { type: 'group', key: group.key, count: group.entries.length }"
                 >
                   <i class="fa-solid fa-trash-can"></i>
@@ -94,7 +94,7 @@
                 :data-group-key="group.key"
               >
                 <div v-if="group.entries.length === 0" class="choice-empty-hint">
-                  <span>{{ t`暂无条目，点击 + 添加` }}</span>
+                  <span>{{ t`No entries. Click + to add.` }}</span>
                 </div>
                 <div
                   v-for="entry in group.entries"
@@ -103,7 +103,7 @@
                   :data-entry-id="entry.id"
                 >
                   <div class="choice-epool-entry-head">
-                    <DragHandle :title="t`拖动排序/换组`" />
+                    <DragHandle :title="t`Drag to reorder or move between groups`" />
                     <label class="choice-check" @click.stop>
                       <input type="checkbox" :checked="selected.has(entry.id)" @change="toggleSelectEntry(entry.id)" />
                     </label>
@@ -119,41 +119,41 @@
                     <select
                       :value="entry.category"
                       class="text_pole choice-cat-select"
-                      :title="t`移动到分组`"
+                      :title="t`Move to Group`"
                       @change="onEntryCategoryChange(entry, ($event.target as HTMLSelectElement).value)"
                       @click.stop
                     >
-                      <option value="">{{ t`未分组` }}</option>
+                      <option value="">{{ t`Ungrouped` }}</option>
                       <option v-for="cat in categoryNames" :key="cat" :value="cat">{{ cat }}</option>
                     </select>
                     <button
                       class="choice-icon-btn choice-delete-btn"
-                      :title="t`删除`"
+                      :title="t`Delete`"
                       @click.stop="deleteTarget = { type: 'entry', id: entry.id, summary: entrySummary(entry) }"
                     >
                       <i class="fa-solid fa-trash-can"></i>
                     </button>
                   </div>
                   <div v-if="expanded.has(entry.id)" class="choice-epool-entry-body">
-                    <input v-model="entry.type" class="text_pole" :placeholder="t`条目类型(短标签)`" />
+                    <input v-model="entry.type" class="text_pole" :placeholder="t`Entry type (short tag)`" />
                     <textarea
                       v-model="entry.content"
                       class="text_pole"
-                      :placeholder="t`AI 生成指令`"
+                      :placeholder="t`AI Generate Prompt`"
                       rows="2"
                     ></textarea>
-                    <input v-model="entry.rule" class="text_pole" :placeholder="t`规则(适用时机/写作约束，可选)`" />
+                    <input v-model="entry.rule" class="text_pole" :placeholder="t`Rule (applicable timing / writing constraint, optional)`" />
                     <div class="choice-epool-entry-fields">
                       <label class="choice-check">
                         <input v-model="entry.pinned" type="checkbox" />
-                        {{ t`固定` }}
+                        {{ t`Pinned` }}
                       </label>
                       <input
                         v-model.number="entry.weight"
                         class="text_pole choice-small-input"
                         type="number"
                         min="0"
-                        :title="t`权重(加权随机)`"
+                        :title="t`Weight (weighted random)`"
                       />
                     </div>
                   </div>
@@ -163,7 +163,7 @@
           </div>
           <div v-else class="choice-empty-hint">
             <i class="fa-solid fa-database"></i>
-            <span>{{ t`条目库为空，点击 + 添加` }}</span>
+            <span>{{ t`Entry pool is empty. Click + to add` }}</span>
           </div>
         </div>
 
@@ -179,7 +179,7 @@
              「替换整个条目库」走预览确认（危险操作）。失败红字显示在对话框内 -->
         <ImportSourceDialog
           :open="showImportSource"
-          :title="t`导入条目库`"
+          :title="t`Import Entry Pool`"
           :error="importSourceError"
           :show-replace="true"
           @close="showImportSource = false"
@@ -191,8 +191,8 @@
           :open="deleteTarget !== null"
           :title="deleteDialogTitle"
           :message="deleteDialogMessage"
-          :confirm-text="t`删除`"
-          :cancel-text="t`取消`"
+          :confirm-text="t`Delete`"
+          :cancel-text="t`Cancel`"
           @confirm="onDeleteConfirm"
           @cancel="deleteTarget = null"
         />
@@ -395,7 +395,7 @@ onUnmounted(() => {
 
 const entrySummary = (entry: PoolEntry): string => {
   const type = entry.type.trim();
-  if (!type && !entry.content.trim()) return t`<空条目>`;
+  if (!type && !entry.content.trim()) return t`<Empty Entry>`;
   if (!entry.content.trim()) return type.slice(0, 50);
   return type.replace(/"/g, '') + ' | ' + entry.content.replace(/"/g, '').slice(0, 40);
 };
@@ -442,13 +442,13 @@ const copyGroup = (group: EntryGroup) => {
     .filter(t => t.trim())
     .join('\n');
   if (!texts) {
-    toastr.warning(t`没有可复制的内容`);
+    toastr.warning(t`Nothing to copy`);
     return;
   }
   navigator.clipboard
     .writeText(texts)
     .then(() => {
-      toastr.success(t`已复制 ${group.entries.length} 条到剪贴板`);
+      toastr.success(t`Copied ${group.entries.length} strip to clipboard`);
     })
     .catch(() => {
       const ta = document.createElement('textarea');
@@ -457,9 +457,9 @@ const copyGroup = (group: EntryGroup) => {
       ta.select();
       try {
         document.execCommand('copy');
-        toastr.success(t`已复制 ${group.entries.length} 条到剪贴板`);
+        toastr.success(t`Copied ${group.entries.length} strip to clipboard`);
       } catch {
-        toastr.error(t`复制失败`);
+        toastr.error(t`Copy failed`);
       }
       document.body.removeChild(ta);
     });
@@ -485,11 +485,11 @@ const toggleSelectGroup = (group: EntryGroup) => {
 
 const createGroup = () => {
   deleteTarget.value = null;
-  const name = prompt(t`请输入分组名称`);
+  const name = prompt(t`Enter group name`);
   if (!name || !name.trim()) return;
   const trimmed = name.trim();
   if (categoryNames.value.includes(trimmed)) {
-    toastr.warning(t`分组「${trimmed}」已存在`);
+    toastr.warning(t`Group "${trimmed}” already exists`);
     return;
   }
   addPendingGroup(trimmed);
@@ -509,7 +509,7 @@ const finishGroupRename = (oldKey: string) => {
     return;
   }
   if (newName !== oldKey && categoryNames.value.includes(newName) && newName !== groupRenameId.value) {
-    toastr.warning(t`分组「${newName}」已存在`);
+    toastr.warning(t`Group "${newName}” already exists`);
     groupRenameId.value = null;
     return;
   }
@@ -601,7 +601,7 @@ const onExportPool = () => {
   const pool = partial ? masterPool.value.filter(e => selected.value.has(e.id)) : masterPool.value;
   // 空库导出防护：空文件导回去再导入会把库清空却提示"成功"（死亡循环），直接阻止
   if (pool.length === 0) {
-    toastr.warning(t`条目库为空，没有可导出的条目`);
+    toastr.warning(t`Entry pool is empty, nothing to export`);
     return;
   }
   const groupOrder = partial
@@ -629,12 +629,12 @@ const onExportPool = () => {
   a.download = `choice-pool-${new Date().toISOString().slice(0, 10)}.json`;
   a.click();
   URL.revokeObjectURL(url);
-  toastr.success(partial ? t`已导出选中的 ${pool.length} 条` : t`已导出全部 ${pool.length} 条`);
+  toastr.success(partial ? t`Exported selected ${pool.length} entries` : t`Exported all ${pool.length} entries`);
 };
 
 // 头部"导出文件"按钮 title 随勾选数动态提示部分导出
 const exportBtnTitle = computed(() =>
-  selected.value.size > 0 ? t`导出文件（仅导出选中的 ${selected.value.size} 条）` : t`导出文件`,
+  selected.value.size > 0 ? t`Export files (export only selected ${selected.value.size} Article)` : t`Export File`,
 );
 
 // 导入选文件走 pickJsonFile（showOpenFilePicker 优先 + 挂载式 input 回退，
@@ -653,11 +653,11 @@ const parseImportText = (text: string): any | null => {
     const clean = text.replace(/^\uFEFF/, '').trim();
     data = JSON.parse(clean);
   } catch (err: any) {
-    importSourceError.value = t`JSON 解析失败：${err?.message ?? err}。请确认粘贴的是导出文件的完整内容（从 { 到 }）`;
+    importSourceError.value = t`JSON parsing failed:${err?.message ?? err}. Please make sure you paste the complete contents of the exported file (from { to })`;
     return null;
   }
   if (data?.type !== 'choice-pool-export') {
-    importSourceError.value = t`文件格式不正确：type=${data?.type ?? '无'}，需要 choice-pool-export（条目库导出的文件）。正则库导出的文件不能导入条目库`;
+    importSourceError.value = t`Incorrect file format: type=${data?.type ?? 'None'}, requires choice-pool-export (item library exported file). Files exported from the regular library cannot be imported into the entry library`;
     return null;
   }
   return data;
@@ -715,7 +715,7 @@ const onImportMerge = ({ text }: { text: string; fileName: string }) => {
   const clean = sanitizeImportData(data.data);
   // 空条目文件防护：空库时期导出的文件导入后"成功"却什么都没有（死亡循环），直接阻止
   if (!clean) {
-    importSourceError.value = t`该文件不包含任何可识别的有效条目（master_pool 为空或条目缺正文/类型），无法导入`;
+    importSourceError.value = t`No recognizable valid entries in this file (master_pool empty or entries missing content/type); cannot import`;
     return;
   }
   const { master_pool, configs, group_order } = clean;
@@ -739,11 +739,11 @@ const onImportMerge = ({ text }: { text: string; fileName: string }) => {
   showImportSource.value = false;
   // 跳过提示先算再插值：插值里嵌反引号模板会让运行时 i18n 键与对账提取口径错位
   const skippedNote =
-    master_pool.length - newEntries.length > 0 ? t`（${master_pool.length - newEntries.length} 条已存在，跳过）` : '';
+    master_pool.length - newEntries.length > 0 ? t`（${master_pool.length - newEntries.length} The item already exists, skip)` : '';
   toastr.success(
     newEntries.length
-      ? t`已导入 ${newEntries.length} 条${skippedNote}`
-      : t`全部 ${master_pool.length} 条均已存在，未重复导入`,
+      ? t`Imported ${newEntries.length} entries${skippedNote}`
+      : t`All ${master_pool.length} All items already exist and have not been imported repeatedly.`,
   );
 };
 
@@ -754,7 +754,7 @@ const onImportReplace = ({ text, fileName }: { text: string; fileName: string })
   if (!data) return;
   const clean = sanitizeImportData(data.data);
   if (!clean) {
-    importSourceError.value = t`该文件不包含任何可识别的有效条目（master_pool 为空或条目缺正文/类型），无法导入`;
+    importSourceError.value = t`No recognizable valid entries in this file (master_pool empty or entries missing content/type); cannot import`;
     return;
   }
   // 预览与最终确认共用清洗后的数据：预览看到的就是将要落库的
@@ -769,7 +769,7 @@ const onImportPoolConfirm = (mode: 'merge' | 'replace') => {
   // 空条目文件防护：空库时期导出的文件、或内容为空的文件，导入只会把库清空/保持为空，
   // 却提示"成功"——这正是"导入成功但条目库还是空的"体验事故的来源。直接取消导入
   if (!master_pool?.length) {
-    toastr.warning(t`该文件不包含任何条目，已取消导入。请检查是否选错了导出文件`);
+    toastr.warning(t`This file contains no entries, import cancelled. Check you picked the right export file`);
     return;
   }
   // 防御：部分导出没有完整 configs，替换会清空现有配置——UI 已禁用，此处兜底按合并处理
@@ -802,16 +802,16 @@ const onImportPoolConfirm = (mode: 'merge' | 'replace') => {
   }
   showImportPool.value = false;
   importFileData.value = null;
-  toastr.success(mode === 'replace' ? t`条目库已替换` : t`条目库已合并`);
+  toastr.success(mode === 'replace' ? t`Entry pool replaced` : t`Entry pool merged`);
 };
 
 const deleteDialogTitle = computed(() => {
   if (!deleteTarget.value) return '';
   switch (deleteTarget.value.type) {
     case 'entry':
-      return t`删除条目`;
+      return t`Delete Entries`;
     case 'group':
-      return t`删除分组`;
+      return t`Delete Group`;
   }
 });
 
@@ -819,11 +819,11 @@ const deleteDialogMessage = computed(() => {
   if (!deleteTarget.value) return '';
   switch (deleteTarget.value.type) {
     case 'entry':
-      return t`确定要删除条目「${deleteTarget.value.summary}」吗？此操作不可撤销。`;
+      return t`Are you sure you want to delete the entry"${deleteTarget.value.summary}"?" This action cannot be undone.`;
     case 'group': {
       // 分组名先算再插值：插值里嵌 t`` 会让运行时 i18n 键与对账提取口径错位
-      const groupName = deleteTarget.value.key || t`未分组`;
-      return t`确定要删除分组「${groupName}」及其全部 ${deleteTarget.value.count} 条条目吗？此操作不可撤销。`;
+      const groupName = deleteTarget.value.key || t`Ungrouped`;
+      return t`Are you sure you want to delete the group"${groupName}” and all ${deleteTarget.value.count} Articles? This action cannot be undone.`;
     }
   }
 });
@@ -908,7 +908,7 @@ const initEntrySortables = () => {
           masterPool.value.push(entry);
         }
         if (!masterPool.value.includes(entry)) {
-          console.warn('[Choice] 条目拖拽后丢失，重新加入', entryId);
+          console.warn('[Choice] The entry is lost after dragging it, re-add it', entryId);
           masterPool.value.push(entry);
         }
       },

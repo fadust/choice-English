@@ -10,15 +10,15 @@
     >
       <button class="choice-menu-item" @click.stop="onShowOptions">
         <i class="fa-solid fa-chess"></i>
-        {{ t`查看行动选项` }}
+        {{ t`View action options` }}
       </button>
       <button class="choice-menu-item" @click.stop="onOpenSettings">
         <i class="fa-solid fa-gear"></i>
-        {{ t`打开设置` }}
+        {{ t`Open Settings` }}
       </button>
       <button class="choice-menu-item" @click.stop="onHideBubble">
         <i class="fa-solid fa-eye-slash"></i>
-        {{ t`隐藏悬浮球` }}
+        {{ t`Hide Floating Bubble` }}
       </button>
     </div>
   </Teleport>

@@ -1,35 +1,35 @@
 <template>
   <Teleport to="body">
     <div v-if="visible" ref="cardEl" class="choice-welcome-card" :style="cardStyle">
-      <button class="choice-welcome-close" :title="t`关闭`" @click="dismiss">&times;</button>
+      <button class="choice-welcome-close" :title="t`Close`" @click="dismiss">&times;</button>
       <div class="choice-welcome-header">
         <i class="fa-solid fa-chess"></i>
-        <span>{{ t`欢迎使用「行动选项」` }}</span>
+        <span>{{ t`Welcome to Action Options` }}</span>
       </div>
       <p class="choice-welcome-intro">
         {{
-          t`在主线对话之外单独调用 API，按当前剧情生成一组行动选项；点选一条即可进入输入框，不占用楼层、不打断对话节奏。`
+          t`Calls the API separately from the main reply to generate a set of action options for the current scene; click one to put it into the input box — no floor used, no interruption to the conversation.`
         }}
       </p>
       <ol class="choice-welcome-steps">
         <li>
           <i class="fa-solid fa-plug"></i>
-          <span>{{ t`配置 API（唯一必做的一步）` }}</span>
+          <span>{{ t`Configure the API (the only required step)` }}</span>
         </li>
         <li>
           <i class="fa-solid fa-bolt"></i>
-          <span>{{ t`AI 回复后自动生成选项` }}</span>
+          <span>{{ t`Auto-generate options after each AI reply` }}</span>
         </li>
         <li>
           <i class="fa-solid fa-paper-plane"></i>
-          <span>{{ t`点选一条，直接使用` }}</span>
+          <span>{{ t`Pick one to use directly` }}</span>
         </li>
       </ol>
       <div class="choice-welcome-actions">
         <button class="menu_button menu_button_default" @click="start">
-          {{ t`配置 API，开始使用` }}
+          {{ t`Configure the API to get started` }}
         </button>
-        <button class="menu_button" @click="dismiss">{{ t`稍后再说` }}</button>
+        <button class="menu_button" @click="dismiss">{{ t`Later` }}</button>
       </div>
     </div>
   </Teleport>

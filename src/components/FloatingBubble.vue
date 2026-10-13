@@ -131,10 +131,10 @@ const bubbleTitle = computed(() => {
   const noApi = !resolveCustomApi(gs.settings.active_api_id, gs.settings.apis);
   const noPool = usePoolSelectorStore().effectivePool.length === 0;
   const opensSettings = gs.settings.ui.bubble_click_action === 'settings';
-  const actionHint = opensSettings ? t`点击打开设置` : t`点击查看选项`;
-  if (noApi && noPool) return t`未配置 API 且条目池为空——${actionHint}`;
-  if (noApi) return t`未配置 API——${actionHint}`;
-  if (noPool) return t`条目池为空——${actionHint}`;
+  const actionHint = opensSettings ? t`Click to open settings` : t`Click to view options`;
+  if (noApi && noPool) return t`API is not configured and the entry pool is empty -${actionHint}`;
+  if (noApi) return t`Not configured API——${actionHint}`;
+  if (noPool) return t`The entry pool is empty——${actionHint}`;
   return actionHint;
 });
 

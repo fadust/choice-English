@@ -15,10 +15,7 @@ const externals = {
   '@popperjs/core': 'Popper',
 } as const;
 
-const relative_sillytavern_path = path.relative(
-  path.join(__dirname, 'dist'),
-  __dirname.substring(0, __dirname.lastIndexOf('public') + 6),
-);
+const relative_sillytavern_path = '../../../../../';
 
 export default defineConfig(({ mode }) => ({
   plugins: [
