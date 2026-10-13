@@ -12,14 +12,14 @@
   min-width: 0;
   max-width: 100%;
 }
-.choice-floating-dialog .choice-nav { flex-wrap: wrap; overflow: visible; }
-.choice-floating-dialog .choice-nav-item { flex: 1 1 6.5em; white-space: normal; }
+.choice-floating-dialog .choice-floating-body .choice-nav { flex-wrap: wrap; overflow: visible; }
+.choice-floating-dialog .choice-floating-body .choice-nav-item { flex: 1 1 6.5em; white-space: normal; }
 .choice-floating-dialog .choice-nav-label { min-width: 0; }
 .choice-floating-dialog .choice-config-row { flex-wrap: wrap; }
 .choice-floating-dialog .choice-config-select { flex: 1 1 12em; }
 .choice-floating-dialog .choice-config-actions { flex-wrap: wrap; }
-.choice-floating-dialog .choice-inline-entry-row { flex-wrap: wrap; }
-.choice-floating-dialog .choice-inline-entry-text { flex: 1 1 8em; min-width: 0; overflow-wrap: anywhere; }
+.choice-floating-dialog .choice-floating-body .choice-inline-entry-row { flex-wrap: wrap; }
+.choice-floating-dialog .choice-floating-body .choice-inline-entry-text { flex: 1 1 8em; min-width: 0; white-space: normal; overflow-wrap: anywhere; }
 @media (max-width: 640px) {
   .choice-count-row { gap: 10px; }
   .choice-count-item { flex: 1 1 100%; }
